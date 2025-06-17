@@ -1,0 +1,22 @@
+{
+  "date_today": "{{date}}",
+  "advertisement": "إعلان",
+  "about": "من نحن",
+  "contact": "اتصل بنا",
+  "search_placeholder": "بحث",
+  "loading": "جارٍ التحميل...",
+  "loadingerror": "حدث خطأ أثناء جلب البيانات ",
+  "noData": "لا توجد أخبار متاحة",
+  "impTitle": "أهم الأخبار ",
+  "noImportantNews": "لا توجد أخبار مهمة حالياً.",
+  "sectionTitle": "اخر الأخبار",
+  "categories": {
+    "Gadget": "أجهزة",
+    "Technology": "تكنولوجيا",
+    "Design": "تصميم",
+    "Products": "منتجات"
+  },
+  "post": {
+    "readMore": "اقرأ المزيد"
+  }
+}

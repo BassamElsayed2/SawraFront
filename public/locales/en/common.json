@@ -1,0 +1,23 @@
+{
+  "date_today": "{{date}}",
+  "advertisement": "Advertisement",
+  "about": "About",
+  "contact": "Contact",
+  "search_placeholder": "Search",
+  "loading": "Loading...",
+  "loadingerror": "An error occurred while fetching data",
+  "noData": "No news available",
+  "impTitle": "Important News",
+  "noImportantNews": "No important news currently.",
+
+  "sectionTitle": "Latest News",
+  "categories": {
+    "Gadget": "Gadget",
+    "Technology": "Technology",
+    "Design": "Design",
+    "Products": "Products"
+  },
+  "post": {
+    "readMore": "Read More"
+  }
+}
