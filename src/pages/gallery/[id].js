@@ -117,7 +117,7 @@ export default function GalleryDetailsPage() {
               <SidebarOne dataPost={postData} />
             </div>
           </div>
-          {otherads && (
+          {otherads?.length > 0 && (
             <div className="row">
               <div className="col-lg-12">
                 <AddBanner
