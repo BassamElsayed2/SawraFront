@@ -8,17 +8,31 @@ import WidgetPostList from "../common/components/sidebar/WidgetPostList";
 import WidgetSocialShare from "../common/components/sidebar/WidgetSocialShare";
 import HeadTitle from "../common/elements/head/HeadTitle";
 import GalleryOne from "../common/gallery/GalleryOne";
+import { getAboutUs } from "../../services/apiAboutUs";
+import { useQuery } from "@tanstack/react-query";
+import { useLocale } from "next-intl";
 
 const AboutUs = ({ allPosts }) => {
+  const locale = useLocale();
+
+  const { data: aboutUs } = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: getAboutUs,
+  });
+
+  console.log(aboutUs);
   return (
     <>
-      <HeadTitle pageTitle="About Us" />
+      <HeadTitle pageTitle={locale === "ar" ? "من نحن" : "About Us"} />
       <HeaderOne postData={allPosts} />
       <BreadcrumbTwo
-        title="About Us"
-        paragraph="Wherever &amp; whenever you need us. We are here for you – contact us for all your support needs. <br />
-            be it technical, general queries or information support."
-        bgImae="url('images/bg/bg-image-1.webp')"
+        title={locale === "ar" ? "من نحن" : "About Us"}
+        paragraph={
+          locale === "ar"
+            ? "أينما ومتى أحتاج إليكم. نحن هنا لك – تواصل معنا لجميع احتياجاتكم. <br /> بأي مساعدة تحتاجون."
+            : "Wherever &amp; whenever you need us. We are here for you – contact us for all your support needs. <br /> be it technical, general queries or information support."
+        }
+        bgImae="url('/images/about.png')"
       />
       <div className="axil-post-list-area axil-section-gap bg-color-white">
         <div className="container">
@@ -27,74 +41,21 @@ const AboutUs = ({ allPosts }) => {
               {/* Start About Area  */}
               <div className="axil-about-us">
                 <div className="inner">
-                  <h3>The Professional Publishing Platform</h3>
-                  <p>
-                    Aenean consectetur massa quis sem volutpat, a condimentum
-                    tortor pretium. Cras id ligula consequat, sagittis nulla at,
-                    sollicitudin lorem. Orci varius natoque penatibus et magnis
-                    dis parturient montes.
-                  </p>
-                  <p>
-                    {" "}
-                    Cras id ligula consequat, sagittis nulla at, sollicitudin
-                    lorem. Orci varius natoque penatibus et magnis dis
-                    parturient montes, nascetur ridiculus mus. Phasellus
-                    eleifend, dolor vel condimentum imperdiet.
-                  </p>
-                  <p>
-                    In a professional context it often happens that private or
-                    corporate clients corder a publication to be made and
-                    presented with the actual content still not being ready.
-                    Think of a news blog that’s filled with content hourly on
-                    the day of going live. However, reviewers tend to be
-                    distracted by comprehensible content, say, a random text
-                    copied from a newspaper or the internet. The are likely to
-                    focus on the text, disregarding the layout and its elements.
-                  </p>
-                  <h3>Our Growing News Network</h3>
-                  <p>
-                    Cicero famously orated against his political opponent Lucius
-                    Sergius Catilina. Occasionally the first Oration against
-                    Catiline is taken for type specimens: Quo usque tandem
-                    abutere, Catilina, patientia nostra? Quam diu etiam furor
-                    iste tuus nos eludet? (How long, O Catiline, will you abuse
-                    our patience? And for how long will that madness of yours
-                    mock us?)
-                  </p>
-                  <p>
-                    Most text editors like MS Word or Lotus Notes generate
-                    random lorem text when needed, either as pre-installed
-                    module or plug-in to be added. Word selection or sequence
-                    don’t necessarily match the original, which is intended to
-                    add variety.{" "}
-                  </p>
-                  <h3>The Professional Publishing Platform</h3>
-                  <p>
-                    Cicero famously orated against his political opponent Lucius
-                    Sergius Catilina. Occasionally the first Oration against
-                    Catiline is taken for type specimens: Quo usque tandem
-                    abutere, Catilina, patientia nostra? Quam diu etiam furor
-                    iste tuus nos eludet? (How long, O Catiline, will you abuse
-                    our patience? And for how long will that madness of yours
-                    mock us?)
-                  </p>
-                  <p>
-                    Most text editors like MS Word or Lotus Notes generate
-                    random lorem text when needed, either as pre-installed
-                    module or plug-in to be added. Word selection or sequence
-                    don’t necessarily match the original, which is intended to
-                    add variety.
-                  </p>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        locale === "ar"
+                          ? aboutUs?.about_us_ar
+                          : aboutUs?.about_us_en,
+                    }}
+                  />
                 </div>
               </div>
               {/* End About Area  */}
             </div>
             <div className="col-lg-4 col-xl-4 mt_md--40 mt_sm--40">
               <div className="sidebar-inner">
-                <WidgetCategory catData={allPosts} />
-                <WidgetSearch />
                 <WidgetPostList postData={allPosts} />
-                <WidgetSocialShare />
               </div>
             </div>
           </div>

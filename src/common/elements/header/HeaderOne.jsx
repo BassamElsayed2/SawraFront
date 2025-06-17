@@ -4,6 +4,8 @@ import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 import Nav from "./Nav";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { useQuery } from "@tanstack/react-query";
+import { getAboutUs } from "../../../../services/apiAboutUs";
 
 const HeaderOne = ({ pClass, darkLogo, lightLogo, postData }) => {
   if (typeof window !== "undefined") {
@@ -20,6 +22,10 @@ const HeaderOne = ({ pClass, darkLogo, lightLogo, postData }) => {
   const toggleHandler = () => {
     setTogglaClass((active) => !active);
   };
+  const { data: logo } = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: getAboutUs,
+  });
 
   return (
     <>
@@ -31,7 +37,7 @@ const HeaderOne = ({ pClass, darkLogo, lightLogo, postData }) => {
                 <Link href="/">
                   <a>
                     <Image
-                      className="dark-logo"
+                      className={logo?.logo_url || "dark-logo"}
                       width={141}
                       height={37}
                       src={
@@ -53,12 +59,12 @@ const HeaderOne = ({ pClass, darkLogo, lightLogo, postData }) => {
                 </nav>
               </div>
             </div>
-            <div className="col-xl-3 col-lg-8 col-md-8 col-sm-9 col-12">
+            <div className="col-xl-3 col-lg-8 col-md-4 col-sm-5 col-12 mb--10 mt--10">
               <ul className="social-share-transparent md-size justify-content-center justify-content-md-end">
                 <LanguageSwitcher />
               </ul>
             </div>
-            <div className="col-xl-3 col-lg-8 col-md-8 col-sm-9 col-12">
+            <div className="col-xl-3 col-lg-8 col-md-4 col-sm-4 col-12">
               <div className="header-search text-end d-flex align-items-center">
                 {/* Start Hamburger Menu  */}
                 <div className="hamburger-menu d-block d-xl-none">

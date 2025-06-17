@@ -9,9 +9,16 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import { useRouter } from "next/router";
 import { getAds } from "../../../../services/apiAds";
 import { useQuery } from "@tanstack/react-query";
+import { getAboutUs } from "../../../../services/apiAboutUs";
 
 const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
   const { locale } = useRouter();
+
+  const { data: logo } = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: getAboutUs,
+  });
+
   const dateFormate = () => {
     var day = new Date().getDate();
     var month = new Date().toLocaleString(locale, { month: "long" });
@@ -97,7 +104,7 @@ const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
                   <Link href="/">
                     <a>
                       <Image
-                        className="dark-logo"
+                        className={logo?.logo_url || "dark-logo"}
                         width={141}
                         height={37}
                         src={

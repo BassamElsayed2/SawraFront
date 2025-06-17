@@ -27,13 +27,13 @@ const TechBlog = ({ allPosts }) => {
 
   return (
     <>
-      <HeadTitle pageTitle="Tech Blog" />
+      <HeadTitle />
       <HeaderThree postData={allPosts} />
       <PostSectionNine news={news} />
       <CategoryListSlide cateData={allPosts} />
       <PostSectionTen postData={allPosts} />
       <PostSectionThree postData={news} />
-      <PostSectionFour postData={techPost} adBanner={true} />
+      {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
 
       <PostSectionEleven />
 
