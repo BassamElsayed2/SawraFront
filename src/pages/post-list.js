@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
-import GalleryOne from "../common/gallery/InstagramOne";
-
+import GalleryOne from "../common/gallery/GalleryOne";
 import FooterThree from "../common/elements/footer/FooterThree";
 import HeaderOne from "../common/elements/header/HeaderOne";
 import { getAllPosts } from "../../lib/api";
