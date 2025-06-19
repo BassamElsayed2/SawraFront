@@ -7,6 +7,7 @@ import { getGalleries } from "../../../services/apiGalleries";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function GalleryPage() {
   const locale = useLocale();
@@ -41,7 +42,7 @@ export default function GalleryPage() {
                     className="card-img-wrapper"
                     style={{ height: "250px", overflow: "hidden" }}
                   >
-                    <img
+                    <Image
                       src={gallery.image_urls[0]}
                       alt={gallery.title_en || "Gallery Image"}
                       className="card-img-top w-100 h-100 object-fit-cover"

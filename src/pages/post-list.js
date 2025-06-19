@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import ReactPaginate from 'react-paginate';
+import React, { useState } from "react";
+import ReactPaginate from "react-paginate";
 import GalleryOne from "../common/gallery/InstagramOne";
 
 import FooterThree from "../common/elements/footer/FooterThree";
@@ -10,7 +9,6 @@ import SidebarOne from "../common/components/sidebar/SidebarOne";
 import PostLayoutTwo from "../common/components/post/layout/PostLayoutTwo";
 import { SortingByDate } from "../common/utils";
 import HeadTitle from "../common/elements/head/HeadTitle";
-import GalleryOne from "../common/components/gallery/InstagramOne";
 
 const PostListPage = ({ allPosts }) => {
   const [blogs] = useState(allPosts);
@@ -54,13 +52,15 @@ const PostListPage = ({ allPosts }) => {
                 activeClassName={"current"}
               />
             </div>
-
-            <GalleryOne parentClass="bg-color-grey" />
-            <FooterThree />
-        </>
-    );
-}
-
+            {/* Sidebar or other columns can go here if needed */}
+          </div>
+        </div>
+      </div>
+      <GalleryOne parentClass="bg-color-grey" />
+      <FooterThree />
+    </>
+  );
+};
 
 export default PostListPage;
 
