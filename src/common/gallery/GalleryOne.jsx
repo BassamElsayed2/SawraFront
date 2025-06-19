@@ -1,5 +1,5 @@
 import Image from "next/image";
-import InstaData from "../../data/instagram/instagram.json";
+
 import { useLocale } from "next-intl";
 import { getGalleries } from "../../../services/apiGalleries";
 import { useQuery } from "@tanstack/react-query";
