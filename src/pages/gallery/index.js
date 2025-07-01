@@ -47,6 +47,8 @@ export default function GalleryPage() {
                       alt={gallery.title_en || "Gallery Image"}
                       className="card-img-top w-100 h-100 object-fit-cover"
                       style={{ transition: "transform 0.3s ease" }}
+                      width={600} // اختار الحجم المناسب
+                      height={400}
                       onMouseOver={(e) =>
                         (e.currentTarget.style.transform = "scale(1.1)")
                       }

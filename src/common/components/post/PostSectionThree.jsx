@@ -133,7 +133,7 @@ const PostSectionThree = ({ postData, adBanner, bgColor }) => {
               {videoPosts?.slice(1, 5).map((data) => (
                 <div
                   className="col-lg-6 col-md-6 col-sm-6 col-12"
-                  key={data._id}
+                  key={data.id}
                 >
                   <div className="content-block post-default image-rounded mt--30">
                     {data.images[0] ? (

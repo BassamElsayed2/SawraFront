@@ -7,8 +7,8 @@ import { getCategoryById } from "../../../../services/apicatogry";
 const PostSectionNine = ({ news, bgColor }) => {
   const { locale } = useRouter();
 
-  // فلترة الأخبار العاجلة
-  const postData = news?.filter((item) => item.status === "urgent") || [];
+  // المبيعات المرتفعة
+  const postData = news?.filter((item) => item.status === "most_sold") || [];
 
   // استخراج البوست الأساسي
   const firstPost = postData[0];
@@ -125,13 +125,13 @@ const PostSectionNine = ({ news, bgColor }) => {
                                   <span
                                     data-text={
                                       locale === "en"
-                                        ? categoryData?.name_en
-                                        : categoryData?.name_ar
+                                        ? "Most Sold"
+                                        : "⭐الاكثر مبيعا"
                                     }
                                   >
                                     {locale === "en"
-                                      ? categoryData?.name_en
-                                      : categoryData?.name_ar}
+                                      ? "Most Sold"
+                                      : " ⭐الاكثر مبيعا"}
                                   </span>
                                 </span>
                               </a>

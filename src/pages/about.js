@@ -20,7 +20,6 @@ const AboutUs = ({ allPosts }) => {
     queryFn: getAboutUs,
   });
 
-  console.log(aboutUs);
   return (
     <>
       <HeadTitle pageTitle={locale === "ar" ? "من نحن" : "About Us"} />

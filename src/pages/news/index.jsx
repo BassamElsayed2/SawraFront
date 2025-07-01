@@ -37,11 +37,16 @@ export default function NewsPage({ allPosts }) {
   useEffect(() => {
     if (news.length > 0) {
       const uniqueCategories = [
-        ...new Set(news.map((item) => item.category?.id)),
+        ...new Set(news.map((item) => String(item.category?.id))),
       ].filter(Boolean);
       setCategories(["all", ...uniqueCategories]);
     }
   }, [news]);
+
+  // Reset page to 1 when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
   // Update URL when category or search changes
   useEffect(() => {
@@ -63,7 +68,8 @@ export default function NewsPage({ allPosts }) {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || item.category?.id === selectedCategory;
+      selectedCategory === "all" ||
+      String(item.category?.id) === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -191,10 +197,11 @@ export default function NewsPage({ allPosts }) {
                 )}
                 <div className="card-body">
                   <h5 className="card-title">
-                    <Link href={`/post/${item.id}`}>
-                      <a className="text-decoration-none text-dark stretched-link">
-                        {locale === "en" ? item.title_en : item.title_ar}
-                      </a>
+                    <Link
+                      href={`/${locale}/post/${item.id}`}
+                      className="text-decoration-none text-dark stretched-link"
+                    >
+                      {locale === "en" ? item.title_en : item.title_ar}
                     </Link>
                   </h5>
                   <p className="card-text text-muted">
