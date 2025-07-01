@@ -83,6 +83,17 @@ const PostSectionNine = ({ news, bgColor }) => {
                         </a>
                       </Link>
                     </h3>
+                    <div className="product-price-box mt-3 ">
+  <div className="price-blur fs-2 ">
+    <span className="price-current text-warning">
+      {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
+    </span>
+    <span className="price-old ms-3">
+      {locale === "en" ? "100 EGP" : "١٠٠ ج.م"}
+    </span>
+  </div>
+</div>
+
                   </div>
                 </div>
               </div>
@@ -139,12 +150,23 @@ const PostSectionNine = ({ news, bgColor }) => {
                           </div>
                         </div>
                         <h5 className="title">
-                          <Link href={`/${locale}/post/${data.id}`}>
-                            <a>
-                              {locale === "en" ? data.title_en : data.title_ar}
-                            </a>
-                          </Link>
-                        </h5>
+  <Link href={`/${locale}/post/${data.id}`}>
+    <a>{locale === "en" ? data.title_en : data.title_ar}</a>
+  </Link>
+</h5>
+
+<div className="product-price-box mt-3">
+  <div className="price-blur bg-light fs-5 ">
+    <span className="price-current ">
+      {locale === "en" ? "75 EGP" : "٧٥ ج.م"}
+    </span>
+    <span className="price-old ms-3">
+      {locale === "en" ? "120 EGP" : "١٢٠ ج.م"}
+    </span>
+  </div>
+</div>
+
+
                       </div>
                     </div>
                   </div>

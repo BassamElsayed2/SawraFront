@@ -82,6 +82,7 @@ const PostSectionTen = () => {
       <div className="container">
         <SectionTitleOne title={t("sectionTitle")} />
         <div className="row">
+        {/*Latest News*/}
           <div className="col-lg-12">
             <Tab.Container
               id="axilTab"

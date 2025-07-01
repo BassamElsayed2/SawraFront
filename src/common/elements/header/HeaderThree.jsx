@@ -143,7 +143,7 @@ const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
           <div className="container">
             <div className="row justify-content-between align-items-center">
               <div className="d-flex justify-content-center">
-                <div className="mainmenu-wrapper d-none d-xl-block">
+                <div className="mainmenu-wrapper  d-xl-block">
                   <nav className="mainmenu-nav">
                     <Nav posts={postData} />
                   </nav>

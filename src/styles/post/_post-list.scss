@@ -1231,3 +1231,40 @@ ul {
     transform: none;
   }
 }
+
+/* =============================
+   Product Price Styles
+   ============================= */
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #198754; /* أخضر للسعر الجديد */
+}
+
+.product-price-box {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.price-blur {
+  background: rgba(15, 3, 3, 0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.price-current {
+  font-weight: 700;
+  color: #198754; /* أخضر */
+}
+
+.price-old {
+  text-decoration: line-through;
+  color: #dc3545; /* أحمر أو رمادي */
+  margin-inline-start: 8px;
+}

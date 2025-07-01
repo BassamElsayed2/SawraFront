@@ -92,7 +92,7 @@ const PostSectionEleven = ({ filters = [] }) => {
         <SectionTitleOne
           title={locale === "en" ? "Previous News" : "الأخبار السابقة"}
         />
-
+{/* Previous News */}
         <div className="row">
           <div className="col-lg-12">
             <Tab.Container id="axilTab" activeKey={activeNav}>

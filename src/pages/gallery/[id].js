@@ -9,9 +9,7 @@ import PostMetaTwo from "../../common/components/post/format/element/PostMetaTwo
 import Image from "next/image";
 import Slider from "react-slick";
 import SidebarOne from "../../common/components/sidebar/SidebarOne";
-
 import { getNews } from "../../../services/apiNews";
-
 import { getAds } from "../../../services/apiAds";
 import AddBanner from "../../common/components/ad-banner/AddBanner";
 
@@ -25,7 +23,7 @@ export default function GalleryDetailsPage() {
     enabled: !!id,
   });
 
-  const { data: postData } = useQuery({
+  const { data: postData, isLoading: isLoadingNews } = useQuery({
     queryKey: ["news"],
     queryFn: getNews,
   });
@@ -41,10 +39,7 @@ export default function GalleryDetailsPage() {
     function SlickNextArrow(props) {
       const { className, onClick } = props;
       return (
-        <button
-          className={`slide-arrow next-arrow ${className}`}
-          onClick={onClick}
-        >
+        <button className={`slide-arrow next-arrow ${className}`} onClick={onClick}>
           <i className="fal fa-arrow-right"></i>
         </button>
       );
@@ -53,10 +48,7 @@ export default function GalleryDetailsPage() {
     function SlickPrevArrow(props) {
       const { className, onClick } = props;
       return (
-        <button
-          className={`slide-arrow prev-arrow ${className}`}
-          onClick={onClick}
-        >
+        <button className={`slide-arrow prev-arrow ${className}`} onClick={onClick}>
           <i className="fal fa-arrow-left"></i>
         </button>
       );
@@ -71,29 +63,30 @@ export default function GalleryDetailsPage() {
       nextArrow: <SlickNextArrow />,
       prevArrow: <SlickPrevArrow />,
     };
+
     return (
-      <Slider
-        {...slideSettings}
-        className="post-gallery-activation axil-slick-arrow arrow-between-side"
-      >
-        {details?.image_urls.map((data, index) => (
-          <div className="post-images" key={index}>
-            <Image
-              src={data}
-              alt={details?.title_en}
-              height={500}
-              width={810}
-              priority={true}
-            />
-          </div>
-        ))}
+      <Slider {...slideSettings} className="post-gallery-activation axil-slick-arrow arrow-between-side">
+        {Array.isArray(details?.image_urls) &&
+          details.image_urls.map((data) => (
+            <div className="post-images" key={data}>
+              <Image src={data} alt={details?.title_en} height={500} width={810} priority />
+            </div>
+          ))}
       </Slider>
     );
   };
 
+  if (isLoadingPost) {
+    return <div className="text-center py-5">Loading gallery...</div>;
+  }
+
+  if (!details) {
+    return <div className="text-center py-5">No gallery found.</div>;
+  }
+
   return (
     <>
-      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "معرض الصور"} />
+      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "\u0645\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u0631"} />
       <HeaderOne pClass="header-light header-sticky header-with-shadow" />
       <div className="post-single-wrapper axil-section-gap bg-color-white">
         <div className="container">
@@ -101,22 +94,23 @@ export default function GalleryDetailsPage() {
             <div className="col-lg-8">
               <PostMetaTwo metaData={details} />
               <div className="axil-post-details">
-                {details?.image_urls ? <SlideGallery /> : ""}
+                {details?.image_urls && <SlideGallery />}
                 <div
                   className="post-details-content"
                   dangerouslySetInnerHTML={{
                     __html:
                       locale === "en"
-                        ? details?.description_en
-                        : details?.description_ar,
+                        ? details?.description_en || ""
+                        : details?.description_ar || "",
                   }}
                 ></div>
               </div>
             </div>
             <div className="col-lg-4">
-              <SidebarOne dataPost={postData} />
+              {!isLoadingNews && <SidebarOne dataPost={postData} />}
             </div>
           </div>
+
           {otherads?.length > 0 && (
             <div className="row">
               <div className="col-lg-12">
