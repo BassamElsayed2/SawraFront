@@ -112,7 +112,7 @@ const HeaderFour = ({ darkLogo, lightLogo, postData }) => {
 						</Link>
 					</div>
 
-					<div className="mainmenu-wrapper d-none d-xl-block">
+					<div className="mainmenu-wrapper  d-xl-block">
 					<nav className="mainmenu-nav">
           <Nav posts={postData}/>
 					</nav>
