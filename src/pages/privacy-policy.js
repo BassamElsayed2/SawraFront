@@ -27,7 +27,7 @@ const PrivacyPolicy = ({privacyData, allPosts}) => {
             </div>
         </div>
 
-        <FooterThree bgColor="bg-color-black" darkLogo="/images/logo/logo-white2.webp"/>
+        <FooterThree bgColor="bg-color-black" darkLogo="/images/logo/sawra.png"/>
         </>
     );
 }

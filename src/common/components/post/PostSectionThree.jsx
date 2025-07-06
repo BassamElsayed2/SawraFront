@@ -14,9 +14,13 @@ const PostSectionThree = ({ postData, adBanner, bgColor }) => {
 
   return (
     <div
-      className={`axil-video-post-area axil-section-gap ${
-        bgColor || "bg-color-black"
-      }`}
+      className="axil-video-post-area axil-section-gap"
+      style={{
+        background: "linear-gradient(45deg,rgba(252, 165, 165, 0.65),rgba(253, 187, 116, 0.47))",
+        borderRadius: "15px",
+        margin: "20px",
+        padding: "30px"
+      }}
     >
       <div className="container">
         {adBanner === true ? (
@@ -93,6 +97,13 @@ const PostSectionThree = ({ postData, adBanner, bgColor }) => {
                     </a>
                   </Link>
                 </h3>
+                <div className="product-price-box mt-3">
+                  <div className="price-blur fs-4">
+                    <span className="price-current text-success fw-bold">
+                      {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
+                    </span>
+                  </div>
+                </div>
                 {firstPost?.author_name && (
                   <div className="post-meta-wrapper">
                     <div className="post-meta">
@@ -190,6 +201,13 @@ const PostSectionThree = ({ postData, adBanner, bgColor }) => {
                           </a>
                         </Link>
                       </h5>
+                      <div className="product-price-box mt-2">
+                        <div className="price-blur fs-6">
+                          <span className="price-current text-success fw-bold">
+                            {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

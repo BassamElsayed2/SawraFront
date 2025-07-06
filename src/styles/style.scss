@@ -116,7 +116,26 @@
 /**************************************
 	Rtl Styles
 ***************************************/
-// @import 'rtl/rtl';
+@import 'rtl/rtl';
+
+/**************************************
+    Logo Enhancement Styles
+***************************************/
+.logo img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.logo a {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.logo a:hover {
+    transform: scale(1.02);
+}
 
 /**************************************
     News Search & Filter Custom Styles
@@ -198,12 +217,160 @@
 	  font-size: 1rem;
 	  height: 48px;
 	}
-  
+	
 	.search-filter-wrapper .input-group-text {
 	  font-size: 1rem;
 	  padding-left: 0.8rem;
 	}
   }
+
+/**************************************
+    Most Sold Badge Hover Effect
+***************************************/
+.most-sold-badge:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+  cursor: pointer;
+}
   
+
+/**************************************
+  Category Button Custom Style
+***************************************/
+.btn-category {
+  border: 2px solid #f97316;
+  border-radius: 9999px;
+  font-weight: 600;
+  padding: 0.25rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: transparent;
+  color: #f97316;
+  display: inline-block;
+}
+
+.btn-category.active,
+.btn-category:hover {
+  background: linear-gradient(90deg, #dc2626, #f97316);
+  color: white;
+  border-color: transparent;
+}
+
+.card-body p {
+	font-size: 0.95rem;
+	color: #6b7280; // gray-500
+	min-height: 50px;
+	line-height: 1.6;
+	margin-bottom: 0.75rem;
+  }
+  .card-body .price {
+	font-size: 1.3rem;
+	font-weight: bold;
+	color: #dc2626; // red-600
+  }
+  .card {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  .category-buttons-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: center;
+  }
+  @media (max-width: 767px) {
+	.category-buttons-wrapper {
+	  overflow-x: auto;
+	  white-space: nowrap;
+	  padding-bottom: 0.5rem;
+	}
+  }
+		
+
+/**************************************
+  Custom Search Box Style
+***************************************/
+.custom-search-box {
+  border-radius: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; // رمادي هادي
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+
+  &:focus-within {
+    box-shadow: 0 0 0 2px #f97316aa; // برتقالي فاتح عند الفوكس
+  }
+
+  .input-group-text {
+    background: transparent;
+    border: none;
+    color: #9ca3af; // text-muted
+    font-size: 1.3rem;
+    padding-left: 1rem;
+    padding-right: 0.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-control {
+    border: none;
+    box-shadow: none;
+    font-size: 1.1rem;
+    padding-left: 0.25rem;
+    color: #111827; // dark text
+    background: transparent;
+  }
+
+  .form-control::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+  }
+}
+
+.card-body h5 a:hover {
+  color: #dc2626 !important; /* أحمر - نفس لون السعر */
+}
+
+.news-description, .news-description * {
+  font-size: 1.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.news-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* عدد السطور */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+  min-height: 3.2em; /* تقريبي لسطرين */
+  line-height: 1.6;
+}
+
+.news-description strong {
+  font-weight: normal;
+}
+
+.pagination .page-item .page-link {
+  border-radius: 9999px;
+  margin: 0 0.25rem;
+  padding: 0.5rem 1rem;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  background-color: #fff8f0;
+  transition: 0.3s ease;
+}
+
+.pagination .page-item.active .page-link,
+.pagination .page-item .page-link:hover {
+  background: linear-gradient(90deg, #dc2626, #f97316);
+  color: white;
+  border-color: transparent;
+}
+
 
 

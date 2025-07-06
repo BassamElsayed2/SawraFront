@@ -19,10 +19,7 @@ const CategoryListSlide = ({ cateData }) => {
   function SlickNextArrow(props) {
     const { className, onClick } = props;
     return (
-      <button
-        className={`slide-arrow next-arrow ${className}`}
-        onClick={onClick}
-      >
+      <button className={`slide-arrow next-arrow ${className}`} onClick={onClick}>
         <i className="fal fa-arrow-right"></i>
       </button>
     );
@@ -31,10 +28,7 @@ const CategoryListSlide = ({ cateData }) => {
   function SlickPrevArrow(props) {
     const { className, onClick } = props;
     return (
-      <button
-        className={`slide-arrow prev-arrow ${className}`}
-        onClick={onClick}
-      >
+      <button className={`slide-arrow prev-arrow ${className}`} onClick={onClick}>
         <i className="fal fa-arrow-left"></i>
       </button>
     );
@@ -72,13 +66,15 @@ const CategoryListSlide = ({ cateData }) => {
   };
 
   return (
-    <div className="axil-categories-list axil-section-gap bg-color-grey">
+    <div className="axil-categories-list axil-section-gap bg-color-white">
       <div className="container">
-        <SectionTitleTwo
-          title={locale === "ar" ? "التصنيفات" : "Categories"}
-          btnText={locale === "ar" ? "عرض الكل" : "See All Topics"}
-          btnUrl={`/${locale}/news`}
-        />
+      <SectionTitleTwo
+  title={locale === "ar" ? "التصنيفات" : "Categories"}
+  btnText={locale === "ar" ? "عرض الكل" : "See All Topics"}
+  btnUrl={`/${locale}/news`}
+  btnClass="custom-see-all-btn"
+/>
+
         <div className="row">
           <div className="col-lg-12">
             <Slider
@@ -87,19 +83,36 @@ const CategoryListSlide = ({ cateData }) => {
             >
               {categories?.map((data, index) => (
                 <div className="single-cat" key={index}>
-                  <div className="inner">
+                  <div
+                    className="inner text-center p-3"
+                    style={{
+                      background: "linear-gradient(45deg, #fca5a5, #fdba74)",
+                      borderRadius: "1rem",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      transition: "transform 0.3s ease",
+                    }}
+                  >
                     <Link href={`/${locale}/news?category=${data.id}`}>
                       <a>
-                        <div className="thumbnail">
+                        <div className="thumbnail mb-3">
                           <Image
                             src={data.image_url}
                             alt={data.name_en}
-                            height={180}
-                            width={180}
+                            height={120}
+                            width={120}
+                            className="rounded-circle"
+                            style={{ objectFit: "cover" }}
                           />
                         </div>
                         <div className="content">
-                          <h5 className="title">
+                          <h5
+                            className="title"
+                            style={{
+                              color: "white",
+                              fontSize: "1.6rem",
+                              fontWeight: "bold",
+                            }}
+                          >
                             {locale === "ar" ? data.name_ar : data.name_en}
                           </h5>
                         </div>

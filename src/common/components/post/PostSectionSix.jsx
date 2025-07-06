@@ -107,6 +107,13 @@ const PostSectionSix = ({ postData }) => {
 										<a>{data.title}</a>
 									</Link>
 									</h3>
+									<div className="product-price-box mt-2">
+									  <div className="price-blur fs-6">
+									    <span className="price-current text-success fw-bold">
+									      ٥٠ ج.م
+									    </span>
+									  </div>
+									</div>
 									<div className="post-meta-wrapper">
 									<div className="post-meta">
 										<div className="content">

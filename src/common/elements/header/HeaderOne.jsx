@@ -38,15 +38,16 @@ const HeaderOne = ({ pClass, darkLogo, lightLogo, postData }) => {
                   <a>
                     <Image
                       className={logo?.logo_url || "dark-logo"}
-                      width={141}
-                      height={37}
+                      width={360}
+                      height={90}
                       src={
                         (colorMode === "Dark"
-                          ? lightLogo || "/images/logo/logo-white2.webp"
-                          : darkLogo || "/images/logo/logo-black.webp") ||
-                        "/images/logo/logo-black.webp"
+                          ? lightLogo || "/images/logo/sawra.png"
+                          : darkLogo || "/images/logo/sawra.png") ||
+                        "/images/logo/sawra.png"
                       }
-                      alt="Blogar logo"
+                      alt="Sawra logo"
+                      priority
                     />
                   </a>
                 </Link>

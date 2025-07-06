@@ -71,11 +71,18 @@ const SliderTwo = ({postData}) => {
                                 </Link>
                                 </div>
                             </div>
-                            <h4 className="title">
+                            <h5 className="title">
                                 <Link href={`/post/${data.id}`}>
                                     <a>{data.title}</a>
                                 </Link>
-                            </h4>
+                            </h5>
+                            <div className="product-price-box mt-2">
+                                <div className="price-blur fs-6">
+                                    <span className="price-current text-success fw-bold">
+                                        ٥٠ ج.م
+                                    </span>
+                                </div>
+                            </div>
                             <div className="post-button">
                                 <Link href={`/post/${data.id}`}>
                                     <a className="axil-button button-rounded color-secondary-alt">

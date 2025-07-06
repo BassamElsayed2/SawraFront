@@ -23,7 +23,7 @@ export default function GalleryPage() {
       <HeaderOne pClass="header-light header-sticky header-with-shadow" />
 
       <div className="container py-5">
-        <h1 className="text-center mb-5 fw-bold">
+        <h1 className="text-center mb-5 fw-bold text-danger">
           {locale === "en" ? "Our Gallery" : "معرض الصور"}
         </h1>
 
@@ -37,7 +37,16 @@ export default function GalleryPage() {
               className="col"
             >
               <Link href={`/${locale}/gallery/${gallery.id}`}>
-                <a className="card h-100 shadow-sm border-0">
+                <a
+                  className="card h-100 border-0"
+                  style={{
+                    backgroundColor: "#fff0f0",
+                    borderRadius: "1rem",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    overflow: "hidden",
+                    transition: "transform 0.3s ease",
+                  }}
+                >
                   <div
                     className="card-img-wrapper"
                     style={{ height: "250px", overflow: "hidden" }}
@@ -47,22 +56,33 @@ export default function GalleryPage() {
                       alt={gallery.title_en || "Gallery Image"}
                       className="card-img-top w-100 h-100 object-fit-cover"
                       style={{ transition: "transform 0.3s ease" }}
-                      width={600} // اختار الحجم المناسب
+                      width={600}
                       height={400}
                       onMouseOver={(e) =>
-                        (e.currentTarget.style.transform = "scale(1.1)")
+                        (e.currentTarget.style.transform = "scale(1.05)")
                       }
                       onMouseOut={(e) =>
                         (e.currentTarget.style.transform = "scale(1)")
                       }
                     />
                   </div>
-                  <div className="card-body text-center">
-                    <h3 className="card-title h5 mb-2">
-                      {locale === "en" ? gallery.title_en : gallery.title_ar}
-                    </h3>
+
+                  <div className="card-body text-center p-3">
+                    <h6
+                      className="card-title"
+                      style={{
+                        fontSize: "1.7rem",
+                        fontWeight: "600",
+                        color: "#b91c1c",
+                      }}
+                    >
+                      {locale === "en"
+                        ? gallery.title_en
+                        : gallery.title_ar}
+                    </h6>
+
                     {gallery.description && (
-                      <p className="card-text small text-muted">
+                      <p className="card-text small text-muted mt-2">
                         {locale === "en"
                           ? gallery.description_en
                           : gallery.description_ar}

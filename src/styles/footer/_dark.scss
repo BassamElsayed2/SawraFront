@@ -87,6 +87,7 @@ body.active-dark-mode .metabar-block li.icon a {
 }
 body.active-dark-mode .axil-header .logo a img.light-logo {
     display: inline-block;
+    filter: brightness(1.1) contrast(1.2) invert(0);
 }
 body.active-dark-mode .axil-header .logo a img.dark-logo {
     display: none;
@@ -185,12 +186,12 @@ body.active-dark-mode .axil-slick-arrow .slide-arrow {
     border: 1px solid #050505;
 }
 body.active-dark-mode .axil-slick-arrow .slide-arrow i {
-    color: #878787;
+    color: #8B0000;
 }
 body.active-dark-mode .axil-slick-arrow .slide-arrow:hover {
     background: #050505;
     border: 1px solid #050505;
-    color: var(--color-primary);
+    color: #8B0000;
 }
 
 body.active-dark-mode .slider-activation.axil-slick-arrow .slide-arrow {
@@ -202,10 +203,10 @@ body.active-dark-mode .slider-activation.axil-slick-arrow .slide-arrow:hover {
     border: 1px solid #050505;
 }
 body.active-dark-mode .slider-activation.axil-slick-arrow .slide-arrow i {
-    color: #050505;
+    color: #8B0000;
 }
 body.active-dark-mode .slider-activation.axil-slick-arrow .slide-arrow:hover i {
-    color: var(--color-primary);
+    color: #8B0000;
 }
 
 /*-----------------------
@@ -230,6 +231,7 @@ body.active-dark-mode .axil-footer-style-1.footer-variation-2 .logo img.dark-log
 
 body.active-dark-mode .axil-footer-style-1.footer-variation-2 .logo img.white-logo {
     display: block;
+    filter: brightness(1.1) contrast(1.2) invert(0);
 }
 
 /*-----------------------
@@ -297,6 +299,7 @@ body.active-dark-mode .copyright-area .copyright-left .logo img.dark-logo {
 
 body.active-dark-mode .copyright-area .copyright-left .logo img.light-logo {
     display: block;
+    filter: brightness(1.1) contrast(1.2) invert(0);
 }
 
 /*---------------- 
@@ -425,6 +428,7 @@ body.active-dark-mode .maintanence-area .content .logo a img.dark-logo {
 
 body.active-dark-mode .maintanence-area .content .logo a img.light-logo {
     display: block;
+    filter: brightness(1.1) contrast(1.2) invert(0);
 }
 
 body.active-dark-mode .maintanence-area .content .subscription-form .form-group input {
@@ -450,8 +454,22 @@ body.active-dark-mode .popup-mobilemenu-area .mainmenu > li {
 body.active-dark-mode .popup-mobilemenu-area .inner .mobile-menu-top .mobile-close i {
     color: #ffffff;
 }
+
+body.active-dark-mode .popup-mobilemenu-area .inner .mobile-menu-top .logo a img {
+    filter: brightness(1.1) contrast(1.2) invert(0);
+}
+
+/* Enhanced logo visibility in dark mode */
+body.active-dark-mode .logo img {
+    filter: brightness(1.15) contrast(1.25) saturate(1.1);
+}
+
+body.active-dark-mode .logo a:hover img {
+    filter: brightness(1.2) contrast(1.3) saturate(1.15);
+}
 body.active-dark-mode .popup-mobilemenu-area .inner .mobile-menu-top .logo a img.light-logo {
     display: inline-block;
+    filter: brightness(1.1) contrast(1.2) invert(0);
 }
 
 body.active-dark-mode .popup-mobilemenu-area .inner .mobile-menu-top .logo a img.dark-logo {

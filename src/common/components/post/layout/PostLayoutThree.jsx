@@ -5,124 +5,88 @@ import Image from "next/image";
 import { slugify } from "../../../utils";
 import { useRouter } from "next/router";
 
-const PostLayoutThree = ({ dataPost = [], postStart = 0, show = 5, bgColor = "" }) => {
+const PostLayoutThree = ({ dataPost = [], postStart = 0, show = 5 }) => {
   const { locale: lang } = useRouter();
 
   if (!dataPost || dataPost.length === 0) return <p>لا يوجد بيانات لعرضها.</p>;
 
   return (
     <>
-      {dataPost
-        .slice(postStart, postStart + show)
-        .map((data, index) => {
-          const title = lang === "en" ? data.title_en : data.title_ar;
-          const featureImg = data.images?.length > 0 ? data.images[0] : null;
-          const categoryName = lang === "en" ? data.category?.name_en : data.category?.name_ar;
-          const createdAt = data.created_at;
+      {dataPost.slice(postStart, postStart + show).map((data, index) => {
+        const title = lang === "en" ? data.title_en : data.title_ar;
+        const content = lang === "en" ? data.content_en : data.content_ar;
+        const featureImg = Array.isArray(data.images) ? data.images[0] : data.images;
+        const categoryName = lang === "en" ? data.category?.name_en : data.category?.name_ar;
 
-          let formattedDate = "";
-          if (createdAt) {
-            const dateObj = new Date(createdAt);
-            formattedDate =
-              lang === "en"
-                ? dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-                : dateObj.toLocaleDateString("ar-EG", { day: "numeric", month: "long", year: "numeric" });
-          }
-
-          return (
-            <div
-              key={data.id ? data.id : `post-${index}`}
-              className={`content-block post-list-view axil-control mt--30 ${bgColor} ${data.sticky ? "sticky" : ""} ${data.postFormat === "quote" ? "format-quote" : ""}`}
-            >
-              {featureImg && (
-                <div className="post-thumbnail">
-                  <Link href={`/post/${data.id}`}>
-                    <a>
-                      <Image
-                        src={featureImg}
-                        alt={title?.slice(0, 100) || "post image"}
-                        height={250}
-                        width={295}
-                        priority={true}
-                      />
-                    </a>
-                  </Link>
-                  {data.playBtn === true && (
-                    <Link href={`/post/${data.id}`}>
-                      <a className="video-popup size-medium position-top-center icon-color-secondary">
-                        <span className="play-icon"></span>
-                      </a>
-                    </Link>
-                  )}
-                </div>
-              )}
-
-              <div className="post-content">
-                <div className="post-cat">
-                  <div className="post-cat-list">
-                    <Link href={`/category/${slugify(categoryName || "")}`}>
-                      <a className="hover-flip-item-wrapper">
-                        <span className="hover-flip-item">
-                          <span data-text={categoryName}>{categoryName}</span>
-                        </span>
-                      </a>
-                    </Link>
-                  </div>
-                </div>
-
-                {data.postFormat === "quote" ? (
-                  <blockquote>
-                    <h4 className="title">
-                      <Link href={`/post/${data.id}`}>
-                        <a>{title}</a>
-                      </Link>
-                    </h4>
-                  </blockquote>
-                ) : (
-                  <h4 className="title">
-                    <Link href={`/post/${data.id}`}>
-                      <a>{title}</a>
-                    </Link>
-                  </h4>
-                )}
-
-                <div className="post-meta-wrapper">
-                  <div className="post-meta">
-                    <div className="content">
-                      <h6 className="post-author-name">
-                        <Link href={`/author/${slugify(data.author_name || "")}`}>
-                          <a className="hover-flip-item-wrapper">
-                            <span className="hover-flip-item">
-                              <span data-text={data.author_name || " "}>{data.author_name || " "}</span>
-                            </span>
-                          </a>
-                        </Link>
-                      </h6>
-
-                      <ul className="post-meta-list">
-                        <li>{formattedDate}</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <ul className="social-share-transparent justify-content-end">
-                    {Array.isArray(data.author_social) && data.author_social.length > 0 ? (
-                      data.author_social.map((social, idx) => (
-                        <li key={social.url ? social.url : `social-${idx}`}>
-                          <a href={social.url} target="_blank" rel="noopener noreferrer">
-                            <i className={social.icon || "fas fa-link"} />
-                          </a>
-                        </li>
-                      ))
-                    ) : (
-                      <li style={{ opacity: 0.6, fontStyle: "italic" }}></li>
-                    )}
-                  </ul>
-                </div>
+        return (
+          <div
+            key={data.id ? data.id : `post-${index}`}
+            className="d-flex gap-4 p-5 mb-5"
+            style={{
+              background: "linear-gradient(45deg,rgba(252, 165, 165, 0.65),rgba(253, 187, 116, 0.47))",
+              borderRadius: "1.5rem",
+              boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+              transition: "transform 0.3s ease-in-out",
+            }}
+          >
+            {featureImg && (
+              <div style={{ flexShrink: 0 }}>
+                <Link href={`/${lang}/post/${data.id}`}>
+                  <Image
+                    src={featureImg}
+                    alt={title?.slice(0, 100) || "post image"}
+                    height={200}
+                    width={260}
+                    className="rounded"
+                    style={{ objectFit: "cover" }}
+                  />
+                </Link>
               </div>
+            )}
+
+            <div className="flex-grow-1 text-black">
+              <div className="mb-3">
+                {categoryName && (
+                  <Link href={`/${lang}/news?category=${data.category?.id}`}>
+                    <span
+                      className="text-white"
+                      style={{
+                        background: "linear-gradient(45deg, #dc2626, #f97316)",
+                        borderRadius: "9999px",
+                        padding: "0.6rem 1.2rem",
+                        fontSize: "1.6rem",
+                        display: "inline-block",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {categoryName}
+                    </span>
+                  </Link>
+                )}
+              </div>
+
+              <h4 style={{ fontWeight: "bold", fontSize: "2.6rem", marginBottom: "1rem" }}>
+                <Link
+                  href={`/${lang}/post/${data.id}`}
+                  style={{ 
+                    color: "black",
+                    transition: "color 0.3s ease",
+                    textDecoration: "none"
+                  }}
+                  onMouseEnter={(e) => (e.target.style.color = "#991b1b")}
+                  onMouseLeave={(e) => (e.target.style.color = "black")}
+                >
+                  {title}
+                </Link>
+              </h4>
+
+              <p style={{ fontSize: "2rem", opacity: 0.95 }}>
+                {content?.replace(/<[^>]+>/g, "").slice(0, 100)}...
+              </p>
             </div>
-          );
-        })}
+          </div>
+        );
+      })}
     </>
   );
 };

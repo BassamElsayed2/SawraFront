@@ -112,6 +112,15 @@ const PostLayoutTwo = ({ postStart = 0, show = 5, bgColor = "" }) => {
                   </h4>
                 )}
 
+                {/* إضافة السعر */}
+                <div className="product-price-box mt-2">
+                  <div className="price-blur fs-6">
+                    <span className="price-current text-success fw-bold">
+                      {lang === "en" ? "50 EGP" : "٥٠ ج.م"}
+                    </span>
+                  </div>
+                </div>
+
                 {/* issuse */}
                 <div className="post-meta-wrapper">
                   <div className="post-meta">

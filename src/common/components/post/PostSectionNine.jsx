@@ -7,16 +7,10 @@ import { getCategoryById } from "../../../../services/apicatogry";
 const PostSectionNine = ({ news, bgColor }) => {
   const { locale } = useRouter();
 
-  // المبيعات المرتفعة
   const postData = news?.filter((item) => item.status === "most_sold") || [];
-
-  // استخراج البوست الأساسي
   const firstPost = postData[0];
-
-  // تحديد البوستات التي نريد عرضها (الباقي بعد أول بوست)
   const slicedPosts = postData.slice(1, 5);
 
-  // جلب بيانات الكاتيجوري لكل بوست
   const categoriesQueries = useQueries({
     queries: slicedPosts.map((post) => ({
       queryKey: ["category", post.category_id],
@@ -25,14 +19,11 @@ const PostSectionNine = ({ news, bgColor }) => {
     })),
   });
 
-  const firstCategory = categoriesQueries[0]?.data;
-
   return (
-    <div className={`axil-tech-post-banner ${bgColor || "bg-color-grey"}`}>
+    <div className={`axil-tech-post-banner ${bgColor || "bg-color-white"}`}>
       <div className="container">
         <div className="row">
-          {/* عرض أول بوست إن وجد */}
-
+          {/* أول بوست كبير */}
           {firstPost && (
             <div className="col-xl-6 col-md-12 col-12 mt--30">
               <div className="content-block post-grid post-grid-transparent">
@@ -51,29 +42,21 @@ const PostSectionNine = ({ news, bgColor }) => {
                 </div>
                 <div className="post-grid-content">
                   <div className="post-content">
-                    <div className="post-cat">
-                      <div className="post-cat-list">
-                        <Link
-                          href={`/${locale}/news?category=${firstPost?.category.id}`}
-                        >
-                          <a className="hover-flip-item-wrapper">
-                            <span className="hover-flip-item">
-                              <span
-                                data-text={
-                                  locale === "en"
-                                    ? firstCategory?.name_en
-                                    : firstCategory?.name_ar
-                                }
-                              >
-                                {locale === "en"
-                                  ? firstCategory?.name_en
-                                  : firstCategory?.name_ar}
-                              </span>
-                            </span>
-                          </a>
-                        </Link>
-                      </div>
+                    {/* ⭐ تصنيف "الأكثر مبيعًا" */}
+                    <div className="post-cat mb-2">
+                      <span
+                        className="px-4 py-2 text-white"
+                        style={{
+                          background: "linear-gradient(45deg, #dc2626, #f97316)",
+                          borderRadius: "9999px",
+                          fontSize: "1.1rem",
+                          display: "inline-block",
+                        }}
+                      >
+                        {locale === "en" ? "Most Sold" : "⭐ الاكثر مبيعا"}
+                      </span>
                     </div>
+
                     <h3 className="title">
                       <Link href={`/${locale}/post/${firstPost.id}`}>
                         <a>
@@ -83,95 +66,86 @@ const PostSectionNine = ({ news, bgColor }) => {
                         </a>
                       </Link>
                     </h3>
-                    <div className="product-price-box mt-3 ">
-  <div className="price-blur fs-2 ">
-    <span className="price-current text-warning">
-      {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
-    </span>
-    <span className="price-old ms-3">
-      {locale === "en" ? "100 EGP" : "١٠٠ ج.م"}
-    </span>
-  </div>
-</div>
 
+                    <div className="product-price-box mt-3 ">
+                      <div className="price-blur fs-2 ">
+                        <span className="price-current text-warning">
+                          {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
+                        </span>
+                        <span className="price-old ms-3">
+                          {locale === "en" ? "100 EGP" : "١٠٠ ج.م"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* عرض باقي البوستات */}
+          {/* باقي البوستات */}
           <div className="col-xl-6 col-lg-12 col-md-12 col-md-6 col-12">
             <div className="row">
-              {slicedPosts.map((data, index) => {
-                const categoryData = categoriesQueries[index]?.data;
+              {slicedPosts.map((data, index) => (
+                <div
+                  className="col-lg-6 col-md-6 col-sm-6 col-12 mt--30"
+                  key={data.id}
+                >
+                  <div className="content-block post-default image-rounded">
+                    <div className="post-thumbnail">
+                      <Link href={`/${locale}/post/${data.id}`}>
+                        <a>
+                          <Image
+                            src={data.images?.[0] || "/"}
+                            height={190}
+                            width={285}
+                            priority={true}
+                            alt=""
+                          />
+                        </a>
+                      </Link>
+                    </div>
+                    <div className="post-content">
+                      <div className="post-cat mb-2">
+                      <span
+  className="most-sold-badge px-4 py-2 text-white"
+  style={{
+    background: "linear-gradient(45deg, #dc2626, #f97316)",
+    borderRadius: "9999px",
+    fontSize: "1.1rem",
+    display: "inline-block",
+    transition: "all 0.3s ease-in-out",
+  }}
+>
+  {locale === "en" ? "Most Sold" : "⭐ الاكثر مبيعا"}
+</span>
 
-                return (
-                  <div
-                    className="col-lg-6 col-md-6 col-sm-6 col-12 mt--30"
-                    key={data.id}
-                  >
-                    <div className="content-block post-default image-rounded">
-                      <div className="post-thumbnail">
+                      </div>
+
+                      <h5 className="title">
                         <Link href={`/${locale}/post/${data.id}`}>
                           <a>
-                            <Image
-                              src={data.images?.[0] || "/"}
-                              height={190}
-                              width={285}
-                              priority={true}
-                              alt=""
-                            />
+                            {locale === "en"
+                              ? data.title_en
+                              : data.title_ar}
                           </a>
                         </Link>
-                      </div>
-                      <div className="post-content">
-                        <div className="post-cat">
-                          <div className="post-cat-list">
-                            <Link
-                              href={`/${locale}/news?category=${data?.category.id}`}
-                            >
-                              <a className="hover-flip-item-wrapper">
-                                <span className="hover-flip-item">
-                                  <span
-                                    data-text={
-                                      locale === "en"
-                                        ? "Most Sold"
-                                        : "⭐الاكثر مبيعا"
-                                    }
-                                  >
-                                    {locale === "en"
-                                      ? "Most Sold"
-                                      : " ⭐الاكثر مبيعا"}
-                                  </span>
-                                </span>
-                              </a>
-                            </Link>
-                          </div>
+                      </h5>
+
+                      <div className="product-price-box mt-3">
+                        <div className="price-blur bg-light fs-5 ">
+                          <span className="price-current ">
+                            {locale === "en" ? "75 EGP" : "٧٥ ج.م"}
+                          </span>
+                          <span className="price-old ms-3">
+                            {locale === "en" ? "120 EGP" : "١٢٠ ج.م"}
+                          </span>
                         </div>
-                        <h5 className="title">
-  <Link href={`/${locale}/post/${data.id}`}>
-    <a>{locale === "en" ? data.title_en : data.title_ar}</a>
-  </Link>
-</h5>
-
-<div className="product-price-box mt-3">
-  <div className="price-blur bg-light fs-5 ">
-    <span className="price-current ">
-      {locale === "en" ? "75 EGP" : "٧٥ ج.م"}
-    </span>
-    <span className="price-old ms-3">
-      {locale === "en" ? "120 EGP" : "١٢٠ ج.م"}
-    </span>
-  </div>
-</div>
-
-
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>

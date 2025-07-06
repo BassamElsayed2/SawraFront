@@ -56,14 +56,22 @@
         flex-wrap: wrap;
         .logo {
             margin-right: 53px;
-            min-height: 38px;
-            min-width: 141px;
+            min-height: 45px;
+            min-width: 150px;
             a {
                 line-height: 1;
                 display: block;
             }
             img {
-                max-height: 37px;
+                max-height: 90px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                filter: brightness(1) contrast(1.1);
+                transition: all 0.3s ease;
+                &:hover {
+                    filter: brightness(1.05) contrast(1.15);
+                }
             }
             @media #{$sm-layout} {
                 flex-basis: 100%;
@@ -137,7 +145,15 @@
         }
         .logo {
             img {
-                max-height: 37px;
+                max-height: 90px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                filter: brightness(1) contrast(1.1);
+                transition: all 0.3s ease;
+                &:hover {
+                    filter: brightness(1.05) contrast(1.15);
+                }
                 &.white-logo {
                     display: none !important;
                 }
@@ -179,7 +195,15 @@
     &.footer-variation-three {
         .logo {
             img {
-                max-height: 37px;
+                max-height: 90px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                filter: brightness(1) contrast(1.1);
+                transition: all 0.3s ease;
+                &:hover {
+                    filter: brightness(1.05) contrast(1.15);
+                }
             }
         }
         .footer-top {

@@ -88,6 +88,14 @@ const SliderOne = ({ postData }) => {
                                 <a>{data.title}</a>
                             </Link>
                       </h2>
+                      {/* إضافة السعر */}
+                      <div className="product-price-box mt-3">
+                        <div className="price-blur fs-4">
+                          <span className="price-current text-success fw-bold">
+                            ٥٠ ج.م
+                          </span>
+                        </div>
+                      </div>
                       {/* Post Meta  */}
                       <div className="post-meta-wrapper with-button">
                         <div className="post-meta">

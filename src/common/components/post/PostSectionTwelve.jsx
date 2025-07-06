@@ -46,6 +46,14 @@ const PostSectionTwelve = ({ postData }) => {
                       <a>{firstPost.title}</a>
                     </Link>
                   </h3>
+                  
+                  <div className="product-price-box mt-3">
+                    <div className="price-blur fs-4">
+                      <span className="price-current text-success fw-bold">
+                        ٥٠ ج.م
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,6 +98,14 @@ const PostSectionTwelve = ({ postData }) => {
 							<a>{data.title}</a>
 						</Link>
 						</h5>
+						
+						<div className="product-price-box mt-2">
+						  <div className="price-blur fs-6">
+						    <span className="price-current text-success fw-bold">
+						      ٥٠ ج.م
+						    </span>
+						  </div>
+						</div>
 						</div>
 					</div>
                   </div>

@@ -1,24 +1,16 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Tab from "react-bootstrap/Tab";
-import Nav from "react-bootstrap/Nav";
+import Slider from "react-slick";
 import { SectionTitleOne } from "../../elements/sectionTitle/SectionTitle";
-import { slugify } from "../../utils";
-import PostLayoutThree from "./layout/PostLayoutThree";
-
-import WidgetVideoPost from "../sidebar/WidgetVideoPost";
-
 import { useQuery } from "@tanstack/react-query";
 import { getNews } from "../../../../services/apiNews";
 import { useLocale } from "next-intl";
 import { getAds } from "../../../../services/apiAds";
 import AddBanner from "../ad-banner/AddBanner";
 
-const PostSectionEleven = ({ filters = [] }) => {
+const PostSectionEleven = () => {
   const locale = useLocale();
-  const defaultActiveCat =
-    filters.length > 0 ? slugify(filters[0].cate) : "all";
 
   const { data: ads } = useQuery({
     queryKey: ["ads"],
@@ -34,43 +26,12 @@ const PostSectionEleven = ({ filters = [] }) => {
     queryFn: getNews,
   });
 
-  const [activeNav, setActiveNav] = useState(defaultActiveCat);
-  const [tabPostData, setTabPostData] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [thirdHomeAd, setThirdHomeAd] = useState(null);
 
   useEffect(() => {
-    if (!Array.isArray(fetchedPosts) || fetchedPosts.length === 0) return;
-
-    const extracted = [
-      ...new Set(
-        fetchedPosts.map((post) => String(post.category?.id)).filter(Boolean)
-      ),
-    ];
-    setCategories(["all", ...extracted]);
-
-    if (!activeNav) {
-      setActiveNav("all");
-    }
-  }, [fetchedPosts, activeNav]);
-
-  useEffect(() => {
-    if (!Array.isArray(fetchedPosts) || fetchedPosts.length === 0) return;
-
-    let filtered = [];
-
-    if (activeNav === "all") {
-      filtered = fetchedPosts;
-    } else {
-      filtered = fetchedPosts.filter(
-        (post) => String(post.category?.id) === activeNav
-      );
-    }
-
-    setTabPostData(filtered);
-  }, [fetchedPosts, activeNav]);
-
-  const homeAds = ads?.filter((ad) => ad.location === "home") || [];
-  const thirdHomeAd = homeAds[2];
+    const homeAds = ads?.filter((ad) => ad.location === "home") || [];
+    setThirdHomeAd(homeAds[2]);
+  }, [ads]);
 
   const getImageSrc = (img) => {
     if (Array.isArray(img)) return img[0] || "";
@@ -78,142 +39,187 @@ const PostSectionEleven = ({ filters = [] }) => {
     return "";
   };
 
-  const renderCategoryName = (category) => {
-    if (!category) return "Normal";
-    return locale === "en" ? category.name_en : category.name_ar;
+  // دالة للحصول على العنوان المناسب حسب اللغة
+  const getTitle = (data) => {
+    if (locale === "ar") {
+      return data.title_ar || data.title_en || "عنوان غير متوفر";
+    }
+    return data.title_en || data.title_ar || "Title not available";
+  };
+
+  // دالة للحصول على المحتوى المناسب حسب اللغة
+  const getContent = (data) => {
+    if (locale === "ar") {
+      return data.content_ar || data.content_en || "";
+    }
+    return data.content_en || data.content_ar || "";
   };
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading data.</p>;
 
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    arrows: true,
+    nextArrow: <button className="slick-arrow slick-next" style={{ color: "white" }}>›</button>,
+    prevArrow: <button className="slick-arrow slick-prev" style={{ color: "white" }}>‹</button>,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   return (
-    <div className="axil-post-grid-area axil-section-gapTop bg-color-grey">
+    <div className="axil-post-grid-area axil-section-gap" style={{ 
+      background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+      direction: locale === "ar" ? "rtl" : "ltr"
+    }}>
       <div className="container">
-        <SectionTitleOne
-          title={locale === "en" ? "Previous News" : "الأخبار السابقة"}
-        />
-{/* Previous News */}
+        <SectionTitleOne title={locale === "en" ? "Hot Offers" : "العروض الساخنة"} />
         <div className="row">
           <div className="col-lg-12">
-            <Tab.Container id="axilTab" activeKey={activeNav}>
-              <Nav className="axil-tab-button nav nav-tabs mt--20">
-                {categories.map((catId) => {
-                  const categoryObj = fetchedPosts.find(
-                    (post) => String(post.category?.id) === String(catId)
-                  )?.category;
-
-                  const label =
-                    catId === "all"
-                      ? locale === "en"
-                        ? "All"
-                        : "الكل"
-                      : locale === "en"
-                      ? categoryObj?.name_en
-                      : categoryObj?.name_ar;
-
-                  return (
-                    <Nav.Item key={catId}>
-                      <Nav.Link
-                        eventKey={catId}
-                        onClick={() => setActiveNav(String(catId))}
+            <Slider {...sliderSettings}>
+              {fetchedPosts?.map((data) => (
+                <div className="slider-item px-2" key={data.id}>
+                  <div
+                    className="featured-post"
+                    style={{
+                      background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
+                      borderRadius: "20px",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05)",
+                      padding: "0",
+                      height: "100%",
+                      minHeight: "450px",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      border: "1px solid rgba(220,38,38,0.1)",
+                      overflow: "hidden",
+                      position: "relative",
+                      direction: locale === "ar" ? "rtl" : "ltr"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-8px)";
+                      e.currentTarget.style.boxShadow = "0 20px 40px rgba(220,38,38,0.15), 0 8px 20px rgba(0,0,0,0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05)";
+                    }}
+                  >
+                    <div className="post-thumbnail position-relative" style={{height: "250px", overflow: "hidden"}}>
+                      <Link href={`/${locale}/post/${data.id}`}>
+                        <a>
+                          <Image
+                            src={getImageSrc(data.images)}
+                            alt={getTitle(data)}
+                            layout="fill"
+                            objectFit="cover"
+                            priority
+                            style={{
+                              transition: "transform 0.4s ease"
+                            }}
+                          />
+                        </a>
+                      </Link>
+                      <div 
+                        className="position-absolute top-0 start-0 m-3"
+                        style={{
+                          background: "linear-gradient(45deg, #dc2626, #f97316)",
+                          color: "white",
+                          padding: "8px 16px",
+                          borderRadius: "25px",
+                          fontSize: "0.85rem",
+                          fontWeight: "600",
+                          boxShadow: "0 4px 12px rgba(220,38,38,0.3)"
+                        }}
                       >
-                        {label}
-                      </Nav.Link>
-                    </Nav.Item>
-                  );
-                })}
-              </Nav>
-
-              <Tab.Content>
-                <Tab.Pane eventKey={activeNav}>
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="row">
-                        {tabPostData.slice(0, 2).map((data) => (
-                          <div className="col-lg-6" key={data.id}>
-                            <div className="featured-post mt--30">
-                              <div className="content-block">
-                                <div className="post-content">
-                                  <div className="post-cat">
-                                    <div className="post-cat-list">
-                                      <Link
-                                        href={`/${locale}/news?category=${data?.category.id}`}
-                                      >
-                                        <a className="hover-flip-item-wrapper">
-                                          <span className="hover-flip-item">
-                                            <span
-                                              data-text={
-                                                locale === "en"
-                                                  ? data.category?.name_en
-                                                  : data.category?.name_ar
-                                              }
-                                            >
-                                              {locale === "en"
-                                                ? data.category?.name_en
-                                                : data.category?.name_ar}
-                                            </span>
-                                          </span>
-                                        </a>
-                                      </Link>
-                                    </div>
-                                  </div>
-
-                                  <h4 className="title">
-                                    <Link href={`/${locale}/post/${data.id}`}>
-                                      <a>
-                                        {locale === "en"
-                                          ? data.title_en
-                                          : data.title_ar}
-                                      </a>
-                                    </Link>
-                                  </h4>
-                                </div>
-
-                                <div className="post-thumbnail">
-                                  <Link href={`/${locale}/post/${data.id}`}>
-                                    <a>
-                                      <Image
-                                        src={getImageSrc(data.images)}
-                                        alt={
-                                          locale === "en"
-                                            ? data.title_en
-                                            : data.title_ar
-                                        }
-                                        height={338}
-                                        width={600}
-                                        priority
-                                        style={{
-                                          objectFit: "cover",
-                                        }}
-                                      />
-                                    </a>
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                        {locale === "en" ? "HOT" : "عرض ساخن"}
                       </div>
                     </div>
-
-                    <div className="col-lg-8 col-xl-8 mt--30">
-                      <PostLayoutThree
-                        dataPost={tabPostData}
-                        postStart={2}
-                        show={3}
-                        bgColor="with-bg-solid"
-                      />
-                    </div>
-
-                    <div className="col-lg-4 col-xl-4 mt--30 mt_md--40 mt_sm--40">
-                      <div className="sidebar-inner">
-                        <WidgetVideoPost postData={fetchedPosts} />
+                    
+                    <div className="post-content p-4" style={{
+                      height: "200px", 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      justifyContent: "space-between",
+                      direction: locale === "ar" ? "rtl" : "ltr"
+                    }}>
+                      <h4 
+                        className="title mb-3" 
+                        style={{ 
+                          fontSize: "1.25rem", 
+                          fontWeight: "700", 
+                          color: "#1a1a1a",
+                          lineHeight: "1.4",
+                          minHeight: "60px",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textAlign: locale === "ar" ? "right" : "left"
+                        }}
+                      >
+                        <Link href={`/${locale}/post/${data.id}`}>
+                          <a 
+                            className="text-decoration-none" 
+                            style={{
+                              color: "#1a1a1a",
+                              transition: "color 0.3s ease"
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = "#dc2626"}
+                            onMouseLeave={(e) => e.target.style.color = "#1a1a1a"}
+                          >
+                            {getTitle(data)}
+                          </a>
+                        </Link>
+                      </h4>
+                      
+                      <div className="d-flex justify-content-between align-items-center">
+                        <button 
+                          className="btn"
+                          style={{
+                            background: "linear-gradient(45deg, #dc2626, #f97316)",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "25px",
+                            padding: "10px 20px",
+                            fontSize: "0.9rem",
+                            fontWeight: "600",
+                            transition: "all 0.3s ease",
+                            boxShadow: "0 4px 12px rgba(220,38,38,0.3)"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.transform = "scale(1.05)";
+                            e.target.style.boxShadow = "0 6px 16px rgba(220,38,38,0.4)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.transform = "scale(1)";
+                            e.target.style.boxShadow = "0 4px 12px rgba(220,38,38,0.3)";
+                          }}
+                        >
+                          {locale === "en" ? "View Details" : "عرض التفاصيل"}
+                        </button>
                       </div>
                     </div>
                   </div>
-                </Tab.Pane>
-              </Tab.Content>
-            </Tab.Container>
+                </div>
+              ))}
+            </Slider>
           </div>
         </div>
 
@@ -230,6 +236,144 @@ const PostSectionEleven = ({ filters = [] }) => {
           </div>
         )}
       </div>
+      
+      <style jsx global>{`
+        .slick-slider { 
+          padding: 20px 0 50px 0;
+          position: relative;
+          margin: 0 -10px;
+        }
+        
+        .slick-list {
+          padding: 0 20px !important;
+        }
+        
+        .slick-track {
+          display: flex !important;
+          gap: 20px !important;
+        }
+        
+        .slick-slide {
+          height: auto !important;
+        }
+        
+        .slick-slide > div {
+          height: 100%;
+        }
+        
+        .slick-arrow {
+          position: absolute !important;
+          top: 50% !important;
+          transform: translateY(-50%) !important;
+          z-index: 100 !important;
+          width: 50px !important;
+          height: 50px !important;
+          background: linear-gradient(45deg, #dc2626, #f97316) !important;
+          border: none !important;
+          border-radius: 50% !important;
+          color: white !important;
+          font-size: 24px !important;
+          font-weight: bold !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 6px 20px rgba(220,38,38,0.3) !important;
+          transition: all 0.3s ease !important;
+          opacity: 1 !important;
+          cursor: pointer !important;
+        }
+        
+        .slick-arrow:hover {
+          background: linear-gradient(45deg, #b91c1c, #ea580c) !important;
+          transform: translateY(-50%) scale(1.1) !important;
+          box-shadow: 0 8px 25px rgba(220,38,38,0.4) !important;
+        }
+        
+        .slick-prev { 
+          left: -30px !important; 
+        }
+        
+        .slick-next { 
+          right: -30px !important; 
+        }
+        
+        .slick-dots {
+          bottom: -40px !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          list-style: none !important;
+          padding: 0 !important;
+          margin: 20px 0 0 0 !important;
+        }
+        
+        .slick-dots li {
+          margin: 0 8px !important;
+          width: 12px !important;
+          height: 12px !important;
+        }
+        
+        .slick-dots li button {
+          width: 100% !important;
+          height: 100% !important;
+          padding: 0 !important;
+          background: #e5e7eb !important;
+          border: none !important;
+          border-radius: 50% !important;
+          transition: all 0.3s ease !important;
+          cursor: pointer !important;
+        }
+        
+        .slick-dots li button:before {
+          display: none !important;
+        }
+        
+        .slick-dots li.slick-active button {
+          background: linear-gradient(45deg, #dc2626, #f97316) !important;
+          transform: scale(1.3) !important;
+          box-shadow: 0 2px 8px rgba(220,38,38,0.3) !important;
+        }
+        
+        /* تحسينات للعرض العربي */
+        [dir="rtl"] .slick-arrow {
+          transform: translateY(-50%) scaleX(-1) !important;
+        }
+        
+        [dir="rtl"] .slick-prev { 
+          right: -30px !important; 
+          left: auto !important;
+        }
+        
+        [dir="rtl"] .slick-next { 
+          left: -30px !important; 
+          right: auto !important;
+        }
+        
+        @media (max-width: 768px) {
+          .slick-arrow {
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 18px !important;
+          }
+          .slick-prev { left: -20px !important; }
+          .slick-next { right: -20px !important; }
+          [dir="rtl"] .slick-prev { right: -20px !important; left: auto !important; }
+          [dir="rtl"] .slick-next { left: -20px !important; right: auto !important; }
+          .slider-item .featured-post { min-height: 400px; }
+        }
+        
+        @media (max-width: 576px) {
+          .slick-arrow {
+            width: 35px !important;
+            height: 35px !important;
+            font-size: 16px !important;
+          }
+          .slick-prev { left: -15px !important; }
+          .slick-next { right: -15px !important; }
+          [dir="rtl"] .slick-prev { right: -15px !important; left: auto !important; }
+          [dir="rtl"] .slick-next { left: -15px !important; right: auto !important; }
+        }
+      `}</style>
     </div>
   );
 };

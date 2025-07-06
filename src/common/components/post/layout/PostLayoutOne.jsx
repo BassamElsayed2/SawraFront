@@ -30,6 +30,13 @@ const PostLayoutOne = ({ postData, itemShow }) => {
                   <a>{data.title}</a>
                 </Link>
               </h4>
+              <div className="product-price-box mt-2">
+                <div className="price-blur fs-6">
+                  <span className="price-current text-success fw-bold">
+                    ٥٠ ج.م
+                  </span>
+                </div>
+              </div>
               <div className="post-meta">
                 <div className="post-author-avatar border-rounded">
                   <Image

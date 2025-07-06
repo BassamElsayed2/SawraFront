@@ -7,6 +7,8 @@ import { appWithTranslation } from "next-i18next";
 import { IntlProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 function MyApp({ Component, pageProps }) {
   const { locale } = useRouter();

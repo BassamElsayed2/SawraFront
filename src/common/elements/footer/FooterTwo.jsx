@@ -14,10 +14,11 @@ const FooterTwo = () => {
                 <Link href="/">
                     <a>
                     <Image
-                        src="/images/logo/logo-white2.webp"
-                        alt="Logo Images"
-                        height={35}
-                        width={134}
+                        src="/images/logo/sawra.png"
+                        priority
+                        alt="Sawra Logo"
+                        height={90}
+                        width={360}
                     />
                     </a>
                 </Link>

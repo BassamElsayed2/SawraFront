@@ -62,6 +62,27 @@ button {
     display: inline-block;
 }
 
+/* Custom See All Button */
+.custom-see-all-btn {
+    border: 2px solid #f97316;
+    border-radius: 9999px;
+    font-weight: 600;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: #090909;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.custom-see-all-btn:hover {
+    background: linear-gradient(90deg, #dc2626, #f97316);
+    color: rgb(7, 7, 7);
+    border-color: transparent;
+    text-decoration: none;
+}
+
 
 
 

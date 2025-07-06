@@ -37,14 +37,15 @@ const MobileMenu = ({ menuShow, menuHide }) => {
               <a>
                 <Image
                   className={logo?.logo_url || "dark-logo"}
-                  width={141}
-                  height={37}
+                  width={360}
+                  height={90}
                   src={
                     colorMode === "Dark"
-                      ? "/images/logo/logo-white2.webp"
-                      : "/images/logo/logo-black.webp"
+                      ? "/images/logo/sawra.png"
+                      : "/images/logo/sawra.png"
                   }
-                  alt="Blogar logo"
+                  alt="Sawra logo"
+                  priority
                 />
               </a>
             </Link>

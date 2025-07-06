@@ -12,7 +12,7 @@ const SectionTitleOne = ({ title }) => {
   );
 };
 
-const SectionTitleTwo = ({title, btnText, btnUrl}) => {
+const SectionTitleTwo = ({title, btnText, btnUrl, btnClass}) => {
   return (
     <div className="row align-items-center mb--30">
       <div className="col-lg-6 col-md-8 col-sm-8 col-12">
@@ -23,7 +23,7 @@ const SectionTitleTwo = ({title, btnText, btnUrl}) => {
       <div className="col-lg-6 col-md-4 col-sm-4 col-12">
         <div className="see-all-topics text-start text-sm-end mt_mobile--20">
           <Link href={btnUrl || "#"}>
-            <a className="axil-link-button">{btnText}</a>
+            <a className={btnClass || "axil-link-button"}>{btnText}</a>
           </Link>
 
         </div>
