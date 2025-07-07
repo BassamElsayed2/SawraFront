@@ -1,6 +1,6 @@
-
 .langSwitcher {
-  background-color: #D93E40;
+  background-color: #cc9d2f;
+  font-weight: bold;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -11,11 +11,10 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #b83b3e;
+    background-color: #d8b663;
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(132, 65, 65, 0.4);
   }
 }

@@ -72,7 +72,12 @@ const CategoryListSlide = ({ cateData }) => {
   };
 
   return (
-    <div className="axil-categories-list axil-section-gap bg-color-grey">
+    <div
+      className="axil-categories-list axil-section-gap bg-color-grey"
+      style={{
+        backgroundColor: "#8b0000",
+      }}
+    >
       <div className="container">
         <SectionTitleTwo
           title={locale === "ar" ? "التصنيفات" : "Categories"}

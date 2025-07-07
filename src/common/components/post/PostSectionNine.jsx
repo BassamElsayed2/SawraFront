@@ -28,15 +28,31 @@ const PostSectionNine = ({ news, bgColor }) => {
   const firstCategory = categoriesQueries[0]?.data;
 
   return (
-    <div className={`axil-tech-post-banner ${bgColor || "bg-color-grey"}`}>
-      <div className="container">
+    <div
+      className={`axil-tech-post-banner relative pb-5`}
+      style={{
+        backgroundColor: "#8b0000",
+      }}
+    >
+      <img
+        src="/images/Rectangle.png"
+        alt="Rectangle"
+        style={{
+          position: "absolute",
+          top: -100,
+          left: 0,
+          bottom: 0,
+          height: 1200,
+        }}
+      />
+      <div className="container" style={{ position: "relative", zIndex: 2 }}>
         <div className="row">
           {/* عرض أول بوست إن وجد */}
 
           {firstPost && (
             <div className="col-xl-6 col-md-12 col-12 mt--30">
               <div className="content-block post-grid post-grid-transparent">
-                <div className="post-thumbnail">
+                <div className="post-thumbnail position-relative">
                   <Link href={`/${locale}/post/${firstPost.id}`}>
                     <a>
                       <Image
@@ -46,6 +62,20 @@ const PostSectionNine = ({ news, bgColor }) => {
                         priority={true}
                         alt=""
                       />
+                      {/* كلمة الاكثر مبيعا على الصورة */}
+                      <div
+                        className="position-absolute top-0 start-0 m-2"
+                        style={{
+                          backgroundColor: "rgba(255, 0, 0, 0.8)",
+                          color: "white",
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {locale === "en" ? "Most Sold" : "⭐الاكثر مبيعا"}
+                      </div>
                     </a>
                   </Link>
                 </div>
@@ -74,6 +104,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                         </Link>
                       </div>
                     </div>
+
                     <h3 className="title">
                       <Link href={`/${locale}/post/${firstPost.id}`}>
                         <a>
@@ -84,16 +115,37 @@ const PostSectionNine = ({ news, bgColor }) => {
                       </Link>
                     </h3>
                     <div className="product-price-box mt-3 ">
-  <div className="price-blur fs-2 ">
-    <span className="price-current text-warning">
-      {locale === "en" ? "50 EGP" : "٥٠ ج.م"}
-    </span>
-    <span className="price-old ms-3">
-      {locale === "en" ? "100 EGP" : "١٠٠ ج.م"}
-    </span>
-  </div>
-</div>
-
+                      <div className="price-blur fs-2 ">
+                        <span className="price-current text-warning">
+                          {locale === "en"
+                            ? ` ${firstPost.price - firstPost.offers} EGP`
+                            : ` ${firstPost.price - firstPost.offers} ج.م`}
+                        </span>
+                        <span className="price-old ms-3">
+                          {locale === "en"
+                            ? ` ${firstPost.price} EGP`
+                            : ` ${firstPost.price} ج.م`}
+                        </span>
+                        <span
+                          className="discount-badge ms-2"
+                          style={{
+                            color: "#cc9d2f",
+                            padding: "2px 6px",
+                            borderRadius: "3px",
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {locale === "en"
+                            ? `${Math.round(
+                                (firstPost.offers / firstPost.price) * 100
+                              )}% OFF`
+                            : `خصم ${Math.round(
+                                (firstPost.offers / firstPost.price) * 100
+                              )}٪`}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -112,7 +164,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                     key={data.id}
                   >
                     <div className="content-block post-default image-rounded">
-                      <div className="post-thumbnail">
+                      <div className="post-thumbnail position-relative">
                         <Link href={`/${locale}/post/${data.id}`}>
                           <a>
                             <Image
@@ -122,51 +174,68 @@ const PostSectionNine = ({ news, bgColor }) => {
                               priority={true}
                               alt=""
                             />
+
+                            <div
+                              className="position-absolute top-0 start-0 m-1"
+                              style={{
+                                backgroundColor: "rgba(255, 0, 0, 0.8)",
+                                color: "white",
+                                padding: "2px 6px",
+                                borderRadius: "3px",
+                                fontSize: "10px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {locale === "en" ? "Most Sold" : "⭐الاكثر مبيعا"}
+                            </div>
                           </a>
                         </Link>
                       </div>
                       <div className="post-content">
-                        <div className="post-cat">
-                          <div className="post-cat-list">
-                            <Link
-                              href={`/${locale}/news?category=${data?.category.id}`}
-                            >
-                              <a className="hover-flip-item-wrapper">
-                                <span className="hover-flip-item">
-                                  <span
-                                    data-text={
-                                      locale === "en"
-                                        ? "Most Sold"
-                                        : "⭐الاكثر مبيعا"
-                                    }
-                                  >
-                                    {locale === "en"
-                                      ? "Most Sold"
-                                      : " ⭐الاكثر مبيعا"}
-                                  </span>
-                                </span>
+                        <div className="d-flex flex-column justify-content-between align-items-center">
+                          <h5 className="title ">
+                            <Link href={`/${locale}/post/${data.id}`}>
+                              <a>
+                                {locale === "en"
+                                  ? data.title_en
+                                  : data.title_ar}
                               </a>
                             </Link>
+                          </h5>
+
+                          <div className="product-price-box mt-3">
+                            <div className="price-blur fs-5 ">
+                              <span className="price-current ">
+                                {locale === "en"
+                                  ? `${data.price - data.offers} EGP`
+                                  : `${data.price - data.offers} ج.م`}
+                              </span>
+                              <span className="price-old ms-3">
+                                {locale === "en"
+                                  ? `${data.price} EGP`
+                                  : `${data.price} ج.م`}
+                              </span>
+                              <span
+                                className="discount-badge ms-2"
+                                style={{
+                                  color: "#cc9d2f",
+                                  padding: "1px 4px",
+                                  borderRadius: "2px",
+                                  fontSize: "12px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {locale === "en"
+                                  ? `${Math.round(
+                                      (data.offers / data.price) * 100
+                                    )}% OFF`
+                                  : `خصم ${Math.round(
+                                      (data.offers / data.price) * 100
+                                    )}٪`}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                        <h5 className="title">
-  <Link href={`/${locale}/post/${data.id}`}>
-    <a>{locale === "en" ? data.title_en : data.title_ar}</a>
-  </Link>
-</h5>
-
-<div className="product-price-box mt-3">
-  <div className="price-blur bg-light fs-5 ">
-    <span className="price-current ">
-      {locale === "en" ? "75 EGP" : "٧٥ ج.م"}
-    </span>
-    <span className="price-old ms-3">
-      {locale === "en" ? "120 EGP" : "١٢٠ ج.م"}
-    </span>
-  </div>
-</div>
-
-
                       </div>
                     </div>
                   </div>

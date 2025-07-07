@@ -78,11 +78,28 @@ const PostSectionTen = () => {
   };
 
   return (
-    <div className="axil-post-grid-area axil-section-gap bg-color-white">
-      <div className="container">
+    <div
+      className="axil-post-grid-area axil-section-gap bg-color-white position-relative"
+      style={{
+        backgroundColor: "#8b0000",
+      }}
+    >
+      <img
+        src="/images/Rectangle.png"
+        alt="Rectangle"
+        style={{
+          position: "absolute",
+          top: -60,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 1200,
+        }}
+      />
+      <div className="container" style={{ position: "relative", zIndex: 2 }}>
         <SectionTitleOne title={t("sectionTitle")} />
         <div className="row">
-        {/*Latest News*/}
+          {/*Latest News*/}
           <div className="col-lg-12">
             <Tab.Container
               id="axilTab"
@@ -126,7 +143,7 @@ const PostSectionTen = () => {
                                         ? data.title_en
                                         : data.title_ar
                                     }
-                                    height={100}
+                                    height={130}
                                     width={100}
                                     priority={true}
                                   />
@@ -148,25 +165,16 @@ const PostSectionTen = () => {
                                 <Link
                                   href={`/${locale}/news?category=${data?.category?.id}`}
                                 >
-                                  <a className="hover-flip-item-wrapper">
-                                    <span className="hover-flip-item">
-                                      <span
-                                        data-text={
-                                          locale === "en"
-                                            ? data?.category?.name_en
-                                            : data?.category?.name_ar
-                                        }
-                                      >
-                                        {locale === "en"
-                                          ? data?.category?.name_en
-                                          : data?.category?.name_ar}
-                                      </span>
-                                    </span>
+                                  <a
+                                    className="hover-flip-item-wrapper"
+                                    style={{ color: "#CC9D2F", fontSize: 15 }}
+                                  >
+                                    {locale === "en" ? "New🔥" : "جديد🔥"}
                                   </a>
                                 </Link>
                               </div>
                             </div>
-                            <h4 className="title">
+                            <h4 className="title" style={{ color: "#fff" }}>
                               <Link href={`/${locale}/post/${data.id}`}>
                                 <a>
                                   {locale === "en"
@@ -177,7 +185,7 @@ const PostSectionTen = () => {
                             </h4>
 
                             <div className="content">
-                              <p>
+                              <p style={{ color: "#fff" }}>
                                 {getSnippet(
                                   locale === "en"
                                     ? data.content_en
@@ -203,7 +211,7 @@ const PostSectionTen = () => {
                                       ? firstPost?.title_en
                                       : firstPost?.title_ar
                                   }
-                                  height={660}
+                                  height={710}
                                   width={705}
                                   priority={true}
                                 />

@@ -3,9 +3,9 @@ Post List Style
 -------------------------*/
 .text-truncate-2 {
   display: -webkit-box;
--webkit-line-clamp: 2;
-line-clamp: 2;
-line-clamp: 2;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -13,9 +13,6 @@ line-clamp: 2;
   line-height: 1.5;
   max-height: 3em;
 }
-
-
-
 
 .slick-layout-wrapper {
   margin: 0 -15px;
@@ -260,17 +257,17 @@ line-clamp: 2;
       }
     }
 
-        .post-content {
-            padding-bottom: 50px;
-            .title {
-                margin-bottom: 0;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: -webkit-box;
-                -webkit-line-clamp: 2; 
-                -webkit-box-orient: vertical;
-            }
-        }
+    .post-content {
+      padding-bottom: 50px;
+      .title {
+        margin-bottom: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+    }
 
     .post-thumbnail {
       margin: 0 -35px;
@@ -852,6 +849,7 @@ line-clamp: 2;
       margin-top: 30px;
       .title {
         margin-bottom: 0;
+        color: #fff;
       }
       .post-meta-wrapper {
         margin-top: 30px;
@@ -1238,7 +1236,7 @@ ul {
 .product-price {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #198754; /* أخضر للسعر الجديد */
+  color: #cc9d2f; /* أخضر للسعر الجديد */
 }
 
 .product-price-box {
@@ -1255,12 +1253,12 @@ ul {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .price-current {
   font-weight: 700;
-  color: #198754; /* أخضر */
+  color: #fff; /* أخضر */
 }
 
 .price-old {
