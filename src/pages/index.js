@@ -35,7 +35,7 @@ const TechBlog = ({ allPosts }) => {
       <PostSectionThree postData={news} />
       {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
 
-      <PostSectionEleven />
+      {/* <PostSectionEleven /> */}
 
       <GalleryOne parentClass="bg-color-grey" />
       <FooterThree />

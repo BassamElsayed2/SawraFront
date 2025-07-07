@@ -76,6 +76,8 @@ const CategoryListSlide = ({ cateData }) => {
       className="axil-categories-list axil-section-gap bg-color-grey"
       style={{
         backgroundColor: "#8b0000",
+        zIndex: 2,
+        position: "relative",
       }}
     >
       <div className="container">

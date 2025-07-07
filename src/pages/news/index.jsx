@@ -258,15 +258,6 @@ export default function NewsPage({ allPosts }) {
                       {locale === "en" ? "Save 50% off" : "خصم 50٪ "}
                     </div>
                   </div>
-
-                  {/* زر التفاصيل بنفس ستايل أزرار التصنيف */}
-                  {/* <button
-  onClick={() => router.push(`/${locale}/post/${item.id}`)}
-  className="btn-category mt-auto"
-  style={{ display: "inline-block", marginTop: "auto" }}
->
-  {locale === "en" ? " Details" : " التفاصيل"}
-</button> */}
                 </div>
               </div>
             </div>

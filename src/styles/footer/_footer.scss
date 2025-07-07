@@ -24,7 +24,7 @@
     li {
       margin: 0 18px;
       a {
-        color: var(--color-midgray);
+        color: #fff;
         font-size: 16px;
         line-height: 22px;
         display: block;
@@ -33,10 +33,10 @@
         &.hover-flip-item-wrapper {
           span {
             &::before {
-              color: var(--color-midgray);
+              color: #fff;
             }
             &::after {
-              color: var(--color-primary);
+              color: #8b0000;
             }
           }
         }

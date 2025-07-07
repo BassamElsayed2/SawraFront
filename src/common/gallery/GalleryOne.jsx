@@ -15,12 +15,17 @@ const GalleryOne = ({ parentClass }) => {
   return (
     <div
       className={`axil-instagram-area axil-section-gap ${parentClass || ""}`}
+      style={{
+        backgroundColor: "#8b0000",
+        zIndex: 2,
+        position: "relative",
+      }}
     >
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
             <div className="section-title">
-              <h2 className="title">
+              <h2 className="title" style={{ color: "#fff" }}>
                 {locale === "ar" ? "معرض الصور" : "Gallery"}
               </h2>
             </div>

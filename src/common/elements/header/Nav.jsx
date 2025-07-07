@@ -60,7 +60,7 @@ const Nav = ({ posts }) => {
       </li>
       <li className="menu-item-has-children">
         <Link href={`/${locale}/news`}>
-          {locale === "en" ? "All News" : "جميع الأخبار"}
+          {locale === "en" ? "Menu" : "المنيو"}
         </Link>
       </li>
 

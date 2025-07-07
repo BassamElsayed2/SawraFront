@@ -16,6 +16,9 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
       className={`axil-footer-area axil-footer-style-1 ${
         bgColor || "bg-color-white"
       }`}
+      style={{
+        backgroundColor: "#CC9D2F",
+      }}
     >
       {/* Start Footer Top Area  */}
       <div className="footer-top">
@@ -67,11 +70,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                         className="dark-logo"
                         width={141}
                         height={37}
-                        src={
-                          colorMode === "Dark"
-                            ? lightLogo || "/images/logo/logo-white2.webp"
-                            : darkLogo || "/images/logo/logo-black.webp"
-                        }
+                        src={`/images/logo/sawra.png`}
                         alt="Blogar logo"
                       />
                     </a>
@@ -155,7 +154,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
             </div>
             <div className="col-lg-3 col-md-12">
               <div className="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
-                <p className="b3">
+                <p className="b3" style={{ color: "#fff" }}>
                   All Rights Reserved © {new Date().getFullYear()}
                 </p>
               </div>
