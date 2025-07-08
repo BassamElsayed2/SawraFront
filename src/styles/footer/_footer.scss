@@ -2,7 +2,7 @@
     Start Footer Area 
 =============================*/
 .axil-footer-style-1 {
-  background: #8b0000 !important;
+  background: #A00008 !important;
   padding: 40px 0;
   .footer-top {
     .inner {
@@ -26,7 +26,7 @@
       margin: 0 18px;
       a {
         color: var(--color-midgray);
-        font-size: 16px;
+        font-size: 26px;
         line-height: 22px;
         display: block;
         font-weight: 500;
@@ -37,7 +37,7 @@
               color:white;
             }
             &::after {
-              color: var(--color-primary);
+              color: #cc9d2f;
             }
           }
         }
@@ -225,34 +225,35 @@
   display: none !important;
 }
 
+/* === ستايل روابط الفوتر مثل الهيدر بالضبط === */
 .axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a,
 .copyright-area .mainmenu li a {
-  position: relative;
   color: #fff !important;
+  font-size: 18px;
+  line-height: 26px;
+  display: inline-block;
   transition: 0.3s;
-  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-weight: normal;
+  padding: 0;
 }
-.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a::after,
-.copyright-area .mainmenu li a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 4px;
-  background: #cc9d2f;
-  border-radius: 10px 10px 0 0;
-  transition: 0.3s;
-  z-index: 2;
-}
+
 .axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:hover,
 .copyright-area .mainmenu li a:hover {
   color: #cc9d2f !important;
+  background: transparent !important;
+  border: none !important;
 }
-.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:hover::after,
-.copyright-area .mainmenu li a:hover::after {
-  width: 100%;
-  background: #cc9d2f;
+
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:active,
+.copyright-area .mainmenu li a:active {
+  background-color: #FFA52A !important;
+  color: #fff !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 12px 2px #ffe082;
+  outline: none;
 }
 
 .axil-footer-style-1 a.hover-effect:hover,

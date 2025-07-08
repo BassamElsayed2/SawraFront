@@ -96,7 +96,7 @@ const PostSectionEleven = ({ filters = [] }) => {
         <div className="row">
           <div className="col-lg-12">
             <Tab.Container id="axilTab" activeKey={activeNav}>
-              <Nav className="axil-tab-button nav nav-tabs mt--20">
+            <Nav className="axil-tab-button semi-transparent-tab nav nav-tabs mt--20 custom-nav">
                 {categories.map((catId) => {
                   const categoryObj = fetchedPosts.find(
                     (post) => String(post.category?.id) === String(catId)
@@ -116,6 +116,7 @@ const PostSectionEleven = ({ filters = [] }) => {
                       <Nav.Link
                         eventKey={catId}
                         onClick={() => setActiveNav(String(catId))}
+                        className="custom-tab"
                       >
                         {label}
                       </Nav.Link>
@@ -123,96 +124,113 @@ const PostSectionEleven = ({ filters = [] }) => {
                   );
                 })}
               </Nav>
-
               <Tab.Content>
-                <Tab.Pane eventKey={activeNav}>
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="row">
-                        {tabPostData.slice(0, 2).map((data) => (
-                          <div className="col-lg-6" key={data.id}>
-                            <div className="featured-post mt--30">
-                              <div className="content-block">
-                                <div className="post-content">
-                                  <div className="post-cat">
-                                    <div className="post-cat-list">
-                                      <Link
-                                        href={`/${locale}/news?category=${data?.category.id}`}
-                                      >
-                                        <a className="hover-flip-item-wrapper">
-                                          <span className="hover-flip-item">
-                                            <span
-                                              data-text={
-                                                locale === "en"
-                                                  ? data.category?.name_en
-                                                  : data.category?.name_ar
-                                              }
-                                            >
-                                              {locale === "en"
-                                                ? data.category?.name_en
-                                                : data.category?.name_ar}
-                                            </span>
-                                          </span>
-                                        </a>
-                                      </Link>
-                                    </div>
-                                  </div>
-
-                                  <h4 className="title">
-                                    <Link href={`/${locale}/post/${data.id}`}>
-                                      <a>
-                                        {locale === "en"
-                                          ? data.title_en
-                                          : data.title_ar}
-                                      </a>
-                                    </Link>
-                                  </h4>
-                                </div>
-
-                                <div className="post-thumbnail">
-                                  <Link href={`/${locale}/post/${data.id}`}>
-                                    <a>
-                                      <Image
-                                        src={getImageSrc(data.images)}
-                                        alt={
-                                          locale === "en"
-                                            ? data.title_en
-                                            : data.title_ar
-                                        }
-                                        height={338}
-                                        width={600}
-                                        priority
-                                        style={{
-                                          objectFit: "cover",
-                                        }}
-                                      />
-                                    </a>
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="col-lg-8 col-xl-8 mt--30">
-                      <PostLayoutThree
-                        dataPost={tabPostData}
-                        postStart={2}
-                        show={3}
-                        bgColor="with-bg-solid"
-                      />
-                    </div>
-
-                    <div className="col-lg-4 col-xl-4 mt--30 mt_md--40 mt_sm--40">
-                      <div className="sidebar-inner">
-                        <WidgetVideoPost postData={fetchedPosts} />
-                      </div>
-                    </div>
+  <Tab.Pane eventKey={activeNav}>
+    <div className="row">
+      <div className="col-lg-12">
+        <div className="row">
+          {tabPostData.slice(0, 2).map((data) => (
+            <div className="col-lg-6" key={data.id}>
+              <div className="featured-post mt--30">
+                <div className="card bg-light bg-opacity-10 shadow-sm border-0 h-100 category-card-hover">
+                  <div className="post-content p-3 text-white">
+                    <h4 className="title fw-bold" style={{ fontSize: "18px" }}>
+                      <Link href={`/${locale}/post/${data.id}`}>
+                        <a>
+                          {locale === "en"
+                            ? data.title_en
+                            : data.title_ar}
+                        </a>
+                      </Link>
+                    </h4>
                   </div>
-                </Tab.Pane>
-              </Tab.Content>
+
+                  <div className="position-relative">
+                    <Link href={`/${locale}/post/${data.id}`}>
+                      <a>
+                        <Image
+                          src={getImageSrc(data.images)}
+                          alt={
+                            locale === "en"
+                              ? data.title_en
+                              : data.title_ar
+                          }
+                          height={338}
+                          width={600}
+                          priority
+                          style={{ objectFit: "cover" }}
+                        />
+                      </a>
+                    </Link>
+
+                    {/* الكاتيجوري فوق الصورة */}
+                    <div
+                      className="position-absolute top-0 start-0 m-1"
+                      style={{
+                        backgroundColor: "rgba(255, 0, 0, 0.8)",
+                        color: "white",
+                        padding: "2px 6px",
+                        borderRadius: "3px",
+                        fontSize: "10px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {locale === "en"
+                        ? data.category?.name_en
+                        : data.category?.name_ar}
+                    </div>
+
+                    {/* أيقونة فيديو */}
+                    {data.yt_code && (
+                      <span
+                        className="position-absolute top-50 start-50 translate-middle"
+                        style={{
+                          backgroundColor: "rgba(0, 0, 0, 0.4)",
+                          borderRadius: "50%",
+                          width: "50px",
+                          height: "50px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <span
+                          className="play-icon"
+                          style={{
+                            width: "0",
+                            height: "0",
+                            borderLeft: "10px solid white",
+                            borderTop: "6px solid transparent",
+                            borderBottom: "6px solid transparent",
+                          }}
+                        ></span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="col-lg-8 col-xl-8 mt--30">
+        <PostLayoutThree
+          dataPost={tabPostData}
+          postStart={2}
+          show={3}
+        />
+      </div>
+
+      <div className="col-lg-4 col-xl-4 mt--30 mt_md--40 mt_sm--40">
+        <div className="sidebar-inner">
+          <WidgetVideoPost postData={fetchedPosts} />
+        </div>
+      </div>
+    </div>
+  </Tab.Pane>
+</Tab.Content>
+
             </Tab.Container>
           </div>
         </div>
@@ -233,5 +251,4 @@ const PostSectionEleven = ({ filters = [] }) => {
     </div>
   );
 };
-
 export default PostSectionEleven;

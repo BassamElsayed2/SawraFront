@@ -84,6 +84,7 @@
 @import "post/post-format";
 @import "post/post-stories";
 @import "post/comment";
+@import "post/post-section-three";
 
 /**************************************
 	Template Styles
@@ -154,7 +155,7 @@
 .category-card-hover {
   transition: all 0.3s ease;
   border: 2px solid transparent !important;
-  background-color: rgba(255, 255, 255, 0.1) !important; /* خلفية شفافة */
+  background-color: rgba(255, 255, 255, 0.1) ; /* خلفية شفافة */
   border-radius: 12px !important; /* ريدياس */
   padding: 8px !important; /* مساحة إضافية حول المحتوى */
   margin: 4px !important; /* هامش إضافي */
@@ -168,8 +169,12 @@
 }
 
 .category-card-hover:hover .category-title {
-  color: #fff !important;
+  color: #8b0000 !important;
   font-weight: bold;
+}
+
+.category-card-hover .title a:hover {
+  color: white !important;
 }
 
 /* ==== Custom Image Size for PostSectionTen ==== */
@@ -183,5 +188,149 @@
   width: 130px !important;
   height: 190px !important;
   object-fit: cover !important;
+}
+  
+
+/* ==== Gallery Card Hover Styles ==== */
+.gallery-card-hover {
+  background: rgba(150, 150, 150, 0.5);
+  border: 2px solid #CC9D2F;
+  border-radius: 16px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  overflow: hidden;
+  margin: 8px;
+}
+.gallery-card-hover:hover {
+  border-color: #ffa42cd3;
+  box-shadow: 0 8px 24px 2px #CC9D2F33;
+  background: rgba(150, 150, 150, 0.5);
+  transform: scale(1.04);
+}
+.gallery-card-hover .instagram-button {
+  background: #CC9D2F;
+  color: #8b0000;
+  border-radius: 50%;
+  padding: 8px 10px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.3s, color 0.3s;
+}
+.gallery-card-hover:hover .instagram-button {
+  background: #8b0000;
+  color: #fff;
+}
+  
+
+/* === Unified Button Style (مثل الهيدر) === */
+.button-unified {
+  background-color: #A00008 !important; /* أو #A00008 */
+  color: #fff !important;
+  border: 2px solid #CC9D2F !important;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+.button-unified:hover {
+  border-color: #ffa42cd3 !important;
+  box-shadow: 0 0 10px 2px #CC9D2F;
+  color: #fff !important;
+}
+
+.button-unified:active,
+a.axil-link-button:active,
+.custom-tab:active {
+  background-color: #FFA52A !important; /* لون أصفر غامق عند التفعيل */
+  color: #fff !important;
+  border-color: #A00008 !important; /* بوردر أحمر غامق عند التفعيل */
+  box-shadow: 0 0 12px 2px #ffe082;
+  outline: none;
+}
+  
+// تخصيص الخط العام
+* {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+body {
+  background-color: #A00008 !important;
+  background-image: url('/images/Rectangle.png') !important;
+  background-position: top center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+
+.container, .news-page-wrapper {
+  background: transparent !important;
+}
+
+.pagination .page-link {
+  background-color: #ffffffaa;
+  color: #000;
+  border: none;
+  border-radius: 999px;
+  margin: 0 5px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pagination .page-item.active .page-link,
+.pagination .page-link:hover {
+  color: white;
+}
+
+.pagination .page-link:focus {
+  box-shadow: none;
+}
+
+.custom-tab.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgba(128, 128, 128, 0.3) !important;
+  color: #666 !important;
+}
+
+.custom-tab.disabled:hover {
+  background-color: rgba(128, 128, 128, 0.3) !important;
+  color: #666 !important;
+}
+  
+.video-icon-wrapper {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.video-icon-wrapper:hover {
+  transform: scale(1.2);
+  background-color: rgba(255, 69, 0, 0.6); /* لون برتقالي شفاف */
+}
+
+.video-icon {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.3s ease;
+}
+
+.video-icon-wrapper:hover .video-icon {
+  transform: scale(1.2);
+}
+  
+.card:hover svg {
+  transform: scale(1.2);
 }
   

@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "../styles/style.scss";
 import "../styles/elements/_language-switcher.css";
+import "../../public/css/font-awesome.css";
 import ColorSwitcher from "../common/elements/color-switcher/ColorSwitcher";
 import { useRouter } from "next/router";
 import { appWithTranslation } from "next-i18next";

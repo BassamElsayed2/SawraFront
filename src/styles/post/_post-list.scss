@@ -971,7 +971,7 @@ Post Category
         &.hover-flip-item-wrapper {
           span {
             &::after {
-              color: var(--color-primary);
+              color: #cc2f2f !important;
             }
           }
         }
@@ -1265,4 +1265,12 @@ ul {
   text-decoration: line-through;
   color: #dc3545; /* أحمر أو رمادي */
   margin-inline-start: 8px;
+}
+
+.post-content .title a:hover {
+  color: white !important;
+}
+
+.post-card-link:hover .post-title-hover {
+  color: #000 !important;
 }

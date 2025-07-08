@@ -31,7 +31,7 @@ const PostSectionNine = ({ news, bgColor }) => {
     <div
       className={`axil-tech-post-banner relative pb-5`}
       style={{
-        backgroundColor: "#8b0000",
+        backgroundColor: "#A00008",
       }}
     >
       <img
@@ -74,7 +74,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                           fontWeight: "bold",
                         }}
                       >
-                        {locale === "en" ? "⭐ Most Sold " : "⭐الاكثر مبيعا"}
+                        {locale === "en" ? "⭐ BestSellers" : "الاكثر مبيعا⭐"}
                       </div>
                     </a>
                   </Link>
@@ -116,34 +116,44 @@ const PostSectionNine = ({ news, bgColor }) => {
                     </h3>
                     <div className="product-price-box mt-3 ">
                       <div className="price-blur fs-2 ">
-                        <span className="price-current text-warning">
-                          {locale === "en"
-                            ? ` ${firstPost.price - firstPost.offers} EGP`
-                            : ` ${firstPost.price - firstPost.offers} ج.م`}
-                        </span>
-                        <span className="price-old ms-3">
-                          {locale === "en"
-                            ? ` ${firstPost.price} EGP`
-                            : ` ${firstPost.price} ج.م`}
-                        </span>
-                        <span
-                          className="discount-badge ms-2"
-                          style={{
-                            color: "#cc9d2f",
-                            padding: "2px 6px",
-                            borderRadius: "3px",
-                            fontSize: "14px",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {locale === "en"
-                            ? `${Math.round(
-                                (firstPost.offers / firstPost.price) * 100
-                              )}% OFF`
-                            : `خصم ${Math.round(
-                                (firstPost.offers / firstPost.price) * 100
-                              )}٪`}
-                        </span>
+                        {firstPost.offers > 0 ? (
+                          <>
+                            <span className="price-current text-warning">
+                              {locale === "en"
+                                ? ` ${firstPost.price - firstPost.offers} EGP`
+                                : ` ${firstPost.price - firstPost.offers} ج.م`}
+                            </span>
+                            <span className="price-old ms-3">
+                              {locale === "en"
+                                ? ` ${firstPost.price} EGP`
+                                : ` ${firstPost.price} ج.م`}
+                            </span>
+                            <span
+                              className="discount-badge ms-2"
+                              style={{
+                                color: "#cc9d2f",
+                                padding: "2px 6px",
+                                borderRadius: "3px",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {locale === "en"
+                                ? `${Math.round(
+                                    (firstPost.offers / firstPost.price) * 100
+                                  )}% OFF`
+                                : `خصم ${Math.round(
+                                    (firstPost.offers / firstPost.price) * 100
+                                  )}٪`}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="price-current text-warning">
+                            {locale === "en"
+                              ? ` ${firstPost.price} EGP`
+                              : ` ${firstPost.price} ج.م`}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -186,7 +196,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                                 fontWeight: "bold",
                               }}
                             >
-                              {locale === "en" ? "⭐Most Sold" : "⭐الاكثر مبيعا"}
+                              {locale === "en" ? "⭐ BestSellers" : "الاكثر مبيعا⭐"}
                             </div>
                           </a>
                         </Link>
@@ -205,34 +215,44 @@ const PostSectionNine = ({ news, bgColor }) => {
 
                           <div className="product-price-box mt-3">
                             <div className="price-blur fs-5 ">
-                              <span className="price-current ">
-                                {locale === "en"
-                                  ? `${data.price - data.offers} EGP`
-                                  : `${data.price - data.offers} ج.م`}
-                              </span>
-                              <span className="price-old ms-3">
-                                {locale === "en"
-                                  ? `${data.price} EGP`
-                                  : `${data.price} ج.م`}
-                              </span>
-                              <span
-                                className="discount-badge ms-2"
-                                style={{
-                                  color: "#cc9d2f",
-                                  padding: "1px 4px",
-                                  borderRadius: "2px",
-                                  fontSize: "12px",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {locale === "en"
-                                  ? `${Math.round(
-                                      (data.offers / data.price) * 100
-                                    )}% OFF`
-                                  : `خصم ${Math.round(
-                                      (data.offers / data.price) * 100
-                                    )}٪`}
-                              </span>
+                              {data.offers > 0 ? (
+                                <>
+                                  <span className="price-current ">
+                                    {locale === "en"
+                                      ? `${data.price - data.offers} EGP`
+                                      : `${data.price - data.offers} ج.م`}
+                                  </span>
+                                  <span className="price-old ms-3">
+                                    {locale === "en"
+                                      ? `${data.price} EGP`
+                                      : `${data.price} ج.م`}
+                                  </span>
+                                  <span
+                                    className="discount-badge ms-2"
+                                    style={{
+                                      color: "#cc9d2f",
+                                      padding: "1px 4px",
+                                      borderRadius: "2px",
+                                      fontSize: "12px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {locale === "en"
+                                      ? `${Math.round(
+                                          (data.offers / data.price) * 100
+                                        )}% OFF`
+                                      : `خصم ${Math.round(
+                                          (data.offers / data.price) * 100
+                                        )}٪`}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="price-current ">
+                                  {locale === "en"
+                                    ? `${data.price} EGP`
+                                    : `${data.price} ج.م`}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>

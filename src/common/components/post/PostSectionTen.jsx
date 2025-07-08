@@ -83,7 +83,7 @@ const PostSectionTen = () => {
     <div
       className="axil-post-grid-area axil-section-gap bg-color-white position-relative"
       style={{
-        backgroundColor: "#8b0000",
+        backgroundColor: "#A00008",
       }}
     >
       <img
@@ -131,118 +131,118 @@ const PostSectionTen = () => {
                   <div className="row mt--40">
                     <div className="col-xl-5 col-lg-6 col-md-12 col-12">
                       {tabPostData.slice(-5).map((data, index) => (
-                        <div
-                          className="content-block post-medium post-medium-border border-thin category-card-hover mb-5"
-                          key={data.id}
-                          onMouseEnter={() => {
-                            setFade(false);
-                            setTimeout(() => {
-                              setHoveredPost(data);
-                              setFade(true);
-                            }, 100); // slight delay for smooth effect
-                          }}
-                          onMouseLeave={() => {
-                            setFade(false);
-                            setTimeout(() => {
-                              setHoveredPost(null);
-                              setFade(true);
-                            }, 100);
-                          }}
-                        >
-                          <div className="post-thumbnail">
-                            <Link href={`/${locale}/post/${data.id}`}>
-                              <a>
-                                {getImageSrc(data.images) ? (
-                                  <Image
-                                    src={getImageSrc(data.images)}
-                                    alt={
-                                      locale === "en"
-                                        ? data.title_en
-                                        : data.title_ar
-                                    }
-                                    height={160}
-                                    width={110}
-                                    priority={true}
-                                  />
-                                ) : (
-                                  <div
-                                    style={{
-                                      width: "100px",
-                                      height: "100px",
-                                      backgroundColor: "#ccc",
-                                    }}
-                                  />
-                                )}
-                              </a>
-                            </Link>
-                          </div>
-                          <div className="post-content mr--10">
-                            <div className="post-cat">
-                              <div className="post-cat-list">
-                                <Link
-                                  href={`/${locale}/news?category=${data?.category?.id}`}
-                                >
-                                  <a
+                        <Link href={`/${locale}/post/${data.id}`} key={data.id} passHref>
+                          <a
+                            style={{ textDecoration: "none" }}
+                            className="content-block post-medium post-medium-border border-thin category-card-hover mb-5 post-card-link"
+                            onMouseEnter={() => {
+                              setFade(false);
+                              setTimeout(() => {
+                                setHoveredPost(data);
+                                setFade(true);
+                              }, 100);
+                            }}
+                            onMouseLeave={() => {
+                              setFade(false);
+                              setTimeout(() => {
+                                setHoveredPost(null);
+                                setFade(true);
+                              }, 100);
+                            }}
+                          >
+                            <div className="post-thumbnail">
+                              {getImageSrc(data.images) ? (
+                                <Image
+                                  src={getImageSrc(data.images)}
+                                  alt={
+                                    locale === "en"
+                                      ? data.title_en
+                                      : data.title_ar
+                                  }
+                                  height={160}
+                                  width={110}
+                                  priority={true}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    backgroundColor: "#ccc",
+                                  }}
+                                />
+                              )}
+                            </div>
+                            <div className="post-content mr--10">
+                              <div className="post-cat">
+                                <div className="post-cat-list">
+                                  <span
                                     className="hover-flip-item-wrapper"
                                     style={{ color: "#CC9D2F", fontSize: 15 }}
                                   >
                                     {locale === "en" ? "New🔥" : "جديد🔥"}
-                                  </a>
-                                </Link>
-                              </div>
-                              <div className="product-price-box mt-3 ">
-                                <div className="price-blur fs-4 ">
-                                  <span className="price-current ">
-                                    {locale === "en"
-                                      ? ` ${data.price - data.offers} EGP`
-                                      : ` ${data.price - data.offers} ج.م`}
-                                  </span>
-                                  <span className="price-old ms-3">
-                                    {locale === "en"
-                                      ? ` ${data.price} EGP`
-                                      : ` ${data.price} ج.م`}
-                                  </span>
-                                  <span
-                                    className="discount-badge ms-2"
-                                    style={{
-                                      color: "#cc9d2f",
-                                      padding: "2px 6px",
-                                      borderRadius: "3px",
-                                      fontSize: "12px",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {locale === "en"
-                                      ? `${Math.round(
-                                          (data.offers / data.price) * 100
-                                        )}% OFF`
-                                      : `خصم ${Math.round(
-                                          (data.offers / data.price) * 100
-                                        )}٪`}
                                   </span>
                                 </div>
+                                <div className="product-price-box mt-3 ">
+                                  <div className="price-blur fs-4 ">
+                                    {data.offers > 0 ? (
+                                      <>
+                                        <span className="price-current ">
+                                          {locale === "en"
+                                            ? ` ${data.price - data.offers} EGP`
+                                            : ` ${data.price - data.offers} ج.م`}
+                                        </span>
+                                        <span className="price-old ms-3">
+                                          {locale === "en"
+                                            ? ` ${data.price} EGP`
+                                            : ` ${data.price} ج.م`}
+                                        </span>
+                                        <span
+                                          className="discount-badge ms-2"
+                                          style={{
+                                            color: "#cc9d2f",
+                                            padding: "2px 6px",
+                                            borderRadius: "3px",
+                                            fontSize: "12px",
+                                            fontWeight: "bold",
+                                          }}
+                                        >
+                                          {locale === "en"
+                                            ? `${Math.round(
+                                                (data.offers / data.price) * 100
+                                              )}% OFF`
+                                            : `خصم ${Math.round(
+                                                (data.offers / data.price) * 100
+                                              )}٪`}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className="price-current ">
+                                        {locale === "en"
+                                          ? ` ${data.price} EGP`
+                                          : ` ${data.price} ج.م`}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              <h4 className="title category-title post-title-hover" style={{ color: "#fff", transition: "color 0.2s" }}>
+                                {locale === "en"
+                                  ? data.title_en
+                                  : data.title_ar}
+                              </h4>
+                              <div className="content">
+                                <p style={{ color: "#fff" }}>
+                                  {getSnippet(
+                                    locale === "en"
+                                      ? data.content_en
+                                      : data.content_ar
+                                  )}
+                                </p>
                               </div>
                             </div>
-                            <h4 className="title category-title" style={{ color: "#fff" }}>
-                              <Link href={`/${locale}/post/${data.id}`}>
-                                <a>
-                                  {locale === "en"
-                                    ? data.title_en
-                                    : data.title_ar}
-                                </a>
-                              </Link>
-                            </h4>
-                            <div className="content">
-                              <p style={{ color: "#fff" }}>
-                                {getSnippet(
-                                  locale === "en"
-                                    ? data.content_en
-                                    : data.content_ar
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                          </a>
+                        </Link>
                       ))}
                     </div>
 
@@ -297,34 +297,44 @@ const PostSectionTen = () => {
         {/* 👇 السعر والخصم */}
         <div className="product-price-box mt-3">
           <div className="price-blur fs-4">
-            <span className="price-current" style={{ color: "#fff" }}>
-              {locale === "en"
-                ? `${firstPost?.price - firstPost?.offers} EGP`
-                : `${firstPost?.price - firstPost?.offers} ج.م`}
-            </span>
-            <span className="price-old ms-3" style={{ color: "#ddd" }}>
-              {locale === "en"
-                ? `${firstPost?.price} EGP`
-                : `${firstPost?.price} ج.م`}
-            </span>
-            <span
-              className="discount-badge ms-2"
-              style={{
-                color: "#cc9d2f",
-                padding: "2px 6px",
-                borderRadius: "3px",
-                fontSize: "12px",
-                fontWeight: "bold",
-              }}
-            >
-              {locale === "en"
-                ? `${Math.round(
-                    (firstPost?.offers / firstPost?.price) * 100
-                  )}% OFF`
-                : `خصم ${Math.round(
-                    (firstPost?.offers / firstPost?.price) * 100
-                  )}٪`}
-            </span>
+            {firstPost?.offers > 0 ? (
+              <>
+                <span className="price-current" style={{ color: "#fff" }}>
+                  {locale === "en"
+                    ? `${firstPost?.price - firstPost?.offers} EGP`
+                    : `${firstPost?.price - firstPost?.offers} ج.م`}
+                </span>
+                <span className="price-old ms-3" style={{ color: "#ddd" }}>
+                  {locale === "en"
+                    ? `${firstPost?.price} EGP`
+                    : `${firstPost?.price} ج.م`}
+                </span>
+                <span
+                  className="discount-badge ms-2"
+                  style={{
+                    color: "#cc9d2f",
+                    padding: "2px 6px",
+                    borderRadius: "3px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {locale === "en"
+                    ? `${Math.round(
+                        (firstPost?.offers / firstPost?.price) * 100
+                      )}% OFF`
+                    : `خصم ${Math.round(
+                        (firstPost?.offers / firstPost?.price) * 100
+                      )}٪`}
+                </span>
+              </>
+            ) : (
+              <span className="price-current" style={{ color: "#fff" }}>
+                {locale === "en"
+                  ? `${firstPost?.price} EGP`
+                  : `${firstPost?.price} ج.م`}
+              </span>
+            )}
           </div>
         </div>
 

@@ -77,7 +77,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                     </a>
                   </Link>
                 </div>
-                <ul className="mainmenu justify-content-start">
+                <ul className="mainmenu justify-content-start fs-5">
                   <li>
                     <Link href="/contact">
                       <a className="hover-flip-item-wrapper hover-effect">

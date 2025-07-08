@@ -33,9 +33,8 @@ const TechBlog = ({ allPosts }) => {
       <CategoryListSlide cateData={allPosts} />
       <PostSectionTen postData={allPosts} />
       <PostSectionThree postData={news} />
-      {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
-
-      <PostSectionEleven />
+    {/*   <PostSectionFour postData={techPost} adBanner={true} />  
+      <PostSectionEleven />*/}
 
       <GalleryOne parentClass="bg-color-grey" />
       <FooterThree />

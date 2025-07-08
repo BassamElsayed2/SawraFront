@@ -66,46 +66,6 @@ const PostMetaOne = ({ metaData }) => {
     </div>
   
     {/* ستايل */}
-    <style jsx>{`
-  .image-wrapper-full {
-    width: 100%;
-    aspect-ratio: 2 / 1;
-    position: relative;
-  }
-
-  .blur-meta-box {
-    position: relative;
-    top: -150px;
-    margin: 0 auto;
-    width: 95%;
-    background: rgba(255, 255, 255, 0.11);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px;
-    z-index: 2;
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.08);
-  }
-
-  .price-blur {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(4px);
-    padding: 6px 14px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .price-current {
-    font-weight: 600;
-    color: #198754;
-  }
-
-  .price-old {
-    text-decoration: line-through;
-    color: #dc3545;
-  }
-`}</style>
-
   </div>
   
   

@@ -97,50 +97,15 @@ export default function NewsPage({ allPosts }) {
 
   return (
     <>
-      <style jsx global>{`
-        * {
-          font-family: 'Montserrat', sans-serif !important;
-        }
-        body {
-          background-color: #8b0000 !important;
-          background-image: url('/images/Rectangle.png') !important;
-          background-position: top center !important;
-          background-repeat: no-repeat !important;
-          background-size: cover !important;
-          background-attachment: fixed !important;
-        }
-        .container, .news-page-wrapper {
-          background: transparent !important;
-        }
-        .pagination .page-link {
-          background-color: #ffffffaa;
-          color: #000;
-          border: none;
-          border-radius: 999px;
-          margin: 0 5px;
-          padding: 0.5rem 1rem;
-          font-weight: 600;
-          transition: all 0.3s ease;
-        }
-        .pagination .page-item.active .page-link,
-        .pagination .page-link:hover {
-          color: white;
-        }
-        .pagination .page-link:focus {
-          box-shadow: none;
-        }
-        .custom-tab.disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background-color: rgba(128, 128, 128, 0.3) !important;
-          color: #666 !important;
-        }
-        .custom-tab.disabled:hover {
-          background-color: rgba(128, 128, 128, 0.3) !important;
-          color: #666 !important;
-        }
-      `}</style>
-      <div className="news-page-wrapper position-relative" style={{ minHeight: "100vh", overflow: "hidden", background: "transparent" }}>
+    
+      <div
+        className="news-page-wrapper position-relative"
+        style={{
+          minHeight: "100vh",
+          overflow: "hidden",
+          background: "transparent",
+        }}
+      >
         <div style={{ position: "relative", zIndex: 2 }}>
           <HeadTitle pageTitle={locale === "en" ? "News" : "الأخبار"} />
           <HeaderOne
@@ -202,135 +167,183 @@ export default function NewsPage({ allPosts }) {
             </Nav>
 
             <div className="row g-4">
-            {currentItems.map((item) => (
-  <div key={item.id} className="col-md-4">
-    <Link
-      href={`/${locale}/post/${item.id}`}
-      className="text-decoration-none"
-    >
-      <div
-        className="card semi-transparent-card h-100 text-center border-0 category-card-hover"
-        style={{
-          borderRadius: "1rem",
-          background: "rgba(150, 150, 150, 0.5)",
-          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
-          border: "2px solid transparent",
-          cursor: "pointer",
-        }}
-      >
-        {item.images?.[0] && (
-          <div
-            className="position-relative"
-            style={{
-              height: 200,
-              overflow: "hidden",
-              borderTopLeftRadius: "1rem",
-              borderTopRightRadius: "1rem",
-            }}
-          >
-            <Image
-              src={item.images[0]}
-              alt={locale === "en" ? item.title_en : item.title_ar}
-              layout="fill"
-              objectFit="cover"
-            />
-            <span
-              className="position-absolute top-0 end-0 m-2 px-3 py-1 text-white fw-bold"
-              style={{
-                backgroundColor: "rgba(255, 0, 0, 0.8)",
-                borderRadius: "9999px",
-                fontSize: "0.75rem",
-              }}
-            >
-              {locale === "en"
-                ? item.category?.name_en
-                : item.category?.name_ar}
-            </span>
-          </div>
-        )}
+              {currentItems.map((item) => (
+                <div key={item.id} className="col-md-4">
+                  <Link
+                    href={`/${locale}/post/${item.id}`}
+                    className="text-decoration-none"
+                  >
+                    <div
+                      className="card semi-transparent-card h-100 text-center border-0 category-card-hover"
+                      style={{
+                        borderRadius: "1rem",
+                        background: "#f5f5f5 " ,
+                        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
+                        border: "2px solid transparent",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {item.images?.[0] && (
+                        <div
+                          className="position-relative"
+                          style={{
+                            height: 200,
+                            overflow: "visible",
+                            borderTopLeftRadius: "1rem",
+                            borderTopRightRadius: "1rem",
+                          }}
+                        >
+                          <Image
+                            src={item.images[0]}
+                            alt={
+                              locale === "en" ? item.title_en : item.title_ar
+                            }
+                            layout="fill"
+                            objectFit="cover"
+                          />
 
-        <div className="card-body px-3 py-4 d-flex flex-column justify-content-between">
-          <h5
-            className="fw-bold mb-2 category-title"
-            style={{ minHeight: "48px", color: "#000" }}
-          >
-            {locale === "en" ? item.title_en : item.title_ar}
-          </h5>
+                          {/* التصنيف */}
+                          <span
+                            className="position-absolute top-0 end-0 m-2 px-3 py-1 text-white fw-bold"
+                            style={{
+                              backgroundColor: "rgba(255, 0, 0, 0.8)",
+                              borderRadius: "9999px",
+                              fontSize: "0.75rem",
+                            }}
+                          >
+                            {locale === "en"
+                              ? item.category?.name_en
+                              : item.category?.name_ar}
+                          </span>
 
-          <div
-            className="news-description text-muted mb-3"
-            style={{ color: "#8b0000", opacity: 0.9 }}
-            dangerouslySetInnerHTML={{
-              __html:
-                (locale === "en"
-                  ? item.content_en
-                  : item.content_ar
-                )
-                  ?.split(" ")
-                  .slice(0, 20)
-                  .join(" ") + " ...",
-            }}
-          ></div>
+                          {/* خصم العرض */}
+                          {item.offers > 0 && (
+                            <span
+                              className="position-absolute start-0"
+                              style={{
+                                bottom: "-20px", // خليها تنزل عن الصورة
+                                left: "10px",
+                                width: "80px",
+                                height: "80px",
+                                background: "linear-gradient(45deg, #dc2626, #f97316)",
+                                color: "#fff",
+                                borderRadius: "50%",
+                                fontSize: "1.5rem",
+                                fontWeight: "bold",
+                                boxShadow: "0 0 10px #FFA52A",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                zIndex: 5,
+                              }}
+                            >
+                              {locale === "en"
+                                ? `${Math.round(
+                                    (item.offers / item.price) * 100
+                                  )}%  OFF`
+                                : `خصم  ${Math.round(
+                                    (item.offers / item.price) * 100
+                                  )}٪`}
+                            </span>
+                          )}
+                        </div>
+                      )}
 
-          <div className="mb-3">
-            {item.offers > 0 ? (
-              <>
-                <div
-                  className="rounded px-3 py-2 d-flex justify-content-between align-items-center"
-                  style={{
-                    background: "rgba(204, 157, 47, 0.52)",
-                    fontSize: "1.7rem",
-                    fontWeight: "bold",
-                    direction: locale === "ar" ? "rtl" : "ltr",
-                    color: "#fff",
-                  }}
-                >
-                  <span style={{ color: "#8b0000", fontWeight: "bold" }}>
-                    {locale === "en"
-                      ? `${item.price - item.offers} EGP`
-                      : `${item.price - item.offers} ج.م`}
-                  </span>
-                  <span style={{ textDecoration: "line-through", opacity: 0.7 }}>
-                    {locale === "en"
-                      ? `${item.price} EGP`
-                      : `${item.price} ج.م`}
-                  </span>
+                      <div className="card-body px-3 py-4 d-flex flex-column justify-content-between">
+                        <h5
+                          className="fw-bold mb-2 category-title"
+                          style={{ minHeight: "48px", color: "#000" }}
+                        >
+                          {locale === "en" ? item.title_en : item.title_ar}
+                        </h5>
+
+                        <div
+                          className="news-description text-muted mb-3"
+                          style={{ color: "#8b0000", opacity: 0.9 }}
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              (locale === "en"
+                                ? item.content_en
+                                : item.content_ar
+                              )
+                                ?.split(" ")
+                                .slice(0, 20)
+                                .join(" ") + " ...",
+                          }}
+                        ></div>
+
+                        <div className="mb-3">
+                          {item.offers > 0 ? (
+                            <>
+                              <div
+                                className="rounded px-3 py-2 d-flex justify-content-between align-items-center"
+                                style={{
+                                  background: "linear-gradient(135deg, #FFA52A, #FFC773)",
+                                  fontSize: "1.7rem",
+                                  fontWeight: "bold",
+                                  direction: locale === "ar" ? "rtl" : "ltr",
+                                  color: "#fff",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    color: "#8b0000",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  {locale === "en"
+                                    ? `${item.price - item.offers} EGP`
+                                    : `${item.price - item.offers} ج.م`}
+                                </span>
+                                <span
+                                  style={{
+                                    textDecoration: "line-through",
+                                    opacity: 0.7,
+                                  }}
+                                >
+                                  {locale === "en"
+                                    ? `${item.price} EGP`
+                                    : `${item.price} ج.م`}
+                                </span>
+                              </div>
+                              {/* <div
+                                className="mt-2"
+                                style={{
+                                  fontWeight: 600,
+                                  color: "#16a34a",
+                                  fontSize: "1.5rem",
+                                }}
+                              >
+                                {locale === "en"
+                                  ? `${Math.round(
+                                      (item.offers / item.price) * 100
+                                    )}% OFF`
+                                  : `خصم ${Math.round(
+                                      (item.offers / item.price) * 100
+                                    )}٪`}
+                              </div> */}
+                            </>
+                          ) : (
+                            <div
+                              className="rounded px-3 py-2 text-center"
+                              style={{
+                                background: "linear-gradient(135deg, #FFA52A, #FFC773)",
+                                fontSize: "1.7rem",
+                                fontWeight: "bold",
+                                color: "#8b0000",
+                              }}
+                            >
+                              {locale === "en"
+                                ? `${item.price} EGP`
+                                : `${item.price} ج.م`}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
-                <div
-                  className="mt-2"
-                  style={{
-                    fontWeight: 600,
-                    color: "#16a34a",
-                    fontSize: "1.5rem",
-                  }}
-                >
-                  {locale === "en"
-                    ? `${Math.round((item.offers / item.price) * 100)}% OFF`
-                    : `خصم ${Math.round((item.offers / item.price) * 100)}٪`}
-                </div>
-              </>
-            ) : (
-              <div
-                className="rounded px-3 py-2 text-center"
-                style={{
-                  background: "rgba(204, 157, 47, 0.52)",
-                  fontSize: "1.7rem",
-                  fontWeight: "bold",
-                  color: "#8b0000",
-                }}
-              >
-                {locale === "en"
-                  ? `${item.price} EGP`
-                  : `${item.price} ج.م`}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </Link>
-  </div>
-))}
-
+              ))}
             </div>
 
             {totalPages > 1 && (
@@ -338,10 +351,14 @@ export default function NewsPage({ allPosts }) {
                 <div className="axil-tab-button semi-transparent-tab nav nav-tabs mt--20 custom-nav justify-content-center">
                   <ul className="pagination justify-content-center mb-0">
                     <li
-                      className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
-                        className={`custom-tab ${currentPage === 1 ? "disabled" : ""}`}
+                        className={`custom-tab ${
+                          currentPage === 1 ? "disabled" : ""
+                        }`}
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                         style={{ margin: "0 5px" }}
@@ -358,7 +375,9 @@ export default function NewsPage({ allPosts }) {
                           }`}
                         >
                           <button
-                            className={`custom-tab ${currentPage === num ? "active" : ""}`}
+                            className={`custom-tab ${
+                              currentPage === num ? "active" : ""
+                            }`}
                             onClick={() => handlePageChange(num)}
                             style={{ margin: "0 5px" }}
                           >
@@ -373,7 +392,9 @@ export default function NewsPage({ allPosts }) {
                       }`}
                     >
                       <button
-                        className={`custom-tab ${currentPage === totalPages ? "disabled" : ""}`}
+                        className={`custom-tab ${
+                          currentPage === totalPages ? "disabled" : ""
+                        }`}
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         style={{ margin: "0 5px" }}
@@ -390,7 +411,9 @@ export default function NewsPage({ allPosts }) {
               <div className="text-center mt-5 py-5">
                 <i className="fas fa-newspaper fa-3x text-muted mb-3"></i>
                 <h3 className="text-muted">
-                  {locale === "en" ? "No news found" : "لم يتم العثور على أخبار"}
+                  {locale === "en"
+                    ? "Sorry, the item is missing."
+                    : " نأسف لعدم وجود العنصر "}
                 </h3>
               </div>
             )}

@@ -1,0 +1,17 @@
+// استايلات كروت الفيديو في PostSectionThree
+.custom-card {
+  border-radius: 18px;
+  transition: box-shadow 0.2s, border 0.2s;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.custom-card:hover {
+  border-color: #ffa42cd3 !important;
+  box-shadow: 0 0 10px 2px #CC9D2F;
+  color: #fff !important;
+}
+.custom-card .text-white,
+.custom-card h3,
+.custom-card h5 {
+  color: #fff !important;
+} 
