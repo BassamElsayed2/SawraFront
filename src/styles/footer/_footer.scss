@@ -2,6 +2,7 @@
     Start Footer Area 
 =============================*/
 .axil-footer-style-1 {
+  background: #8b0000 !important;
   padding: 40px 0;
   .footer-top {
     .inner {
@@ -33,7 +34,7 @@
         &.hover-flip-item-wrapper {
           span {
             &::before {
-              color: var(--color-midgray);
+              color:white;
             }
             &::after {
               color: var(--color-primary);
@@ -222,4 +223,40 @@
 
 .copyright-area .copyright-left .logo img.light-logo {
   display: none !important;
+}
+
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a,
+.copyright-area .mainmenu li a {
+  position: relative;
+  color: #fff !important;
+  transition: 0.3s;
+  z-index: 1;
+}
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a::after,
+.copyright-area .mainmenu li a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 4px;
+  background: #cc9d2f;
+  border-radius: 10px 10px 0 0;
+  transition: 0.3s;
+  z-index: 2;
+}
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:hover,
+.copyright-area .mainmenu li a:hover {
+  color: #cc9d2f !important;
+}
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:hover::after,
+.copyright-area .mainmenu li a:hover::after {
+  width: 100%;
+  background: #cc9d2f;
+}
+
+.axil-footer-style-1 a.hover-effect:hover,
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a.hover-effect:hover,
+.axil-footer-style-1 .copyright-area .mainmenu li a.hover-effect:hover {
+  color: #cc9d2f !important;
 }

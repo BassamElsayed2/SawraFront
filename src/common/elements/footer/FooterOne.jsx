@@ -17,28 +17,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">U.N.</a>
+                      <a href="#" className="hover-effect">U.N.</a>
                     </li>
                     <li>
-                      <a href="#">Conflicts</a>
+                      <a href="#" className="hover-effect">Conflicts</a>
                     </li>
                     <li>
-                      <a href="#">Terrorism</a>
+                      <a href="#" className="hover-effect">Terrorism</a>
                     </li>
                     <li>
-                      <a href="#">Disasters</a>
+                      <a href="#" className="hover-effect">Disasters</a>
                     </li>
                     <li>
-                      <a href="#">Global Economy</a>
+                      <a href="#" className="hover-effect">Global Economy</a>
                     </li>
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Religion</a>
+                      <a href="#" className="hover-effect">Religion</a>
                     </li>
                     <li>
-                      <a href="#">Scandals</a>
+                      <a href="#" className="hover-effect">Scandals</a>
                     </li>
                   </ul>
                 </div>
@@ -50,28 +50,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">Executive</a>
+                      <a href="#" className="hover-effect">Executive</a>
                     </li>
                     <li>
-                      <a href="#">Senate</a>
+                      <a href="#" className="hover-effect">Senate</a>
                     </li>
                     <li>
-                      <a href="#">House</a>
+                      <a href="#" className="hover-effect">House</a>
                     </li>
                     <li>
-                      <a href="#">Judiciary</a>
+                      <a href="#" className="hover-effect">Judiciary</a>
                     </li>
                     <li>
-                      <a href="#">Global Economy</a>
+                      <a href="#" className="hover-effect">Global Economy</a>
                     </li>
                     <li>
-                      <a href="#">Foreign policy</a>
+                      <a href="#" className="hover-effect">Foreign policy</a>
                     </li>
                     <li>
-                      <a href="#">Polls</a>
+                      <a href="#" className="hover-effect">Polls</a>
                     </li>
                     <li>
-                      <a href="#">Elections</a>
+                      <a href="#" className="hover-effect">Elections</a>
                     </li>
                   </ul>
                 </div>
@@ -83,28 +83,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">Celebrity News</a>
+                      <a href="#" className="hover-effect">Celebrity News</a>
                     </li>
                     <li>
-                      <a href="#">Movies</a>
+                      <a href="#" className="hover-effect">Movies</a>
                     </li>
                     <li>
-                      <a href="#">TV News</a>
+                      <a href="#" className="hover-effect">TV News</a>
                     </li>
                     <li>
-                      <a href="#">Disasters</a>
+                      <a href="#" className="hover-effect">Disasters</a>
                     </li>
                     <li>
-                      <a href="#">Music News</a>
+                      <a href="#" className="hover-effect">Music News</a>
                     </li>
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Style News</a>
+                      <a href="#" className="hover-effect">Style News</a>
                     </li>
                     <li>
-                      <a href="#">Entertainment Video</a>
+                      <a href="#" className="hover-effect">Entertainment Video</a>
                     </li>
                   </ul>
                 </div>
@@ -116,28 +116,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Conflicts</a>
+                      <a href="#" className="hover-effect">Conflicts</a>
                     </li>
                     <li>
-                      <a href="#">Terrorism</a>
+                      <a href="#" className="hover-effect">Terrorism</a>
                     </li>
                     <li>
-                      <a href="#">Disasters</a>
+                      <a href="#" className="hover-effect">Disasters</a>
                     </li>
                     <li>
-                      <a href="#">Global Economy</a>
+                      <a href="#" className="hover-effect">Global Economy</a>
                     </li>
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Religion</a>
+                      <a href="#" className="hover-effect">Religion</a>
                     </li>
                     <li>
-                      <a href="#">Scandals</a>
+                      <a href="#" className="hover-effect">Scandals</a>
                     </li>
                   </ul>
                 </div>
@@ -149,28 +149,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">Movies</a>
+                      <a href="#" className="hover-effect">Movies</a>
                     </li>
                     <li>
-                      <a href="#">Conflicts</a>
+                      <a href="#" className="hover-effect">Conflicts</a>
                     </li>
                     <li>
-                      <a href="#">Terrorism</a>
+                      <a href="#" className="hover-effect">Terrorism</a>
                     </li>
                     <li>
-                      <a href="#">Disasters</a>
+                      <a href="#" className="hover-effect">Disasters</a>
                     </li>
                     <li>
-                      <a href="#">Global Economy</a>
+                      <a href="#" className="hover-effect">Global Economy</a>
                     </li>
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Religion</a>
+                      <a href="#" className="hover-effect">Religion</a>
                     </li>
                     <li>
-                      <a href="#">Scandals</a>
+                      <a href="#" className="hover-effect">Scandals</a>
                     </li>
                   </ul>
                 </div>
@@ -182,28 +182,28 @@ const FooterOne = () => {
                 <div className="inner">
                   <ul className="ft-menu-list">
                     <li>
-                      <a href="#">U.N.</a>
+                      <a href="#" className="hover-effect">U.N.</a>
                     </li>
                     <li>
-                      <a href="#">Conflicts</a>
+                      <a href="#" className="hover-effect">Conflicts</a>
                     </li>
                     <li>
-                      <a href="#">Terrorism</a>
+                      <a href="#" className="hover-effect">Terrorism</a>
                     </li>
                     <li>
-                      <a href="#">Disasters</a>
+                      <a href="#" className="hover-effect">Disasters</a>
                     </li>
                     <li>
-                      <a href="#">Global Economy</a>
+                      <a href="#" className="hover-effect">Global Economy</a>
                     </li>
                     <li>
-                      <a href="#">Environment</a>
+                      <a href="#" className="hover-effect">Environment</a>
                     </li>
                     <li>
-                      <a href="#">Religion</a>
+                      <a href="#" className="hover-effect">Religion</a>
                     </li>
                     <li>
-                      <a href="#">Scandals</a>
+                      <a href="#" className="hover-effect">Scandals</a>
                     </li>
                   </ul>
                 </div>
@@ -222,7 +222,7 @@ const FooterOne = () => {
                 <a>
                   <Image
                     className="dark-logo"
-                    src={colorMode === "Dark" ? "/images/logo/logo-white2.webp" : "/images/logo/logo-black.webp"}
+                    src={colorMode === "Dark" ? "/images/logo/sawra.png" : "/images/logo/sawra.png"}
                     alt="Logo Images"
                     height={37}
                     width={141}
@@ -273,7 +273,7 @@ const FooterOne = () => {
                 <ul className="mainmenu justify-content-start">
                   <li>
                     <Link href="/about">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span data-text="Contact Us">Contact Us</span>
                         </span>
@@ -282,7 +282,7 @@ const FooterOne = () => {
                   </li>
                   <li>
                     <Link href="/privacy-policy">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span data-text="Privacy Policy">Privacy Policy</span>
                         </span>
@@ -291,7 +291,7 @@ const FooterOne = () => {
                   </li>
                   <li>
                     <Link href="#">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span data-text="AdChoices">AdChoices</span>
                         </span>
@@ -300,7 +300,7 @@ const FooterOne = () => {
                   </li>
                   <li>
                     <Link href="#">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span data-text="Advertise with Us">
                             Advertise with Us
@@ -311,7 +311,7 @@ const FooterOne = () => {
                   </li>
                   <li>
                     <Link href="#">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span data-text="Blogar Store">Blogar Store</span>
                         </span>

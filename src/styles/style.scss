@@ -106,3 +106,82 @@
 	Rtl Styles
 ***************************************/
 // @import 'rtl/rtl';
+
+/* ==== Custom Nav & Tab Styles ==== */
+.custom-nav {
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.custom-tab {
+  color: white !important;
+  background-color: #A00008 !important; /* أحمر غامق مثل الخلفية */
+  border: 2px solid #CC9D2F !important; /* بوردر أصفر */
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.custom-tab:hover {
+  box-shadow: 0 0 10px 2px #CC9D2F;
+  color: #fff !important;
+  border-color: #ffa42cd3 !important; /* بوردر أصفر أفتح عند الهوفر */
+}
+
+.custom-tab.active,
+.custom-tab.active:focus,
+.custom-tab.active:hover {
+  background-color: #FFA52A !important; /* لون أصفر غامق */
+  color: #fff !important;
+  border-color: #8b0000 !important; /* بوردر أحمر غامق عند التفعيل */
+}
+.fade-transition {
+	transition: opacity 0.6s ease;
+	opacity: 1;
+  }
+  
+  .fade-transition.hidden {
+	opacity: 0;
+  }
+  
+
+/* ==== Category Card Hover Styles ==== */
+.category-card-hover {
+  transition: all 0.3s ease;
+  border: 2px solid transparent !important;
+  background-color: rgba(255, 255, 255, 0.1) !important; /* خلفية شفافة */
+  border-radius: 12px !important; /* ريدياس */
+  padding: 8px !important; /* مساحة إضافية حول المحتوى */
+  margin: 4px !important; /* هامش إضافي */
+  margin-bottom: 2rem !important; /* مسافة إضافية بين البوستات */
+}
+
+.category-card-hover:hover {
+  border-color: #ffa42cd3 !important; /* بوردر أصفر أفتح مثل زر عرض الكل */
+  box-shadow: 0 0 10px 2px #CC9D2F;
+  transform: translateY(-2px);
+}
+
+.category-card-hover:hover .category-title {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+/* ==== Custom Image Size for PostSectionTen ==== */
+.category-card-hover.post-medium .post-thumbnail {
+  width: 120px !important;
+  min-width: 120px !important;
+  height: 160px !important;
+}
+
+.category-card-hover.post-medium .post-thumbnail a img {
+  width: 130px !important;
+  height: 190px !important;
+  object-fit: cover !important;
+}
+  

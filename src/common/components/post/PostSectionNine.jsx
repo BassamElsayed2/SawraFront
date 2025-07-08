@@ -51,7 +51,7 @@ const PostSectionNine = ({ news, bgColor }) => {
 
           {firstPost && (
             <div className="col-xl-6 col-md-12 col-12 mt--30">
-              <div className="content-block post-grid post-grid-transparent">
+              <div className="content-block post-grid post-grid-transparent category-card-hover">
                 <div className="post-thumbnail position-relative">
                   <Link href={`/${locale}/post/${firstPost.id}`}>
                     <a>
@@ -74,7 +74,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                           fontWeight: "bold",
                         }}
                       >
-                        {locale === "en" ? "Most Sold" : "⭐الاكثر مبيعا"}
+                        {locale === "en" ? "⭐ Most Sold " : "⭐الاكثر مبيعا"}
                       </div>
                     </a>
                   </Link>
@@ -105,7 +105,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                       </div>
                     </div>
 
-                    <h3 className="title">
+                    <h3 className="title category-title">
                       <Link href={`/${locale}/post/${firstPost.id}`}>
                         <a>
                           {locale === "en"
@@ -163,7 +163,7 @@ const PostSectionNine = ({ news, bgColor }) => {
                     className="col-lg-6 col-md-6 col-sm-6 col-12 mt--30"
                     key={data.id}
                   >
-                    <div className="content-block post-default image-rounded">
+                    <div className="content-block post-default image-rounded category-card-hover">
                       <div className="post-thumbnail position-relative">
                         <Link href={`/${locale}/post/${data.id}`}>
                           <a>
@@ -186,14 +186,14 @@ const PostSectionNine = ({ news, bgColor }) => {
                                 fontWeight: "bold",
                               }}
                             >
-                              {locale === "en" ? "Most Sold" : "⭐الاكثر مبيعا"}
+                              {locale === "en" ? "⭐Most Sold" : "⭐الاكثر مبيعا"}
                             </div>
                           </a>
                         </Link>
                       </div>
                       <div className="post-content">
                         <div className="d-flex flex-column justify-content-between align-items-center">
-                          <h5 className="title ">
+                          <h5 className="title category-title">
                             <Link href={`/${locale}/post/${data.id}`}>
                               <a>
                                 {locale === "en"

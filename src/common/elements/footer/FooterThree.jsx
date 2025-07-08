@@ -69,8 +69,8 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                         height={37}
                         src={
                           colorMode === "Dark"
-                            ? lightLogo || "/images/logo/logo-white2.webp"
-                            : darkLogo || "/images/logo/logo-black.webp"
+                            ? lightLogo || "/images/logo/sawra.png"
+                            : darkLogo || "/images/logo/sawra.png"
                         }
                         alt="Blogar logo"
                       />
@@ -80,7 +80,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                 <ul className="mainmenu justify-content-start">
                   <li>
                     <Link href="/contact">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span
                             data-text={
@@ -95,7 +95,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                   </li>
                   <li>
                     <Link href="/privacy-policy">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span
                             data-text={
@@ -114,7 +114,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                   </li>
                   <li>
                     <Link href="#">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span
                             data-text={
@@ -133,7 +133,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                   </li>
                   <li>
                     <Link href="#">
-                      <a className="hover-flip-item-wrapper">
+                      <a className="hover-flip-item-wrapper hover-effect">
                         <span className="hover-flip-item">
                           <span
                             data-text={

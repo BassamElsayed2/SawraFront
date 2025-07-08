@@ -14,7 +14,7 @@ const FooterTwo = () => {
                 <Link href="/">
                     <a>
                     <Image
-                        src="/images/logo/logo-white2.webp"
+                        src="/images/logo/sawra.png"
                         alt="Logo Images"
                         height={35}
                         width={134}
@@ -65,7 +65,7 @@ const FooterTwo = () => {
                 <ul className="mainmenu justify-content-start">
                   <li>
                   <Link href="/about">
-                    <a className="hover-flip-item-wrapper">
+                    <a className="hover-flip-item-wrapper hover-effect">
                       <span className="hover-flip-item">
                         <span data-text="Contact Us">Contact Us</span>
                       </span>
@@ -74,7 +74,7 @@ const FooterTwo = () => {
                   </li>
                   <li>
                   <Link href="/privacy-policy">
-                    <a className="hover-flip-item-wrapper">
+                    <a className="hover-flip-item-wrapper hover-effect">
                       <span className="hover-flip-item">
                         <span data-text="Privacy Policy">Privacy Policy</span>
                       </span>
@@ -83,7 +83,7 @@ const FooterTwo = () => {
                   </li>
                   <li>
                   <Link href="#">
-                    <a className="hover-flip-item-wrapper">
+                    <a className="hover-flip-item-wrapper hover-effect">
                       <span className="hover-flip-item">
                         <span data-text="AdChoices">AdChoices</span>
                       </span>
@@ -92,7 +92,7 @@ const FooterTwo = () => {
                   </li>
                   <li>
                   <Link href="#">
-                    <a className="hover-flip-item-wrapper">
+                    <a className="hover-flip-item-wrapper hover-effect">
                       <span className="hover-flip-item">
                         <span data-text="Advertise with Us">
                           Advertise with Us
@@ -103,7 +103,7 @@ const FooterTwo = () => {
                   </li>
                   <li>
                   <Link href="#">
-                    <a className="hover-flip-item-wrapper">
+                    <a className="hover-flip-item-wrapper hover-effect">
                       <span className="hover-flip-item">
                         <span data-text="Blogar Store">Blogar Store</span>
                       </span>

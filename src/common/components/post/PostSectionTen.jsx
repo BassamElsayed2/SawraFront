@@ -24,6 +24,8 @@ const PostSectionTen = () => {
   const [activeNav, setActiveNav] = useState("");
   const [tabPostData, setTabPostData] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [hoveredPost, setHoveredPost] = useState(null);
+  const [fade, setFade] = useState(true);
 
   const locale = useLocale();
   const { t } = useTranslation("common");
@@ -55,9 +57,9 @@ const PostSectionTen = () => {
     setTabPostData(filtered);
   }, [postData, activeNav]);
 
-  if (isLoading) return <p>loading...</p>;
+  const firstPost = hoveredPost || tabPostData[0];
 
-  const firstPost = tabPostData[0];
+  if (isLoading) return <p>loading...</p>;
 
   const getImageSrc = (img) => {
     if (Array.isArray(img)) return img[0] || "";
@@ -106,17 +108,18 @@ const PostSectionTen = () => {
               activeKey={activeNav}
               onSelect={(k) => setActiveNav(k)}
             >
-              <Nav className="axil-tab-button nav nav-tabs mt--20">
+              <Nav className="axil-tab-button semi-transparent-tab nav nav-tabs mt--20 custom-nav">
                 {categories.map((catId, i) => (
                   <Nav.Item key={i}>
-                    <Nav.Link eventKey={catId}>
+                    <Nav.Link eventKey={catId} className="custom-tab">
                       {catId === "all"
                         ? locale === "en"
                           ? "All"
                           : "الكل"
                         : renderCategoryName(
-                            postData.find((post) => post.category?.id === catId)
-                              ?.category
+                            postData.find(
+                              (post) => post.category?.id === catId
+                            )?.category
                           )}
                     </Nav.Link>
                   </Nav.Item>
@@ -127,10 +130,24 @@ const PostSectionTen = () => {
                 <Tab.Pane className="single-post-grid" eventKey={activeNav}>
                   <div className="row mt--40">
                     <div className="col-xl-5 col-lg-6 col-md-12 col-12">
-                      {tabPostData.slice(-5).map((data) => (
+                      {tabPostData.slice(-5).map((data, index) => (
                         <div
-                          className="content-block post-medium post-medium-border border-thin"
+                          className="content-block post-medium post-medium-border border-thin category-card-hover mb-5"
                           key={data.id}
+                          onMouseEnter={() => {
+                            setFade(false);
+                            setTimeout(() => {
+                              setHoveredPost(data);
+                              setFade(true);
+                            }, 100); // slight delay for smooth effect
+                          }}
+                          onMouseLeave={() => {
+                            setFade(false);
+                            setTimeout(() => {
+                              setHoveredPost(null);
+                              setFade(true);
+                            }, 100);
+                          }}
                         >
                           <div className="post-thumbnail">
                             <Link href={`/${locale}/post/${data.id}`}>
@@ -143,8 +160,8 @@ const PostSectionTen = () => {
                                         ? data.title_en
                                         : data.title_ar
                                     }
-                                    height={130}
-                                    width={100}
+                                    height={160}
+                                    width={110}
                                     priority={true}
                                   />
                                 ) : (
@@ -173,8 +190,40 @@ const PostSectionTen = () => {
                                   </a>
                                 </Link>
                               </div>
+                              <div className="product-price-box mt-3 ">
+                                <div className="price-blur fs-4 ">
+                                  <span className="price-current ">
+                                    {locale === "en"
+                                      ? ` ${data.price - data.offers} EGP`
+                                      : ` ${data.price - data.offers} ج.م`}
+                                  </span>
+                                  <span className="price-old ms-3">
+                                    {locale === "en"
+                                      ? ` ${data.price} EGP`
+                                      : ` ${data.price} ج.م`}
+                                  </span>
+                                  <span
+                                    className="discount-badge ms-2"
+                                    style={{
+                                      color: "#cc9d2f",
+                                      padding: "2px 6px",
+                                      borderRadius: "3px",
+                                      fontSize: "12px",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {locale === "en"
+                                      ? `${Math.round(
+                                          (data.offers / data.price) * 100
+                                        )}% OFF`
+                                      : `خصم ${Math.round(
+                                          (data.offers / data.price) * 100
+                                        )}٪`}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                            <h4 className="title" style={{ color: "#fff" }}>
+                            <h4 className="title category-title" style={{ color: "#fff" }}>
                               <Link href={`/${locale}/post/${data.id}`}>
                                 <a>
                                   {locale === "en"
@@ -183,7 +232,6 @@ const PostSectionTen = () => {
                                 </a>
                               </Link>
                             </h4>
-
                             <div className="content">
                               <p style={{ color: "#fff" }}>
                                 {getSnippet(
@@ -199,65 +247,114 @@ const PostSectionTen = () => {
                     </div>
 
                     <div className="col-xl-7 col-lg-6 col-md-12 col-12 mt_md--40 mt_sm--40">
-                      <div className="content-block content-block post-grid post-grid-transparent">
-                        {getImageSrc(firstPost?.images) && (
-                          <div className="post-thumbnail">
-                            <Link href={`/${locale}/post/${firstPost?.id}`}>
-                              <a>
-                                <Image
-                                  src={getImageSrc(firstPost?.images)}
-                                  alt={
-                                    locale === "en"
-                                      ? firstPost?.title_en
-                                      : firstPost?.title_ar
-                                  }
-                                  height={710}
-                                  width={705}
-                                  priority={true}
-                                />
-                              </a>
-                            </Link>
-                          </div>
-                        )}
-                        <div className="post-grid-content">
-                          <div className="post-content">
-                            <div className="post-cat">
-                              <div className="post-cat-list">
-                                <Link
-                                  href={`/${locale}/news?category=${firstPost?.category.id}`}
-                                >
-                                  <a className="hover-flip-item-wrapper">
-                                    <span className="hover-flip-item">
-                                      <span
-                                        data-text={
-                                          locale === "en"
-                                            ? firstPost?.category?.name_en
-                                            : firstPost?.category?.name_ar
-                                        }
-                                      >
-                                        {locale === "en"
-                                          ? firstPost?.category?.name_en
-                                          : firstPost?.category?.name_ar}
-                                      </span>
-                                    </span>
-                                  </a>
-                                </Link>
-                              </div>
-                            </div>
-                            <h3 className="title">
-                              <Link href={`/${locale}/post/${firstPost?.id}`}>
-                                <a>
-                                  {locale === "en"
-                                    ? firstPost?.title_en
-                                    : firstPost?.title_ar}
-                                </a>
-                              </Link>
-                            </h3>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+  <div
+    className={`content-block post-grid post-grid-transparent fade-transition category-card-hover ${
+      fade ? "" : "hidden"
+    }`}
+  >
+    {getImageSrc(firstPost?.images) && (
+      <div className="post-thumbnail">
+        <Link href={`/${locale}/post/${firstPost?.id}`}>
+          <a>
+            <Image
+              src={getImageSrc(firstPost?.images)}
+              alt={
+                locale === "en" ? firstPost?.title_en : firstPost?.title_ar
+              }
+              height={710}
+              width={705}
+              priority={true}
+            />
+          </a>
+        </Link>
+      </div>
+    )}
+
+    <div className="post-grid-content">
+      <div className="post-content">
+
+        {/* 👇 التصنيف - الكاتيجوري فوق السعر عادي مش في المنتصف */}
+        <div className="post-cat-list mb-2">
+          <Link href={`/${locale}/news?category=${firstPost?.category.id}`}>
+            <a
+              style={{
+                backgroundColor: "rgba(255, 0, 0, 0.8)",
+                color: "#fff",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                fontSize: "14px",
+                fontWeight: "bold",
+                display: "inline-block",
+              }}
+            >
+              {locale === "en"
+                ? firstPost?.category?.name_en
+                : firstPost?.category?.name_ar}
+            </a>
+          </Link>
+        </div>
+
+        {/* 👇 السعر والخصم */}
+        <div className="product-price-box mt-3">
+          <div className="price-blur fs-4">
+            <span className="price-current" style={{ color: "#fff" }}>
+              {locale === "en"
+                ? `${firstPost?.price - firstPost?.offers} EGP`
+                : `${firstPost?.price - firstPost?.offers} ج.م`}
+            </span>
+            <span className="price-old ms-3" style={{ color: "#ddd" }}>
+              {locale === "en"
+                ? `${firstPost?.price} EGP`
+                : `${firstPost?.price} ج.م`}
+            </span>
+            <span
+              className="discount-badge ms-2"
+              style={{
+                color: "#cc9d2f",
+                padding: "2px 6px",
+                borderRadius: "3px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              {locale === "en"
+                ? `${Math.round(
+                    (firstPost?.offers / firstPost?.price) * 100
+                  )}% OFF`
+                : `خصم ${Math.round(
+                    (firstPost?.offers / firstPost?.price) * 100
+                  )}٪`}
+            </span>
+          </div>
+        </div>
+
+        {/* 👇 العنوان */}
+        <h3 className="title category-title" style={{ color: "#fff" }}>
+          <Link href={`/${locale}/post/${firstPost?.id}`}>
+            <a>
+              {locale === "en"
+                ? firstPost?.title_en
+                : firstPost?.title_ar}
+            </a>
+          </Link>
+        </h3>
+
+        {/* 👇 الوصف */}
+        <div className="content">
+          <p style={{ color: "#fff" }}>
+            {getSnippet(
+              locale === "en"
+                ? firstPost?.content_en
+                : firstPost?.content_ar,
+              120 // length for larger description
+            )}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ </div>
                 </Tab.Pane>
               </Tab.Content>
             </Tab.Container>

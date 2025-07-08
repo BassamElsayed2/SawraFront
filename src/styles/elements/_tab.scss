@@ -25,7 +25,7 @@
             font-weight: var(--p-bold);
             font-size: var(--font-size-b1);
             color: var(--color-midgray);
-            background: var(--color-white);
+            background: rgba(255,255,255,0.7);
             outline: none;
             cursor: pointer;
             @media #{$sm-layout} {
@@ -41,6 +41,11 @@
     }
 }
 
+.axil-tab-button.semi-transparent-tab {
+    .nav-link {
+        background: rgba(255,255,255,0.7);
+    }
+}
 
 // Modern Post Tab Content 
 .single-tab-content {
