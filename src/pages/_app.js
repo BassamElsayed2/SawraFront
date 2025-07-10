@@ -7,6 +7,7 @@ import { appWithTranslation } from "next-i18next";
 import { IntlProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import PageTransition from "../common/PageTransition";
 
 function MyApp({ Component, pageProps }) {
   const { locale } = useRouter();
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }) {
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale={locale} messages={pageProps.messages}>
           <Component {...pageProps} />
+          <PageTransition />
         </IntlProvider>
       </QueryClientProvider>
     </>

@@ -25,7 +25,7 @@ const SectionTitleTwo = ({ title, btnText, btnUrl }) => {
         </div>
       </div>
       <div className="col-lg-6 col-md-4 col-sm-4 col-12">
-        <div className="see-all-topics text-start text-sm-end mt_mobile--20">
+        <div className="see-all-topics text-start mt_mobile--20">
           <Link href={btnUrl || "#"}>
             <a className="axil-link-button" style={{ color: "#CC9D2F" }}>
               {btnText}
