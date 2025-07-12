@@ -1,6 +1,11 @@
 /*--------------------
 Header Styles  
 -----------------------*/
+
+.main {
+  max-width: 1248px;
+  margin: auto;
+}
 .axil-header {
   padding: 0 60px;
   background: var(--color-background);
@@ -22,7 +27,11 @@ Header Styles
       margin-bottom: 20px;
     }
   }
-
+  .mostafa {
+    width: 1305px;
+    padding: 0px;
+    margin: 0px;
+  }
   .header-search {
     @media #{$large-mobile} {
       text-align: center !important;
@@ -357,9 +366,26 @@ button {
     }
   }
 }
-
+.in {
+  background-image: url("/images/inbg.jpg");
+}
+.copyright-left {
+  padding-top: 98px;
+}
+.footerz {
+  height: 162px;
+  background-image: url("/images/footerbg.jpg");
+}
+.header-bottom {
+  padding-right: 200px;
+}
+.logoz {
+  padding-top: 10px;
+  padding-right: 40px !important;
+}
 .axil-header {
-  background: #8b0000;
+  background-image: url("/images/headerbg.jpg");
+  height: 522px;
 
   &.header-style-3 {
     padding: 0;

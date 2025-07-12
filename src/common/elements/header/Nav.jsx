@@ -56,22 +56,40 @@ const Nav = ({ posts }) => {
   return (
     <ul className="mainmenu">
       <li className="menu-item-has-children">
-        <Link href="/">{locale === "en" ? "Home" : "الرئيسية"}</Link>
+        <Link href="/menu">
+          <a>
+            <Image
+              width={100}
+              height={38}
+              src={"/images/link1.png"}
+              alt="Blogar logo"
+            />
+          </a>
+        </Link>
       </li>
       <li className="menu-item-has-children">
-        <Link href={`/${locale}/news`}>
-          {locale === "en" ? "Menu" : "المنيو"}
+        <Link href="/">
+          <a>
+            <Image
+              width={98}
+              height={38}
+              src={"/images/link2.png"}
+              alt="Blogar logo"
+            />
+          </a>
         </Link>
       </li>
 
       <li className="menu-item-has-children">
-        <Link href={`/${locale}/gallery`}>
-          <a>{locale === "en" ? "Gallery" : "معرض الصور"}</a>
-        </Link>
-      </li>
-      <li>
-        <Link href={`/${locale}/about`}>
-          <a>{locale === "en" ? "About Us" : "عنا"}</a>
+        <Link href="/">
+          <a>
+            <Image
+              width={140}
+              height={38}
+              src={"/images/link3.png"}
+              alt="Blogar logo"
+            />
+          </a>
         </Link>
       </li>
     </ul>

@@ -77,12 +77,7 @@ export default function PageTransition() {
             transition={{ duration: 1 }}
             style={{ zIndex: 2 }}
           >
-            <Image
-              src="/images/logo/sawra.png"
-              alt="Logo"
-              width={100}
-              height={100}
-            />
+            <Image src="/images/logo.png" alt="Logo" width={100} height={100} />
           </motion.div>
         </motion.div>
       )}

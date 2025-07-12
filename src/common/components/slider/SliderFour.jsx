@@ -4,61 +4,10 @@ import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { SectionTitleTwo } from "../../elements/sectionTitle/SectionTitle";
-
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getNews } from "../../../../services/apiNews";
 import { useLocale } from "next-intl";
-
-const cards = [
-  {
-    id: 1,
-    title: "كارت 1",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 1",
-  },
-  {
-    id: 2,
-    title: "كارت 2",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 2",
-  },
-  {
-    id: 3,
-    title: "كارت 3",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 3",
-  },
-  {
-    id: 4,
-    title: "كارت 4",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 4",
-  },
-  {
-    id: 5,
-    title: "كارت 5",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 5",
-  },
-  {
-    id: 6,
-    title: "كارت 6",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 6",
-  },
-  {
-    id: 7,
-    title: "كارت 7",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 7",
-  },
-  {
-    id: 8,
-    title: "كارت 8",
-    image: "/images/add-banner/banner-01.webp",
-    desc: "وصف مختصر للكارت 8",
-  },
-];
 
 export default function CardSlider() {
   const locale = useLocale();
@@ -98,12 +47,18 @@ export default function CardSlider() {
   };
 
   return (
-    <div className=" p-5" style={{ backgroundColor: "#8b0000" }}>
-      <SectionTitleTwo
-        title={locale === "en" ? "Offers" : "اخر العروض"}
-        btnText={locale === "en" ? "See More" : "عرض الكل"}
-        btnUrl={`/${locale}/news`}
-      />
+    <div className=" p-5">
+      <SectionTitleTwo />{" "}
+      <Link href={`/${locale}/menu`}>
+        <a>
+          <Image
+            width={259}
+            height={75}
+            src={"/images/last.png"}
+            alt="Blogar logo"
+          />
+        </a>
+      </Link>
       <Slider {...settings}>
         {offersNews.map((item) => (
           <div key={item.id} className="p-2">
@@ -133,81 +88,6 @@ export default function CardSlider() {
                   }}
                 />
               )}
-              <div className="card-body" style={{ padding: 18 }}>
-                <h5
-                  className="card-title"
-                  style={{ fontWeight: 700, fontSize: 18, marginBottom: 10 }}
-                >
-                  {locale === "en" ? item.title_en : item.title_ar}
-                </h5>
-                <div style={{ marginTop: 12 }}>
-                  <div
-                    className="product-price-box mt-3"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                    }}
-                  >
-                    {item.offers > 0 && (
-                      <span
-                        className="price-current"
-                        style={{
-                          color: "#16a34a",
-                          fontWeight: 700,
-                          fontSize: 20,
-                        }}
-                      >
-                        {locale === "en"
-                          ? `${item.price - item.offers} EGP`
-                          : `${item.price - item.offers} ج.م`}
-                      </span>
-                    )}
-                    <span
-                      className={
-                        item.offers > 0 ? "price-old" : "price-current"
-                      }
-                      style={{
-                        color: item.offers > 0 ? "#888" : "#16a34a",
-                        textDecoration:
-                          item.offers > 0 ? "line-through" : "none",
-                        fontSize: 16,
-                        fontWeight: 500,
-                        marginLeft: 6,
-                      }}
-                    >
-                      {locale === "en"
-                        ? `${item.price} EGP`
-                        : `${item.price} ج.م`}
-                    </span>
-                    {item.offers > 0 && (
-                      <span
-                        className="discount-badge ms-2"
-                        style={{
-                          background: "#fff4e0",
-                          color: "#d32f2f",
-                          padding: "2px 10px",
-                          borderRadius: "999px",
-                          fontSize: "13px",
-                          fontWeight: "bold",
-                          marginLeft: 6,
-                          border: "1px solid #ffd6b0",
-                          letterSpacing: 1,
-                        }}
-                      >
-                        {locale === "en"
-                          ? `${Math.round(
-                              (item.offers / item.price) * 100
-                            )}% OFF`
-                          : `خصم ${Math.round(
-                              (item.offers / item.price) * 100
-                            )}٪`}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         ))}

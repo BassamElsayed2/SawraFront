@@ -11,7 +11,7 @@ import { getAds } from "../../../../services/apiAds";
 import { useQuery } from "@tanstack/react-query";
 import { getAboutUs } from "../../../../services/apiAboutUs";
 
-const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
+const HeaderThree = ({ postData }) => {
   const { locale } = useRouter();
 
   const { data: logo } = useQuery({
@@ -98,16 +98,16 @@ const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
 
         <div className="header-middle">
           <div className="container">
-            <div className="row align-items-center justify-content-center">
-              <div className="col-12">
-                <div className=" d-flex justify-content-center align-items-center">
+            <div className="row">
+              <div className="logoz col-12">
+                <div className=" d-flex ">
                   <Link href="/">
                     <a>
                       <Image
                         className={logo?.logo_url || "dark-logo"}
-                        width={141}
-                        height={60}
-                        src={"/images/logo/sawra.png"}
+                        width={385}
+                        height={265}
+                        src={"/images/logo.png"}
                         alt="Blogar logo"
                       />
                     </a>
@@ -120,8 +120,8 @@ const HeaderThree = ({ darkLogo, lightLogo, postData }) => {
 
         <div className="header-bottom">
           <div className="container">
-            <div className="row justify-content-between align-items-center">
-              <div className="d-flex justify-content-center">
+            <div className="row">
+              <div className="d-flex">
                 <div className="mainmenu-wrapper  d-xl-block">
                   <nav className="mainmenu-nav">
                     <Nav posts={postData} />

@@ -13,12 +13,7 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
 
   return (
     <div
-      className={`axil-footer-area axil-footer-style-1 ${
-        bgColor || "bg-color-white"
-      }`}
-      style={{
-        backgroundColor: "#CC9D2F",
-      }}
+      className="footerz"
     >
       {/* Start Footer Top Area  */}
       <div className="footer-top">
@@ -63,100 +58,54 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
           <div className="row align-items-center">
             <div className="col-lg-9 col-md-12">
               <div className="copyright-left">
-                <div className="logo">
+               
+                <ul className="mainmenu justify-content-start">
+                  <li>
                   <Link href="/">
                     <a>
                       <Image
-                        className="dark-logo"
-                        width={141}
-                        height={37}
-                        src={`/images/logo/sawra.png`}
+                      
+                        width={100}
+                        height={38}
+                        src={"/images/link1.png"}
                         alt="Blogar logo"
                       />
                     </a>
                   </Link>
-                </div>
-                <ul className="mainmenu justify-content-start">
-                  <li>
-                    <Link href="/contact">
-                      <a className="hover-flip-item-wrapper">
-                        <span className="hover-flip-item">
-                          <span
-                            data-text={
-                              locale === "ar" ? "اتصل بنا" : "Contact Us"
-                            }
-                          >
-                            {locale === "en" ? "Contact Us" : "اتصل بنا"}
-                          </span>
-                        </span>
-                      </a>
-                    </Link>
                   </li>
                   <li>
-                    <Link href="/privacy-policy">
-                      <a className="hover-flip-item-wrapper">
-                        <span className="hover-flip-item">
-                          <span
-                            data-text={
-                              locale === "ar"
-                                ? "سياسة الخصوصية"
-                                : "Privacy Policy"
-                            }
-                          >
-                            {locale === "en"
-                              ? "Privacy Policy"
-                              : "سياسة الخصوصية"}
-                          </span>
-                        </span>
-                      </a>
-                    </Link>
+                  <Link href="/">
+                    <a>
+                      <Image
+                      
+                        width={98}
+                        height={38}
+                        src={"/images/link2.png"}
+                        alt="Blogar logo"
+                      />
+                    </a>
+                  </Link>
                   </li>
+       
                   <li>
-                    <Link href="#">
-                      <a className="hover-flip-item-wrapper">
-                        <span className="hover-flip-item">
-                          <span
-                            data-text={
-                              locale === "en"
-                                ? "AdChoices"
-                                : "اختيارات الإعلانات"
-                            }
-                          >
-                            {locale === "en"
-                              ? "AdChoices"
-                              : "اختيارات الإعلانات"}
-                          </span>
-                        </span>
-                      </a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#">
-                      <a className="hover-flip-item-wrapper">
-                        <span className="hover-flip-item">
-                          <span
-                            data-text={
-                              locale === "en"
-                                ? "Advertise with Us"
-                                : "اعلن معنا"
-                            }
-                          >
-                            {locale === "en"
-                              ? "Advertise with Us"
-                              : "اعلن معنا"}
-                          </span>
-                        </span>
-                      </a>
-                    </Link>
+                  <Link href="/">
+                    <a>
+                      <Image
+                      
+                        width={140}
+                        height={38}
+                        src={"/images/link3.png"}
+                        alt="Blogar logo"
+                      />
+                    </a>
+                  </Link>
                   </li>
                 </ul>
               </div>
             </div>
             <div className="col-lg-3 col-md-12">
               <div className="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
-                <p className="b3" style={{ color: "#fff" }}>
-                  All Rights Reserved © {new Date().getFullYear()}
-                </p>
+               
               </div>
             </div>
           </div>

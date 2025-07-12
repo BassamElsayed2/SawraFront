@@ -29,20 +29,20 @@ const TechBlog = ({ allPosts }) => {
 
   return (
     <>
+    <div className="main">
       <HeadTitle />
       <HeaderThree postData={allPosts} />
-      <PostSectionNine news={news} />
-      <CategoryListSlide cateData={allPosts} />
-      <PostSectionTen postData={allPosts} />
+
+    <div className="in">
+
       {/* <PostSectionThree postData={news} /> */}
       {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
       <SliderThree />
       <SliderFour />
 
       {/* <PostSectionEleven /> */}
-
-      <GalleryOne parentClass="bg-color-grey" />
-      <FooterThree />
+</div>
+      <FooterThree /></div>
     </>
   );
 };

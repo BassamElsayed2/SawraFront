@@ -1,44 +1,34 @@
 import Carousel from "react-bootstrap/Carousel";
+import { getAds } from "../../../../services/apiAds";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 // import ExampleCarouselImage from "components/ExampleCarouselImage";
 
 function SliderThree() {
+  const { data: bannars } = useQuery({
+    queryKey: ["ads"],
+    queryFn: getAds,
+  });
+
+  console.log(bannars);
+
   return (
     <Carousel>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="/images/add-banner/banner-01.webp"
-          alt="First slide"
-        />
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="/images/add-banner/banner-01.webp"
-          alt="Second slide"
-        />
-        <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="/images/add-banner/banner-01.webp"
-          alt="Third slide"
-        />
-        <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
-        </Carousel.Caption>
-      </Carousel.Item>
+      {bannars?.map((banner) => (
+        <Carousel.Item key={banner.id}>
+          <Link href={banner.link || "#"}>
+            <img
+              className="d-block w-100 "
+              style={{
+                objectFit: "cover",
+                height: "350px",
+              }}
+              src={banner.image_url}
+              alt={banner.title_en || "bannar"}
+            />
+          </Link>
+        </Carousel.Item>
+      ))}
     </Carousel>
   );
 }
