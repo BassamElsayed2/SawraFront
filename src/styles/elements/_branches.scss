@@ -1,0 +1,367 @@
+// Branches Page Styles
+.branches-page {
+  .hero-section {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+      @media (max-width: 768px) {
+        font-size: 2.5rem;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      opacity: 0.95;
+    }
+
+    .hero-stats {
+      .stat-badge {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .branches-section {
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: #718096;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+  }
+
+  .branch-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: none;
+
+    &:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-image {
+      position: relative;
+      height: 250px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.7) 0%,
+          transparent 100%
+        );
+      }
+
+      .card-title-overlay {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        z-index: 2;
+
+        h3 {
+          color: #ffffff;
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+          color: #e2e8f0;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+
+      .icon-wrapper {
+        background: #ebf8ff;
+        color: #3182ce;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 1rem;
+        flex-shrink: 0;
+
+        &.purple {
+          background: #faf5ff;
+          color: #805ad5;
+        }
+
+        &.green {
+          background: #f0fff4;
+          color: #38a169;
+        }
+      }
+
+      .info-content {
+        flex: 1;
+        margin-right: 15px;
+        h4 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #2d3748;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: #718096;
+          line-height: 1.6;
+          margin: 0;
+          font-size: 15px;
+        }
+      }
+    }
+
+    .services-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+
+      .service-tag {
+        background: #ebf8ff;
+        color: #3182ce;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+
+      @media (max-width: 576px) {
+        flex-direction: column;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+
+        &.btn-contact {
+          background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+          color: #ffffff;
+
+          &:hover {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+          }
+        }
+
+        &.btn-directions {
+          background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+          color: #ffffff;
+
+          &:hover {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(66, 153, 225, 0.3);
+          }
+        }
+      }
+    }
+  }
+
+  .contact-info-section {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    color: #ffffff;
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: #a0aec0;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+
+    .contact-item {
+      text-align: center;
+      padding: 2rem 1rem;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+
+        &.blue {
+          background: #4299e1;
+
+          &:hover {
+            background: #3182ce;
+            transform: scale(1.1);
+          }
+        }
+
+        &.green {
+          background: #48bb78;
+
+          &:hover {
+            background: #38a169;
+            transform: scale(1.1);
+          }
+        }
+
+        &.purple {
+          background: #805ad5;
+
+          &:hover {
+            background: #6b46c1;
+            transform: scale(1.1);
+          }
+        }
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: #ffffff;
+        }
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .contact-value {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+
+        &.blue {
+          color: #90cdf4;
+        }
+
+        &.green {
+          color: #9ae6b4;
+        }
+
+        &.purple {
+          color: #d6bcfa;
+        }
+      }
+
+      .contact-note {
+        color: #a0aec0;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .branches-page {
+    .info-item {
+      .icon-wrapper {
+        margin-left: 0;
+        margin-right: 1rem;
+      }
+    }
+
+    .action-buttons {
+      .btn {
+        gap: 0.5rem;
+      }
+    }
+  }
+}

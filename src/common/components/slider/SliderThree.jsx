@@ -18,10 +18,12 @@ function SliderThree() {
         <Carousel.Item key={banner.id}>
           <Link href={banner.link || "#"}>
             <img
-              className="d-block w-100 "
+              className="d-block  "
               style={{
                 objectFit: "cover",
                 height: "350px",
+                width: "75%",
+                margin: "auto",
               }}
               src={banner.image_url}
               alt={banner.title_en || "bannar"}

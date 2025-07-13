@@ -22,6 +22,9 @@ export default function NewsPage({ allPosts }) {
     query.category || "all"
   );
   const [currentPage, setCurrentPage] = useState(Number(query.page) || 1);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const itemsPerPage = 9;
 
   const {
@@ -77,6 +80,28 @@ export default function NewsPage({ allPosts }) {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleCardClick = (item) => {
+    setSelectedItem(item);
+    setQuantity(1);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+    setQuantity(1);
+  };
+
+  const increaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
   };
 
   useEffect(() => {
@@ -155,176 +180,156 @@ export default function NewsPage({ allPosts }) {
         <div className="row g-4">
           {currentItems.map((item) => (
             <div key={item.id} className="col-md-4">
-              <Link
-                href={`/${locale}/post/${item.id}`}
-                className="text-decoration-none"
+              <div
+                className="card semi-transparent-card h-100 text-center border-0 category-card-hover"
+                style={{
+                  borderRadius: "1rem",
+                  background: "#f5f5f5 ",
+                  boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
+                  border: "2px solid transparent",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCardClick(item)}
               >
-                <div
-                  className="card semi-transparent-card h-100 text-center border-0 category-card-hover"
-                  style={{
-                    borderRadius: "1rem",
-                    background: "#f5f5f5 ",
-                    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
-                    border: "2px solid transparent",
-                    cursor: "pointer",
-                  }}
-                >
-                  {item.images?.[0] && (
-                    <div
-                      className="position-relative"
+                {item.images?.[0] && (
+                  <div
+                    className="position-relative"
+                    style={{
+                      height: 200,
+                      overflow: "visible",
+                      borderTopLeftRadius: "1rem",
+                      borderTopRightRadius: "1rem",
+                    }}
+                  >
+                    <Image
+                      src={item.images[0]}
+                      alt={locale === "en" ? item.title_en : item.title_ar}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+
+                    {/* التصنيف */}
+                    <span
+                      className="position-absolute top-0 end-0 m-2 px-3 py-1 text-white fw-bold"
                       style={{
-                        height: 200,
-                        overflow: "visible",
-                        borderTopLeftRadius: "1rem",
-                        borderTopRightRadius: "1rem",
+                        backgroundColor: "rgba(255, 0, 0, 0.8)",
+                        borderRadius: "9999px",
+                        fontSize: "0.75rem",
                       }}
                     >
-                      <Image
-                        src={item.images[0]}
-                        alt={locale === "en" ? item.title_en : item.title_ar}
-                        layout="fill"
-                        objectFit="cover"
-                      />
+                      {locale === "en"
+                        ? item.category?.name_en
+                        : item.category?.name_ar}
+                    </span>
 
-                      {/* التصنيف */}
+                    {/* خصم العرض */}
+                    {item.offers > 0 && (
                       <span
-                        className="position-absolute top-0 end-0 m-2 px-3 py-1 text-white fw-bold"
+                        className="position-absolute start-0"
                         style={{
-                          backgroundColor: "rgba(255, 0, 0, 0.8)",
-                          borderRadius: "9999px",
-                          fontSize: "0.75rem",
+                          bottom: "-20px",
+                          width: "80px",
+                          height: "80px",
+                          background:
+                            "linear-gradient(45deg, #dc2626, #f97316)",
+                          color: "#fff",
+                          borderRadius: "50%",
+                          fontSize: "1.5rem",
+                          fontWeight: "bold",
+                          boxShadow: "0 0 10px #FFA52A",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 5,
                         }}
                       >
                         {locale === "en"
-                          ? item.category?.name_en
-                          : item.category?.name_ar}
+                          ? `${Math.round(
+                              (item.offers / item.price) * 100
+                            )}%  OFF`
+                          : `خصم  ${Math.round(
+                              (item.offers / item.price) * 100
+                            )}٪`}
                       </span>
+                    )}
+                  </div>
+                )}
 
-                      {/* خصم العرض */}
-                      {item.offers > 0 && (
-                        <span
-                          className="position-absolute start-0"
-                          style={{
-                            bottom: "-20px",
-                            width: "80px",
-                            height: "80px",
-                            background:
-                              "linear-gradient(45deg, #dc2626, #f97316)",
-                            color: "#fff",
-                            borderRadius: "50%",
-                            fontSize: "1.5rem",
-                            fontWeight: "bold",
-                            boxShadow: "0 0 10px #FFA52A",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 5,
-                          }}
-                        >
-                          {locale === "en"
-                            ? `${Math.round(
-                                (item.offers / item.price) * 100
-                              )}%  OFF`
-                            : `خصم  ${Math.round(
-                                (item.offers / item.price) * 100
-                              )}٪`}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                <div className="card-body px-3 py-4 d-flex flex-column justify-content-between">
+                  <h5
+                    className="fw-bold mb-2 category-title"
+                    style={{ minHeight: "48px", color: "#000" }}
+                  >
+                    {locale === "en" ? item.title_en : item.title_ar}
+                  </h5>
 
-                  <div className="card-body px-3 py-4 d-flex flex-column justify-content-between">
-                    <h5
-                      className="fw-bold mb-2 category-title"
-                      style={{ minHeight: "48px", color: "#000" }}
-                    >
-                      {locale === "en" ? item.title_en : item.title_ar}
-                    </h5>
+                  <div
+                    className="news-description text-muted mb-3"
+                    style={{ color: "#8b0000", opacity: 0.9 }}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        (locale === "en" ? item.content_en : item.content_ar)
+                          ?.split(" ")
+                          .slice(0, 20)
+                          .join(" ") + " ...",
+                    }}
+                  ></div>
 
-                    <div
-                      className="news-description text-muted mb-3"
-                      style={{ color: "#8b0000", opacity: 0.9 }}
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          (locale === "en" ? item.content_en : item.content_ar)
-                            ?.split(" ")
-                            .slice(0, 20)
-                            .join(" ") + " ...",
-                      }}
-                    ></div>
-
-                    <div className="mb-3">
-                      {item.offers > 0 ? (
-                        <>
-                          <div
-                            className="rounded px-3 py-2 d-flex justify-content-between align-items-center"
-                            style={{
-                              background:
-                                "linear-gradient(135deg, #FFA52A, #FFC773)",
-                              fontSize: "1.7rem",
-                              fontWeight: "bold",
-                              direction: locale === "ar" ? "rtl" : "ltr",
-                              color: "#fff",
-                            }}
-                          >
-                            <span
-                              style={{
-                                color: "#8b0000",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {locale === "en"
-                                ? `${item.price - item.offers} EGP`
-                                : `${item.price - item.offers} ج.م`}
-                            </span>
-                            <span
-                              style={{
-                                textDecoration: "line-through",
-                                opacity: 0.7,
-                              }}
-                            >
-                              {locale === "en"
-                                ? `${item.price} EGP`
-                                : `${item.price} ج.م`}
-                            </span>
-                          </div>
-                          {/* <div
-                                className="mt-2"
-                                style={{
-                                  fontWeight: 600,
-                                  color: "#16a34a",
-                                  fontSize: "1.5rem",
-                                }}
-                              >
-                                {locale === "en"
-                                  ? `${Math.round(
-                                      (item.offers / item.price) * 100
-                                    )}% OFF`
-                                  : `خصم ${Math.round(
-                                      (item.offers / item.price) * 100
-                                    )}٪`}
-                              </div> */}
-                        </>
-                      ) : (
+                  <div className="mb-3">
+                    {item.offers > 0 ? (
+                      <>
                         <div
-                          className="rounded px-3 py-2 text-center"
+                          className="rounded px-3 py-2 d-flex justify-content-between align-items-center"
                           style={{
                             background:
                               "linear-gradient(135deg, #FFA52A, #FFC773)",
                             fontSize: "1.7rem",
                             fontWeight: "bold",
-                            color: "#8b0000",
+                            direction: locale === "ar" ? "rtl" : "ltr",
+                            color: "#fff",
                           }}
                         >
-                          {locale === "en"
-                            ? `${item.price} EGP`
-                            : `${item.price} ج.م`}
+                          <span
+                            style={{
+                              color: "#8b0000",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {locale === "en"
+                              ? `${item.price - item.offers} EGP`
+                              : `${item.price - item.offers} ج.م`}
+                          </span>
+                          <span
+                            style={{
+                              textDecoration: "line-through",
+                              opacity: 0.7,
+                            }}
+                          >
+                            {locale === "en"
+                              ? `${item.price} EGP`
+                              : `${item.price} ج.م`}
+                          </span>
                         </div>
-                      )}
-                    </div>
+                      </>
+                    ) : (
+                      <div
+                        className="rounded px-3 py-2 text-center"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #FFA52A, #FFC773)",
+                          fontSize: "1.7rem",
+                          fontWeight: "bold",
+                          color: "#8b0000",
+                        }}
+                      >
+                        {locale === "en"
+                          ? `${item.price} EGP`
+                          : `${item.price} ج.م`}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
           ))}
         </div>
@@ -388,6 +393,204 @@ export default function NewsPage({ allPosts }) {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && selectedItem && (
+        <div
+          className="modal fade show"
+          style={{
+            display: "block",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1050,
+          }}
+          onClick={closeModal}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header border-0">
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                  aria-label="Close"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+              <div className="modal-body p-4">
+                <div className="row">
+                  {/* صورة المنتج */}
+                  <div className="col-md-6 mb-4">
+                    {selectedItem.images?.[0] && (
+                      <div
+                        className="product-image-container position-relative"
+                        style={{ height: "400px" }}
+                      >
+                        <Image
+                          src={selectedItem.images[0]}
+                          alt={
+                            locale === "en"
+                              ? selectedItem.title_en
+                              : selectedItem.title_ar
+                          }
+                          layout="fill"
+                          objectFit="cover"
+                          style={{ borderRadius: "1rem" }}
+                        />
+                        {selectedItem.offers > 0 && (
+                          <span
+                            className="position-absolute top-0 start-0 m-3 px-3 py-2 text-white fw-bold"
+                            style={{
+                              backgroundColor: "rgba(220, 38, 38, 0.9)",
+                              borderRadius: "9999px",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {locale === "en"
+                              ? `${Math.round(
+                                  (selectedItem.offers / selectedItem.price) *
+                                    100
+                                )}% OFF`
+                              : `خصم ${Math.round(
+                                  (selectedItem.offers / selectedItem.price) *
+                                    100
+                                )}٪`}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* تفاصيل المنتج */}
+                  <div className="col-md-6">
+                    <h3 className="fw-bold mb-3" style={{ color: "#000" }}>
+                      {locale === "en"
+                        ? selectedItem.title_en
+                        : selectedItem.title_ar}
+                    </h3>
+
+                    {/* التصنيف */}
+                    <div className="mb-3">
+                      <span className="category-badge">
+                        {locale === "en"
+                          ? selectedItem.category?.name_en
+                          : selectedItem.category?.name_ar}
+                      </span>
+                    </div>
+
+                    {/* الوصف */}
+                    <div className="mb-4">
+                      <h6 className="fw-bold mb-2">
+                        {locale === "en" ? "Description" : "الوصف"}
+                      </h6>
+                      <div
+                        className="product-description"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            locale === "en"
+                              ? selectedItem.content_en
+                              : selectedItem.content_ar,
+                        }}
+                      ></div>
+                    </div>
+
+                    {/* العداد */}
+                    <div className="mb-4">
+                      <h6 className="fw-bold mb-2">
+                        {locale === "en" ? "Quantity" : "الكمية"}
+                      </h6>
+                      <div className="quantity-counter d-flex align-items-center">
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={decreaseQuantity}
+                          disabled={quantity <= 1}
+                        >
+                          -
+                        </button>
+                        <span className="quantity-display mx-3 fw-bold">
+                          {quantity}
+                        </span>
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={increaseQuantity}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* السعر */}
+                    <div className="mb-4">
+                      <h6 className="fw-bold mb-2">
+                        {locale === "en" ? "Price" : "السعر"}
+                      </h6>
+                      <div className="price-display">
+                        {selectedItem.offers > 0 ? (
+                          <div className="d-flex align-items-center gap-3">
+                            <span className="current-price">
+                              {locale === "en"
+                                ? `${
+                                    selectedItem.price - selectedItem.offers
+                                  } EGP`
+                                : `${
+                                    selectedItem.price - selectedItem.offers
+                                  } ج.م`}
+                            </span>
+                            <span className="original-price">
+                              {locale === "en"
+                                ? `${selectedItem.price} EGP`
+                                : `${selectedItem.price} ج.م`}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="current-price">
+                            {locale === "en"
+                              ? `${selectedItem.price} EGP`
+                              : `${selectedItem.price} ج.م`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* إجمالي السعر */}
+                    <div className="mb-4">
+                      <h6 className="fw-bold mb-2">
+                        {locale === "en" ? "Total" : "الإجمالي"}
+                      </h6>
+                      <span className="total-price">
+                        {locale === "en"
+                          ? `${
+                              (selectedItem.offers > 0
+                                ? selectedItem.price - selectedItem.offers
+                                : selectedItem.price) * quantity
+                            } EGP`
+                          : `${
+                              (selectedItem.offers > 0
+                                ? selectedItem.price - selectedItem.offers
+                                : selectedItem.price) * quantity
+                            } ج.م`}
+                      </span>
+                    </div>
+
+                    {/* أزرار الإجراءات */}
+                    <div className="action-buttons d-grid gap-2">
+                      <button className="btn btn-primary btn-lg">
+                        {locale === "en" ? "Add to Cart" : "أضف إلى السلة"}
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={closeModal}
+                      >
+                        {locale === "en" ? "Close" : "إغلاق"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* <GalleryOne /> */}
       <FooterThree />

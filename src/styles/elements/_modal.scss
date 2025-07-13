@@ -1,0 +1,225 @@
+// Modal Styles
+.modal {
+  .modal-dialog {
+    max-width: 900px;
+  }
+
+  .modal-content {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem 0;
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #666;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #f8f9fa;
+        color: #333;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  // Product Image Container
+  .product-image-container {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    img {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  // Quantity Counter
+  .quantity-counter {
+    .btn {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background-color: #ffa52a;
+        border-color: #ffa52a;
+        color: white;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .quantity-display {
+      min-width: 60px;
+      text-align: center;
+    }
+  }
+
+  // Price Display
+  .price-display {
+    .current-price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #dc2626;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      opacity: 0.7;
+      font-size: 1.2rem;
+    }
+  }
+
+  // Total Price
+  .total-price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #16a34a;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  // Action Buttons
+  .action-buttons {
+    .btn-primary {
+      background: linear-gradient(135deg, #ffa52a, #ffc773);
+      border: none;
+      color: #8b0000;
+      font-weight: bold;
+      padding: 0.75rem 2rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 165, 42, 0.4);
+      }
+    }
+
+    .btn-outline-secondary {
+      border-radius: 0.5rem;
+      padding: 0.75rem 2rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+      }
+    }
+  }
+
+  // Category Badge
+  .category-badge {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    font-weight: bold;
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    display: inline-block;
+  }
+
+  // Description
+  .product-description {
+    line-height: 1.6;
+    color: #666;
+    max-height: 200px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    .modal-dialog {
+      margin: 1rem;
+      max-width: calc(100% - 2rem);
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .product-image-container {
+      height: 250px !important;
+    }
+
+    .current-price {
+      font-size: 1.5rem !important;
+    }
+
+    .total-price {
+      font-size: 2rem !important;
+    }
+  }
+}
+
+// Animation for modal
+.modal.fade.show {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Backdrop animation
+.modal-backdrop.show {
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}

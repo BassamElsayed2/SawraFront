@@ -68,7 +68,7 @@ const Nav = ({ posts }) => {
         </Link>
       </li>
       <li className="menu-item-has-children">
-        <Link href="/">
+        <Link href="/branches">
           <a>
             <Image
               width={98}

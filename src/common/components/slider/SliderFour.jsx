@@ -77,7 +77,7 @@ export default function CardSlider() {
                 <Image
                   src={item.images[0]}
                   alt={locale === "en" ? item.title_en : item.title_ar}
-                  width={400}
+                  width={250}
                   height={250}
                   className="card-img-top"
                   style={{
