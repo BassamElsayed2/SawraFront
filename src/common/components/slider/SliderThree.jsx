@@ -13,6 +13,7 @@ function SliderThree() {
   console.log(bannars);
 
   return (
+    <div className="slidez">
     <Carousel>
       {bannars?.map((banner) => (
         <Carousel.Item key={banner.id}>
@@ -22,7 +23,7 @@ function SliderThree() {
               style={{
                 objectFit: "cover",
                 height: "244px",
-                width: "1141px",
+                width: "1135px",
                 margin: "auto",
               }}
               src={banner.image_url}
@@ -31,7 +32,7 @@ function SliderThree() {
           </Link>
         </Carousel.Item>
       ))}
-    </Carousel>
+    </Carousel></div>
   );
 }
 

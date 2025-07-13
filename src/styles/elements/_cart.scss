@@ -306,11 +306,7 @@
   }
 
   .btn-primary {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary),
-      var(--color-secondary)
-    );
+    background: linear-gradient(45deg, rgb(220, 38, 38), rgb(249, 115, 22));
     border: none;
     border-radius: var(--radius);
     font-weight: var(--p-bold);
@@ -318,11 +314,7 @@
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(
-        135deg,
-        var(--color-secondary),
-        var(--color-primary)
-      );
+      background: linear-gradient(45deg, rgb(249, 115, 22), rgb(220, 38, 38));
       transform: translateY(-2px);
       box-shadow: var(--shadow-primary);
     }

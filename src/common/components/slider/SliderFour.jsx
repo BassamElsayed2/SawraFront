@@ -17,9 +17,9 @@ export default function CardSlider() {
     queryFn: getNews,
   });
 
-  // فلترة الأخبار التي لديها offers غير null
+  // فلترة الأخبار التي لديها status يساوي 'offer'
   const offersNews = Array.isArray(news)
-    ? news.filter((item) => item.offers > 0)
+    ? news.filter((item) => item.status === "offer")
     : [];
 
   console.log(offersNews);
@@ -30,7 +30,7 @@ export default function CardSlider() {
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 4,
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 4000,
     pauseOnHover: false,
     pauseOnFocus: false,
@@ -63,13 +63,13 @@ export default function CardSlider() {
         {offersNews.map((item) => (
           <div key={item.id} className="p-2">
             <div
-              className="card h-100 shadow-sm text-center card-offer"
+              className="card  h-100  text-center card-offer"
               style={{
                 borderRadius: 18,
                 overflow: "hidden",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                 transition: "transform 0.2s, box-shadow 0.2s",
-                background: "#fff",
+                background: "transparent",
                 cursor: "pointer",
               }}
             >
@@ -77,8 +77,8 @@ export default function CardSlider() {
                 <Image
                   src={item.images[0]}
                   alt={locale === "en" ? item.title_en : item.title_ar}
-                  width={250}
-                  height={250}
+                  width={282}
+                  height={345}
                   className="card-img-top"
                   style={{
                     objectFit: "cover",

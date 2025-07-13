@@ -155,8 +155,6 @@ export default function NewsPage({ allPosts }) {
     return offerMap[selectedSize] || item.offers;
   };
 
-  console.log(selectedItem);
-
   // دالة للتحقق من وجود أحجام متعددة
   const hasMultipleSizes = (item) => {
     if (!item) return false;

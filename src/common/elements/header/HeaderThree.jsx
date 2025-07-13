@@ -52,10 +52,10 @@ const HeaderThree = ({ postData }) => {
       <header className="header axil-header header-style-3  header-light header-sticky">
         <div className="header-top">
           <div className="container">
-            <div className="row align-items-center">
-              <div className="col-lg-6 col-md-8 col-sm-12">
+            <div className=" d-flex justify-content-between align-items-center">
+              <div className="">
                 <div className="header-top-bar d-flex flex-wrap align-items-center justify-content-center justify-content-md-start">
-                  <ul className="header-top-date liststyle d-flex flrx-wrap align-items-center mr--20">
+                  <ul className="header-top-date liststyle  align-items-center mr--20">
                     <li>
                       <Link href="#">
                         <a>{dateFormate()}</a>
@@ -81,7 +81,7 @@ const HeaderThree = ({ postData }) => {
                   </ul>
                 </div>
               </div>
-              <div className="col-lg-6 col-md-4 col-sm-12">
+              <div className="">
                 <ul className="social-share-transparent md-size justify-content-center justify-content-md-end">
                   <LanguageSwitcher />
                 </ul>

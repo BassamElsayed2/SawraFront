@@ -45,6 +45,7 @@ const CartModal = ({ isOpen, onClose }) => {
       locale === "en" ? "EGP" : "ج.م"
     }%0A`;
     text += locale === "en" ? "Name: " : "الاسم: ";
+
     return text;
   };
 

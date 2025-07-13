@@ -53,45 +53,44 @@ const Nav = ({ posts }) => {
     setTabPostData(tempData);
   };
 
+  const navLinks = [
+    {
+      href: "/menu",
+      img: {
+        src: "/images/link1.png",
+        className: "nav-menu",
+        alt: "Blogar logo",
+      },
+    },
+    {
+      href: "/branches",
+      img: {
+        src: "/images/link2.png",
+        className: "nav-branches",
+        alt: "Blogar logo",
+      },
+    },
+    {
+      href: "/",
+      img: {
+        src: "/images/link3.png",
+        className: "nav-home",
+        alt: "Blogar logo",
+      },
+    },
+  ];
+
   return (
     <ul className="mainmenu">
-      <li className="menu-item-has-children">
-        <Link href="/menu">
-          <a>
-            <Image
-              width={100}
-              height={38}
-              src={"/images/link1.png"}
-              alt="Blogar logo"
-            />
-          </a>
-        </Link>
-      </li>
-      <li className="menu-item-has-children">
-        <Link href="/branches">
-          <a>
-            <Image
-              width={98}
-              height={38}
-              src={"/images/link2.png"}
-              alt="Blogar logo"
-            />
-          </a>
-        </Link>
-      </li>
-
-      <li className="menu-item-has-children">
-        <Link href="/">
-          <a>
-            <Image
-              width={140}
-              height={38}
-              src={"/images/link3.png"}
-              alt="Blogar logo"
-            />
-          </a>
-        </Link>
-      </li>
+      {navLinks.map((link, idx) => (
+        <li className="menu-item-has-children" key={idx}>
+          <Link href={link.href}>
+            <a>
+              <img className={link.cn} src={link.img.src} alt={link.img.alt} />
+            </a>
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 };

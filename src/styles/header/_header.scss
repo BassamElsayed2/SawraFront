@@ -5,7 +5,6 @@ Header Styles
 .main {
   max-width: 1248px;
   margin: auto;
-  box-shadow: 0px 0px 40px 40px #881713;
 }
 .axil-header {
   padding: 0 60px;
@@ -27,6 +26,10 @@ Header Styles
       text-align: center;
       margin-bottom: 20px;
     }
+  }
+  .slidez {
+    background: black;
+    height: 1000px;
   }
   .mostafa {
     width: 1305px;
@@ -319,6 +322,7 @@ button {
     Header Style Three  
 ---------------------------*/
 .header-top {
+  background-color: #8b0000;
   .header-top-nav {
     li {
       margin: 0 20px;
@@ -733,4 +737,55 @@ button {
 
 .popup-mobilemenu-area .inner .mobile-menu-top .logo a img.light-logo {
   display: none;
+}
+
+@media (max-width: 576px) {
+  .main {
+    max-width: 576px;
+    margin: auto;
+  }
+  .axil-header {
+    background-image: url(/images/hmbg.jpg) !important;
+    height: 392px !important;
+  }
+  .logoz {
+    display: none !important;
+  }
+  .header-bottom {
+    margin-top: 110px;
+  }
+  .menu-item-has-children {
+    height: 23px;
+  }
+  .nav-menu {
+    width: 80px;
+    height: 31px;
+  }
+  .nav-branches {
+    width: 80px;
+    height: 31px;
+  }
+  .nav-home {
+    display: none;
+  }
+  .footerz {
+    background-image: url(/images/mfbg.jpg) !important;
+    height: 154px;
+  }
+  .copyright-area ul.mainmenu {
+    display: none;
+  }
+}
+
+.nav-menu {
+  width: 105px;
+  height: 40px;
+}
+.nav-branches {
+  width: 105px;
+  height: 40px;
+}
+.nav-home {
+  width: 149px;
+  height: 40px;
 }
