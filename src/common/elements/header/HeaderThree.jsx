@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { getAds } from "../../../../services/apiAds";
 import { useQuery } from "@tanstack/react-query";
 import { getAboutUs } from "../../../../services/apiAboutUs";
+import { useLocale } from "next-intl";
 
 const HeaderThree = ({ postData }) => {
   const { locale } = useRouter();
@@ -45,13 +46,6 @@ const HeaderThree = ({ postData }) => {
   };
 
   const { t } = useTranslation("common");
-
-  const { data: ads } = useQuery({
-    queryKey: ["ads"],
-    queryFn: getAds,
-  });
-
-  const homeAds = ads?.filter((ad) => ad.location === "home");
 
   return (
     <>

@@ -21,8 +21,8 @@ function SliderThree() {
               className="d-block  "
               style={{
                 objectFit: "cover",
-                height: "350px",
-                width: "75%",
+                height: "244px",
+                width: "1141px",
                 margin: "auto",
               }}
               src={banner.image_url}

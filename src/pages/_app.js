@@ -8,26 +8,24 @@ import { IntlProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import PageTransition from "../common/PageTransition";
+import { CartProvider } from "../context/CartContext";
 
 function MyApp({ Component, pageProps }) {
   const { locale } = useRouter();
   const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
-    // ضبط الاتجاه بناءً على اللغة
-    if (locale === "ar") {
-      document.documentElement.dir = "rtl";
-    } else {
-      document.documentElement.dir = "ltr";
-    }
+    document.documentElement.dir = "rtl";
   }, [locale]);
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale={locale} messages={pageProps.messages}>
-          <Component {...pageProps} />
-          <PageTransition />
+          <CartProvider>
+            <Component {...pageProps} />
+            <PageTransition />
+          </CartProvider>
         </IntlProvider>
       </QueryClientProvider>
     </>

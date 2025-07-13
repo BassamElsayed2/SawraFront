@@ -29,20 +29,20 @@ const TechBlog = ({ allPosts }) => {
 
   return (
     <>
-    <div className="main">
-      <HeadTitle />
-      <HeaderThree postData={allPosts} />
+      <div className="main">
+        <HeadTitle />
+        <HeaderThree postData={allPosts} />
 
-    <div className="in">
+        <div className="in">
+          {/* <PostSectionThree postData={news} /> */}
+          {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
+          <SliderThree />
+          <SliderFour />
 
-      {/* <PostSectionThree postData={news} /> */}
-      {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
-      <SliderThree />
-      <SliderFour />
-
-      {/* <PostSectionEleven /> */}
-</div>
-      <FooterThree /></div>
+          {/* <PostSectionEleven /> */}
+        </div>
+        <FooterThree />
+      </div>
     </>
   );
 };

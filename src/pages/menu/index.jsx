@@ -12,10 +12,14 @@ import { getAllPosts } from "../../../lib/api";
 import FooterThree from "../../common/elements/footer/FooterThree";
 import GalleryOne from "../../common/gallery/GalleryOne";
 import HeaderThree from "../../common/elements/header/HeaderThree";
+import { useCart } from "../../context/CartContext";
+import CartModal from "../../common/components/cart/CartModal";
+import CartIcon from "../../common/components/cart/CartIcon";
 
 export default function NewsPage({ allPosts }) {
   const router = useRouter();
   const { locale, query } = router;
+  const { addToCart } = useCart();
 
   const [searchTerm, setSearchTerm] = useState(query.search || "");
   const [selectedCategory, setSelectedCategory] = useState(
@@ -25,6 +29,8 @@ export default function NewsPage({ allPosts }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("price");
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const itemsPerPage = 9;
 
   const {
@@ -85,6 +91,7 @@ export default function NewsPage({ allPosts }) {
   const handleCardClick = (item) => {
     setSelectedItem(item);
     setQuantity(1);
+    setSelectedSize("price");
     setIsModalOpen(true);
   };
 
@@ -92,6 +99,20 @@ export default function NewsPage({ allPosts }) {
     setIsModalOpen(false);
     setSelectedItem(null);
     setQuantity(1);
+    setSelectedSize("price");
+  };
+
+  const handleAddToCart = () => {
+    if (selectedItem) {
+      addToCart(selectedItem, quantity, selectedSize);
+      closeModal();
+      // إظهار رسالة نجاح
+      alert(
+        locale === "en"
+          ? "Product added to cart successfully!"
+          : "تم إضافة المنتج إلى السلة بنجاح!"
+      );
+    }
   };
 
   const increaseQuantity = () => {
@@ -102,6 +123,49 @@ export default function NewsPage({ allPosts }) {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
+  };
+
+  // دالة لحساب السعر الحالي بناءً على الحجم المحدد
+  const getCurrentPrice = (item) => {
+    if (!item) return 0;
+
+    const priceMap = {
+      price: item.price,
+      price_small: item.price_small,
+      price_medium: item.price_medium,
+      price_large: item.price_large,
+      price_family: item.price_family,
+    };
+
+    return priceMap[selectedSize] || item.price;
+  };
+
+  // دالة لحساب الخصم الحالي بناءً على الحجم المحدد
+  const getCurrentOffer = (item) => {
+    if (!item) return 0;
+
+    const offerMap = {
+      price: item.offers,
+      price_small: item.offers_small,
+      price_medium: item.offers_medium,
+      price_large: item.offers_large,
+      price_family: item.offers_family,
+    };
+
+    return offerMap[selectedSize] || item.offers;
+  };
+
+  console.log(selectedItem);
+
+  // دالة للتحقق من وجود أحجام متعددة
+  const hasMultipleSizes = (item) => {
+    if (!item) return false;
+    return (
+      item.price_small ||
+      item.price_medium ||
+      item.price_large ||
+      item.price_family
+    );
   };
 
   useEffect(() => {
@@ -121,6 +185,21 @@ export default function NewsPage({ allPosts }) {
     <div className="news-page main">
       <HeadTitle pageTitle={locale === "en" ? "News" : "الأخبار"} />
       <HeaderThree postData={allPosts} />
+
+      {/* أيقونة السلة */}
+      <div
+        className="position-fixed"
+        style={{
+          top: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <CartIcon
+          onClick={() => setIsCartModalOpen(true)}
+          className="p-3 rounded-circle shadow-lg"
+        />
+      </div>
 
       <div className="container mt-5 mb-5">
         {/* البحث */}
@@ -437,7 +516,7 @@ export default function NewsPage({ allPosts }) {
                           objectFit="cover"
                           style={{ borderRadius: "1rem" }}
                         />
-                        {selectedItem.offers > 0 && (
+                        {getCurrentOffer(selectedItem) > 0 && (
                           <span
                             className="position-absolute top-0 start-0 m-3 px-3 py-2 text-white fw-bold"
                             style={{
@@ -448,11 +527,13 @@ export default function NewsPage({ allPosts }) {
                           >
                             {locale === "en"
                               ? `${Math.round(
-                                  (selectedItem.offers / selectedItem.price) *
+                                  (getCurrentOffer(selectedItem) /
+                                    getCurrentPrice(selectedItem)) *
                                     100
                                 )}% OFF`
                               : `خصم ${Math.round(
-                                  (selectedItem.offers / selectedItem.price) *
+                                  (getCurrentOffer(selectedItem) /
+                                    getCurrentPrice(selectedItem)) *
                                     100
                                 )}٪`}
                           </span>
@@ -494,6 +575,79 @@ export default function NewsPage({ allPosts }) {
                       ></div>
                     </div>
 
+                    {/* اختيار الحجم */}
+                    {hasMultipleSizes(selectedItem) && (
+                      <div className="mb-4">
+                        <h6 className="fw-bold mb-2">
+                          {locale === "en" ? "Size" : "الحجم"}
+                        </h6>
+                        <div className="size-selector d-flex flex-wrap gap-2">
+                          {selectedItem.price && (
+                            <button
+                              className={`size-btn ${
+                                selectedSize === "price" ? "active" : ""
+                              }`}
+                              onClick={() => setSelectedSize("price")}
+                            >
+                              {locale === "en" ? "Regular" : "عادي"}
+                            </button>
+                          )}
+                          {selectedItem.price_small && (
+                            <button
+                              className={`size-btn ${
+                                selectedSize === "price_small" ? "active" : ""
+                              }`}
+                              onClick={() => setSelectedSize("price_small")}
+                            >
+                              {locale === "en" ? "Small" : "صغير"}
+                            </button>
+                          )}
+                          {selectedItem.price_medium && (
+                            <button
+                              className={`size-btn ${
+                                selectedSize === "price_medium" ? "active" : ""
+                              }`}
+                              onClick={() => setSelectedSize("price_medium")}
+                            >
+                              {locale === "en" ? "Medium" : "متوسط"}
+                            </button>
+                          )}
+                          {selectedItem.price_large && (
+                            <button
+                              className={`size-btn ${
+                                selectedSize === "price_large" ? "active" : ""
+                              }`}
+                              onClick={() => setSelectedSize("price_large")}
+                            >
+                              {selectedItem.category?.name_en === "Crepe"
+                                ? locale === "en"
+                                  ? "role medium"
+                                  : "رول وسط"
+                                : locale === "en"
+                                ? "Large"
+                                : "كبير"}
+                            </button>
+                          )}
+                          {selectedItem.price_family && (
+                            <button
+                              className={`size-btn ${
+                                selectedSize === "price_family" ? "active" : ""
+                              }`}
+                              onClick={() => setSelectedSize("price_family")}
+                            >
+                              {selectedItem.category?.name_en === "Crepe"
+                                ? locale === "en"
+                                  ? "role large"
+                                  : "رول كبير"
+                                : locale === "en"
+                                ? "Family"
+                                : "عائلي"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* العداد */}
                     <div className="mb-4">
                       <h6 className="fw-bold mb-2">
@@ -525,28 +679,30 @@ export default function NewsPage({ allPosts }) {
                         {locale === "en" ? "Price" : "السعر"}
                       </h6>
                       <div className="price-display">
-                        {selectedItem.offers > 0 ? (
+                        {getCurrentOffer(selectedItem) > 0 ? (
                           <div className="d-flex align-items-center gap-3">
                             <span className="current-price">
                               {locale === "en"
                                 ? `${
-                                    selectedItem.price - selectedItem.offers
+                                    getCurrentPrice(selectedItem) -
+                                    getCurrentOffer(selectedItem)
                                   } EGP`
                                 : `${
-                                    selectedItem.price - selectedItem.offers
+                                    getCurrentPrice(selectedItem) -
+                                    getCurrentOffer(selectedItem)
                                   } ج.م`}
                             </span>
                             <span className="original-price">
                               {locale === "en"
-                                ? `${selectedItem.price} EGP`
-                                : `${selectedItem.price} ج.م`}
+                                ? `${getCurrentPrice(selectedItem)} EGP`
+                                : `${getCurrentPrice(selectedItem)} ج.م`}
                             </span>
                           </div>
                         ) : (
                           <span className="current-price">
                             {locale === "en"
-                              ? `${selectedItem.price} EGP`
-                              : `${selectedItem.price} ج.م`}
+                              ? `${getCurrentPrice(selectedItem)} EGP`
+                              : `${getCurrentPrice(selectedItem)} ج.م`}
                           </span>
                         )}
                       </div>
@@ -560,21 +716,26 @@ export default function NewsPage({ allPosts }) {
                       <span className="total-price">
                         {locale === "en"
                           ? `${
-                              (selectedItem.offers > 0
-                                ? selectedItem.price - selectedItem.offers
-                                : selectedItem.price) * quantity
+                              (getCurrentOffer(selectedItem) > 0
+                                ? getCurrentPrice(selectedItem) -
+                                  getCurrentOffer(selectedItem)
+                                : getCurrentPrice(selectedItem)) * quantity
                             } EGP`
                           : `${
-                              (selectedItem.offers > 0
-                                ? selectedItem.price - selectedItem.offers
-                                : selectedItem.price) * quantity
+                              (getCurrentOffer(selectedItem) > 0
+                                ? getCurrentPrice(selectedItem) -
+                                  getCurrentOffer(selectedItem)
+                                : getCurrentPrice(selectedItem)) * quantity
                             } ج.م`}
                       </span>
                     </div>
 
                     {/* أزرار الإجراءات */}
                     <div className="action-buttons d-grid gap-2">
-                      <button className="btn btn-primary btn-lg">
+                      <button
+                        className="btn btn-primary btn-lg"
+                        onClick={handleAddToCart}
+                      >
                         {locale === "en" ? "Add to Cart" : "أضف إلى السلة"}
                       </button>
                       <button
@@ -591,6 +752,12 @@ export default function NewsPage({ allPosts }) {
           </div>
         </div>
       )}
+
+      {/* Modal السلة */}
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={() => setIsCartModalOpen(false)}
+      />
 
       {/* <GalleryOne /> */}
       <FooterThree />
