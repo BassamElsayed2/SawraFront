@@ -36,8 +36,10 @@ const TechBlog = ({ allPosts }) => {
         <div className="in">
           {/* <PostSectionThree postData={news} /> */}
           {/* <PostSectionFour postData={techPost} adBanner={true} /> */}
-          <SliderThree />
-          <SliderFour />
+          <div className="Home">
+            <SliderThree />
+            <SliderFour />
+          </div>
 
           {/* <PostSectionEleven /> */}
         </div>

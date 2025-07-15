@@ -37,12 +37,12 @@ const MobileMenu = ({ menuShow, menuHide }) => {
               <a>
                 <Image
                   className={logo?.logo_url || "dark-logo"}
-                  width={141}
-                  height={37}
+                  width={200}
+                        height={60}
                   src={
                     colorMode === "Dark"
-                      ? "/images/logo/logo-white2.webp"
-                      : "/images/logo/logo-black.webp"
+                      ? "/images/logo/LogoElSawra.png"
+                      : "/images/logo/LogoElSawra.png"
                   }
                   alt="Blogar logo"
                 />
@@ -61,13 +61,13 @@ const MobileMenu = ({ menuShow, menuHide }) => {
             <Link href="/">{locale === "en" ? "Home" : "الرئيسية"}</Link>
           </li>
           <li className="menu-item-has-children">
-            <Link href={`/${locale}/news`}>
-              {locale === "en" ? "All News" : "جميع الأخبار"}
+            <Link href={`/${locale}/menu`}>
+              {locale === "en" ? "Menu" : "المنيو"}
             </Link>
           </li>
           <li className="menu-item-has-children">
             <Link href={`/${locale}/gallery`}>
-              <a>{locale === "en" ? "Gallery" : "معرض الصور"}</a>
+              <a>{locale === "en" ? "Gallery" : "المعرض "}</a>
             </Link>
           </li>
           <li>

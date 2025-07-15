@@ -9,7 +9,7 @@
 @mixin config-bg-colors($prefix, $bg-color-...) {
 	@each $i in $bg-color- {
 		.#{$prefix}#{nth($i, 1)} {
-			background: nth($i, 2);
+			background: #A00008;
 		}
 	}
 }

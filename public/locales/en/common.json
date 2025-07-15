@@ -19,5 +19,8 @@
   },
   "post": {
     "readMore": "Read More"
-  }
+  },
+  "location": "Your Country, Your City, 12345",
+  "hotline": "0123456789",
+  "working_hours": "11:00 AM - 9:00 PM"
 }

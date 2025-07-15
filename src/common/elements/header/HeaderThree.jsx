@@ -10,9 +10,8 @@ import { useRouter } from "next/router";
 import { getAds } from "../../../../services/apiAds";
 import { useQuery } from "@tanstack/react-query";
 import { getAboutUs } from "../../../../services/apiAboutUs";
-import { useLocale } from "next-intl";
 
-const HeaderThree = ({ postData }) => {
+const HeaderThree = ({pClass, darkLogo, lightLogo, postData }) => {
   const { locale } = useRouter();
 
   const { data: logo } = useQuery({
@@ -47,88 +46,95 @@ const HeaderThree = ({ postData }) => {
 
   const { t } = useTranslation("common");
 
+  const { data: ads } = useQuery({
+    queryKey: ["ads"],
+    queryFn: getAds,
+  });
+
+  const homeAds = ads?.filter((ad) => ad.location === "home");
+
   return (
     <>
-      <header className="header axil-header header-style-3  header-light header-sticky">
-        <div className="header-top">
-          <div className="container">
-            <div className=" d-flex justify-content-between align-items-center">
-              <div className="">
-                <div className="header-top-bar d-flex flex-wrap align-items-center justify-content-center justify-content-md-start">
-                  <ul className="header-top-date liststyle  align-items-center mr--20">
-                    <li>
-                      <Link href="#">
-                        <a>{dateFormate()}</a>
-                      </Link>
-                    </li>
-                  </ul>
-                  <ul className="header-top-nav liststyle d-flex flrx-wrap align-items-center">
-                    <li>
-                      <Link href="#">
-                        <a>{t("advertisement")}</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="#">
-                        <a href="#">{t("about")}</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="#">
-                        <a>{t("contact")}</a>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="">
-                <ul className="social-share-transparent md-size justify-content-center justify-content-md-end">
-                  <LanguageSwitcher />
-                </ul>
-              </div>
+  <header className="header axil-header header-style-3 header-light header-sticky">
+  <div className="custom-header-top">
+  <div className="container">
+    <div className="row align-items-center justify-content-between">
+      <div className="col-md-9 col-sm-12">
+        <ul className="header-top-info list-unstyled mb-0">
+          <li>
+            <i className="fas fa-map-marker-alt icon-yellow" />
+            <span>{t("location", { defaultValue: "Your Country, Your City, 12345" })}</span>
+          </li>
+          <li>
+            <i className="fas fa-phone-alt icon-yellow" />
+            <span>{t("hotline", { defaultValue: "123 456 789" })}</span>
+          </li>
+          <li>
+            <i className="fas fa-clock icon-yellow" />
+            <span>{t("working_hours", { defaultValue: "11:00 - 21:00" })}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div className="col-md-3 col-sm-12 text-end">
+        <LanguageSwitcher />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    {/* ===== Header Main Row: Logo + Nav + Switch ===== */}
+    <div className="header-middle py-2">
+      <div className="container">
+        <div className="row align-items-center justify-content-between">
+          {/* Logo */}
+          <div className="col-lg-3 col-md-4 col-sm-4 col-6">
+            <div className="logo">
+           
+              <Link href="/">
+                <a>
+                  <img
+                    className={logo?.logo_url || "dark-logo"}
+                   
+                    src="/images/logo/LogoElSawra.png"
+                    alt=" logo"
+                  />
+                </a>
+              </Link>
             </div>
           </div>
-        </div>
 
-        <div className="header-middle">
-          <div className="container">
-            <div className="row">
-              <div className="logoz col-12">
-                <div className=" d-flex ">
-                  <Link href="/">
-                    <a>
-                      <Image
-                        className={logo?.logo_url || "dark-logo"}
-                        width={385}
-                        height={265}
-                        src={"/images/logo.png"}
-                        alt="Blogar logo"
-                      />
-                    </a>
-                  </Link>
-                </div>
-              </div>
+          <div className="col-lg-6 d-none d-xl-block">
+            <div className="mainmenu-wrapper text-center">
+              <nav className="mainmenu-nav">
+                <Nav posts={postData} />
+               
+              </nav>
             </div>
           </div>
-        </div>
 
-        <div className="header-bottom">
-          <div className="container">
-            <div className="row">
-              <div className="d-flex">
-                <div className="mainmenu-wrapper  d-xl-block">
-                  <nav className="mainmenu-nav">
-                    <Nav posts={postData} />
-                  </nav>
+          <div className="col-lg-3 col-md-4 col-sm-6 col-6 d-flex justify-content-end align-items-center">
+         
+
+            {/* Hamburger (mobile only) */}
+            <div className="hamburger-menu d-block d-xl-none">
+              <div className="hamburger-inner">
+                <div className="icon" onClick={MobileShowHandler}>
+                  <i className="fal fa-bars" />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </header>
+      </div>
+    </div>
+  </header>
 
-      <MobileMenu menuShow={showMMenu} menuHide={MobileHideHandler} />
-    </>
+  <MobileMenu menuShow={showMMenu} menuHide={MobileHideHandler} />
+</>
+
+  
   );
 };
 

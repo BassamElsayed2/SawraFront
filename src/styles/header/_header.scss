@@ -1,11 +1,6 @@
 /*--------------------
 Header Styles  
 -----------------------*/
-
-.main {
-  max-width: 1248px;
-  margin: auto;
-}
 .axil-header {
   padding: 0 60px;
   background: var(--color-background);
@@ -27,15 +22,7 @@ Header Styles
       margin-bottom: 20px;
     }
   }
-  .slidez {
-    background: black;
-    height: 1000px;
-  }
-  .mostafa {
-    width: 1305px;
-    padding: 0px;
-    margin: 0px;
-  }
+
   .header-search {
     @media #{$large-mobile} {
       text-align: center !important;
@@ -159,7 +146,51 @@ Header Styles
       display: block;
       line-height: 1;
       img {
-        max-height: 37px;
+        max-height: 100px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات الصغيرة */
+    @media #{$large-mobile} {
+      a {
+        img {
+          max-height: 85px;
+        }
+      }
+    }
+    
+    @media #{$small-mobile} {
+      a {
+        img {
+          max-height: 75px;
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات المتوسطة */
+    @media #{$md-layout} {
+      a {
+        img {
+          max-height: 95px;
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات الكبيرة */
+    @media #{$lg-layout} {
+      a {
+        img {
+          max-height: 110px;
+        }
       }
     }
   }
@@ -322,7 +353,6 @@ button {
     Header Style Three  
 ---------------------------*/
 .header-top {
-  background-color: #8b0000;
   .header-top-nav {
     li {
       margin: 0 20px;
@@ -371,26 +401,9 @@ button {
     }
   }
 }
-.in {
-  background-image: url("/images/inbg.jpg");
-}
-.copyright-left {
-  padding-top: 98px;
-}
-.footerz {
-  height: 162px;
-  background-image: url("/images/footerbg.jpg");
-}
-.header-bottom {
-  padding-right: 200px;
-}
-.logoz {
-  padding-top: 10px;
-  padding-right: 40px !important;
-}
+
 .axil-header {
-  background-image: url("/images/headerbg.jpg");
-  height: 522px;
+  background: #A00008;
 
   &.header-style-3 {
     padding: 0;
@@ -738,54 +751,46 @@ button {
 .popup-mobilemenu-area .inner .mobile-menu-top .logo a img.light-logo {
   display: none;
 }
-
-@media (max-width: 576px) {
-  .main {
-    max-width: 576px;
-    margin: auto;
-  }
-  .axil-header {
-    background-image: url(/images/hmbg.jpg) !important;
-    height: 392px !important;
-  }
-  .logoz {
-    display: none !important;
-  }
-  .header-bottom {
-    margin-top: 110px;
-  }
-  .menu-item-has-children {
-    height: 23px;
-  }
-  .nav-menu {
-    width: 80px;
-    height: 31px;
-  }
-  .nav-branches {
-    width: 80px;
-    height: 31px;
-  }
-  .nav-home {
-    display: none;
-  }
-  .footerz {
-    background-image: url(/images/mfbg.jpg) !important;
-    height: 154px;
-  }
-  .copyright-area ul.mainmenu {
-    display: none;
-  }
+.custom-header-top {
+  background-color: #a30000; /* أحمر غامق */
+  color: #fff;               /* لون النص أبيض */
+  font-size: 14px;
+  padding: 5px 0;
+  direction: ltr;           /* تثبيت الاتجاه لليسار */
 }
 
-.nav-menu {
-  width: 105px;
-  height: 40px;
+.header-top-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
-.nav-branches {
-  width: 105px;
-  height: 40px;
+
+.header-top-info li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  color: #fff;               /* تأكيد على لون النص */
 }
-.nav-home {
-  width: 149px;
-  height: 40px;
+
+.header-top-info li i {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.icon-yellow {
+  color: #f9c600; /* أصفر */
+}
+
+@media (max-width: 768px) {
+  .custom-header-top {
+    text-align: center;
+  }
+
+  .header-top-info {
+    justify-content: center !important;
+  }
+
+  .header-top-info li {
+    margin: 5px 10px;
+  }
 }

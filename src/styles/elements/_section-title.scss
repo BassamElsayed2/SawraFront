@@ -9,6 +9,16 @@
 }
 
 /**************************************
+  Category Section Title Custom Style
+***************************************/
+.category-section-title {
+  .title {
+    color: #000 !important;
+    font-weight: bold;
+  }
+}
+
+/**************************************
     Logo Enhancement Styles
 ***************************************/
 .logo img {
@@ -29,16 +39,11 @@
 
 /**************************************
     News Search & Filter Custom Styles
-@@ -198,12 +217,160 @@
-	  font-size: 1rem;
-	  height: 48px;
-	}
-	
-	.search-filter-wrapper .input-group-text {
-	  font-size: 1rem;
-	  padding-left: 0.8rem;
-	}
-  }
+***************************************/
+.search-filter-wrapper .input-group-text {
+  font-size: 1rem;
+  padding-left: 0.8rem;
+}
 
 /**************************************
     Most Sold Badge Hover Effect
@@ -60,21 +65,18 @@
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: transparent;
-  color: #fff;
-
-  white-space: nowrap;
-  margin-bottom: 0.5rem;
+  color: #f97316;
+  display: inline-block;
 }
 
 .btn-category.active,
 .btn-category:hover {
-  background: linear-gradient(90deg, #dc2626, #f97316);
   color: white;
   border-color: transparent;
 }
 
 .card-body p {
-  font-size: 15px;
+  font-size: 0.95rem;
   color: #6b7280; // gray-500
   min-height: 50px;
   line-height: 1.6;
@@ -91,6 +93,9 @@
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.card.semi-transparent-card {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 .category-buttons-wrapper {
   display: flex;
@@ -184,23 +189,7 @@
 
 .pagination .page-item.active .page-link,
 .pagination .page-item .page-link:hover {
-  background: linear-gradient(90deg, #dc2626, #f97316);
+  backgroundColor: "rgba(255, 0, 0, 0.8)";
   color: white;
   border-color: transparent;
-}
-
-.discount-badge {
-  bottom: "-20px";
-  width: "80px";
-  height: "80px";
-  background: "linear-gradient(45deg, #dc2626, #f97316)";
-  color: "#fff";
-  border-radius: "50%";
-  font-size: "1.5rem";
-  font-weight: "bold";
-  box-shadow: "0 0 10px #FFA52A";
-  display: "flex";
-  align-items: "center";
-  justify-content: "center";
-  z-index: 5;
 }

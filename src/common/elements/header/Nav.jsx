@@ -53,44 +53,23 @@ const Nav = ({ posts }) => {
     setTabPostData(tempData);
   };
 
-  const navLinks = [
-    {
-      href: "/menu",
-      img: {
-        src: "/images/link1.png",
-        className: "nav-menu",
-        alt: "Blogar logo",
-      },
-    },
-    {
-      href: "/branches",
-      img: {
-        src: "/images/link2.png",
-        className: "nav-branches",
-        alt: "Blogar logo",
-      },
-    },
-    {
-      href: "/",
-      img: {
-        src: "/images/link3.png",
-        className: "nav-home",
-        alt: "Blogar logo",
-      },
-    },
-  ];
-
   return (
     <ul className="mainmenu">
-      {navLinks.map((link, idx) => (
-        <li className="menu-item-has-children" key={idx}>
-          <Link href={link.href}>
-            <a>
-              <img className={link.cn} src={link.img.src} alt={link.img.alt} />
-            </a>
-          </Link>
-        </li>
-      ))}
+   {/*    <li className="menu-item-has-children">
+        <Link href="/">{locale === "en" ? "Home" : "الرئيسية"}</Link>
+      </li> */}
+      <li className="menu-item-has-children">
+        <Link href={`/${locale}/menu`}>
+          {locale === "en" ? "Menu" : "المنيو"}
+        </Link>
+      </li>
+
+      <li className="menu-item-has-children">
+        <Link href={`/${locale}/branches`}>
+          <a>{locale === "en" ? "Branches" : "الفروع "}</a>
+        </Link>
+      </li>
+  
     </ul>
   );
 };

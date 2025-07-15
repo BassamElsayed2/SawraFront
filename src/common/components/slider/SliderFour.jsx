@@ -48,8 +48,8 @@ export default function CardSlider() {
 
   return (
     <div className=" p-5">
-      <SectionTitleTwo />{" "}
-      <Link href={`/${locale}/menu`}>
+{/*       <SectionTitleTwo />{" "}
+ */}      <Link href={`/${locale}/menu`}>
         <a>
           <Image
             width={259}

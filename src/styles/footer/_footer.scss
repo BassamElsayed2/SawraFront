@@ -2,7 +2,8 @@
     Start Footer Area 
 =============================*/
 .axil-footer-style-1 {
-  padding: 40px 0;
+  background: #A00008 !important;
+  padding: 5px 0;
   .footer-top {
     .inner {
       padding-bottom: 20px;
@@ -24,8 +25,8 @@
     li {
       margin: 0 18px;
       a {
-        color: #fff;
-        font-size: 16px;
+        color: var(--color-midgray);
+        font-size: 26px;
         line-height: 22px;
         display: block;
         font-weight: 500;
@@ -33,10 +34,10 @@
         &.hover-flip-item-wrapper {
           span {
             &::before {
-              color: #fff;
+              color:white;
             }
             &::after {
-              color: #8b0000;
+              color: #cc9d2f;
             }
           }
         }
@@ -53,15 +54,38 @@
     flex-wrap: wrap;
     .logo {
       margin-right: 53px;
-      min-height: 38px;
-      min-width: 141px;
+      min-height: 60px;
+      min-width: 200px;
       a {
         line-height: 1;
         display: block;
       }
       img {
-        max-height: 37px;
+        max-height: 100px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
       }
+      
+      /* تحسين عرض اللوجو في الشاشات الصغيرة */
+      @media #{$large-mobile} {
+        img {
+          max-height: 85px;
+        }
+      }
+      
+      @media #{$small-mobile} {
+        img {
+          max-height: 75px;
+        }
+      }
+      
       @media #{$sm-layout} {
         flex-basis: 100%;
         margin-bottom: 20px;
@@ -71,6 +95,21 @@
   .copyright-right {
     p {
       color: var(--color-midgray);
+      
+      &.copyright-text {
+        color: #ffffff !important;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.4;
+        
+        @media #{$large-mobile} {
+          font-size: 16px;
+        }
+        
+        @media #{$small-mobile} {
+          font-size: 14px;
+        }
+      }
     }
   }
   ul {
@@ -134,9 +173,15 @@
     }
     .logo {
       img {
-        max-height: 37px;
-        &.white-logo {
-          display: none !important;
+        max-height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
         }
       }
     }
@@ -175,7 +220,16 @@
   &.footer-variation-three {
     .logo {
       img {
-        max-height: 37px;
+        max-height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
       }
     }
     .footer-top {
@@ -222,4 +276,41 @@
 
 .copyright-area .copyright-left .logo img.light-logo {
   display: none !important;
+}
+
+/* === ستايل روابط الفوتر مثل الهيدر بالضبط === */
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a,
+.copyright-area .mainmenu li a {
+  color: #fff !important;
+  font-size: 18px;
+  line-height: 26px;
+  display: inline-block;
+  transition: 0.3s;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-weight: normal;
+  padding: 0;
+}
+
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:hover,
+.copyright-area .mainmenu li a:hover {
+  color: #cc9d2f !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a:active,
+.copyright-area .mainmenu li a:active {
+  background-color: #FFA52A !important;
+  color: #fff !important;
+  border-color: #8b0000 !important;
+  box-shadow: 0 0 12px 2px #ffe082;
+  outline: none;
+}
+
+.axil-footer-style-1 a.hover-effect:hover,
+.axil-footer-style-1 .footer-mainmenu .footer-widget ul.ft-menu-list li a.hover-effect:hover,
+.axil-footer-style-1 .copyright-area .mainmenu li a.hover-effect:hover {
+  color: #cc9d2f !important;
 }

@@ -1,20 +1,27 @@
 .langSwitcher {
-  background-color: #cc9d2f;
+  background-color: #A00008 !important; 
   font-weight: bold;
-  color: white;
+  color: white !important;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: none;
+  border: 2px solid #CC9D2F !important; 
   width: 90px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+}
 
-  &:hover {
-    background-color: #d8b663;
-  }
+.langSwitcher:hover {
+  background-color: #A00008 !important;
+  color: #fff !important;
+  border-color: #ffa42cd3 !important; 
+  box-shadow: 0 0 10px 2px #CC9D2F;
+}
 
-  &:focus {
-    outline: none;
-  }
+.langSwitcher:active {
+  background-color: #FFA52A !important; 
+  color: #fff !important;
+  border-color: #A00008 !important;
+  box-shadow: 0 0 12px 2px #ffe082;
+  outline: none;
 }
