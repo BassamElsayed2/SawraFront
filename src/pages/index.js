@@ -13,6 +13,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useQuery } from "@tanstack/react-query";
 import { getNews } from "../../services/apiNews";
 import GalleryOne from "../common/gallery/GalleryOne";
+import SloganPost from "../common/components/post/SloganPost";
 
 const TechBlog = ({ allPosts }) => {
   const { data: news } = useQuery({
@@ -29,12 +30,13 @@ const TechBlog = ({ allPosts }) => {
     <>
       <HeadTitle />
       <HeaderThree postData={allPosts} />
+      <SloganPost/>   
       <PostSectionNine news={news} />
       <CategoryListSlide cateData={allPosts} />
       <PostSectionTen postData={allPosts} />
       <PostSectionThree postData={news} />
-    {/*   <PostSectionFour postData={techPost} adBanner={true} />  
-      <PostSectionEleven />*/}
+    {/*   <PostSectionFour postData={techPost} adBanner={true} /> 
+      <PostSectionEleven /> */}
 
       <GalleryOne parentClass="bg-color-grey" />
       <FooterThree />

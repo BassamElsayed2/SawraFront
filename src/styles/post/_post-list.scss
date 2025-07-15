@@ -65,6 +65,7 @@ Post List Style
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: normal;
+      color: #fff;
       a {
         position: relative;
         display: inline;
@@ -893,6 +894,28 @@ Post List Style
       }
     }
   }
+}
+
+.fullwidth-bg {
+  background-color: #A00008;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  position: relative;
+  overflow: hidden;
+}
+
+.rectangle-bg-img {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  width: 100%;
+  height: 1200px;
+  z-index: 1;
+  object-fit: cover;
+  pointer-events: none;
 }
 
 // Featured Images

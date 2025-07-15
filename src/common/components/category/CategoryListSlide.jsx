@@ -22,19 +22,19 @@ const CategoryListSlide = () => {
       onClick={onClick}
       style={{
         position: "absolute",
-        right: "-15px",
+        right: "10px",
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 10,
-        background: "#fff",
+        background: "#A00008",
         border: "none",
         borderRadius: "50%",
-        width: "35px",
-        height: "35px",
+          width: "35px",
+          height: "35px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
       }}
     >
-      <i className="fas fa-chevron-right" style={{ color: "#8b0000" }}></i>
+      <i className="fas fa-chevron-right" style={{ color: "#fff" }}></i>
     </button>
   );
 
@@ -44,19 +44,19 @@ const CategoryListSlide = () => {
       onClick={onClick}
       style={{
         position: "absolute",
-        left: "-15px",
+        left: "10px",
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 10,
-        background: "#fff",
+        background: "#A00008",
         border: "none",
         borderRadius: "50%",
-        width: "35px",
-        height: "35px",
+        width: "42px",
+        height: "42px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
       }}
     >
-      <i className="fas fa-chevron-left" style={{ color: "#8b0000" }}></i>
+      <i className="fas fa-chevron-left" style={{ color: "#fff" }}></i>
     </button>
   );
 
@@ -84,7 +84,7 @@ const CategoryListSlide = () => {
     <section
       className="py-5"
       style={{
-        backgroundColor: "rgb(139, 0, 0)",
+        background:"rgb(247, 247, 247)",
         position: "relative",
         zIndex: 2,
       }}
@@ -93,14 +93,15 @@ const CategoryListSlide = () => {
         <SectionTitleTwo
           title={locale === "ar" ? "التصنيفات" : "CATEGORIES"}
           btnText={locale === "ar" ? "عرض الكل" : "See All Topics"}
-          btnUrl={`/${locale}/news`}
+          btnUrl={`/${locale}/menu`}
+          className="category-section-title"
         />
       </div>
       <div style={{width: "100%", padding: 0, margin: 0}}>
         <Slider {...slideSettings}>
           {categories?.map((cat) => (
             <div key={cat.id} className="px-2">
-              <Link href={`/${locale}/news?category=${cat.id}`} passHref>
+              <Link href={`/${locale}/menu?category=${cat.id}`} passHref>
                 <a className="text-decoration-none">
                   <div
                     className="card border-0 h-100 category-card-hover"
@@ -131,7 +132,7 @@ const CategoryListSlide = () => {
                       <h5
                         className="mb-0"
                         style={{
-                          color: "#fff",
+                          color: "#000",
                           fontSize: "18px",
                           fontWeight: "bold",
                         }}

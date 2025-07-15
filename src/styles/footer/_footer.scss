@@ -3,7 +3,7 @@
 =============================*/
 .axil-footer-style-1 {
   background: #A00008 !important;
-  padding: 40px 0;
+  padding: 5px 0;
   .footer-top {
     .inner {
       padding-bottom: 20px;
@@ -54,15 +54,38 @@
     flex-wrap: wrap;
     .logo {
       margin-right: 53px;
-      min-height: 38px;
-      min-width: 141px;
+      min-height: 60px;
+      min-width: 200px;
       a {
         line-height: 1;
         display: block;
       }
       img {
-        max-height: 37px;
+        max-height: 100px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
       }
+      
+      /* تحسين عرض اللوجو في الشاشات الصغيرة */
+      @media #{$large-mobile} {
+        img {
+          max-height: 85px;
+        }
+      }
+      
+      @media #{$small-mobile} {
+        img {
+          max-height: 75px;
+        }
+      }
+      
       @media #{$sm-layout} {
         flex-basis: 100%;
         margin-bottom: 20px;
@@ -72,6 +95,21 @@
   .copyright-right {
     p {
       color: var(--color-midgray);
+      
+      &.copyright-text {
+        color: #ffffff !important;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.4;
+        
+        @media #{$large-mobile} {
+          font-size: 16px;
+        }
+        
+        @media #{$small-mobile} {
+          font-size: 14px;
+        }
+      }
     }
   }
   ul {
@@ -135,9 +173,15 @@
     }
     .logo {
       img {
-        max-height: 37px;
-        &.white-logo {
-          display: none !important;
+        max-height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
         }
       }
     }
@@ -176,7 +220,16 @@
   &.footer-variation-three {
     .logo {
       img {
-        max-height: 37px;
+        max-height: 70px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
       }
     }
     .footer-top {

@@ -10,6 +10,7 @@
   "impTitle": "أهم الأخبار ",
   "noImportantNews": "لا توجد أخبار مهمة حالياً.",
   "sectionTitle": "الجديد",
+  "sectionTitle2": "الاكثر مبيعا",
   "categories": {
     "Gadget": "أجهزة",
     "Technology": "تكنولوجيا",
@@ -18,5 +19,11 @@
   },
   "post": {
     "readMore": "اقرأ المزيد"
-  }
+  },
+  
+    "location": "بلدك، مدينتك، 12345",
+    "hotline": "٠١٢٣٤٥٦٧٨٩",
+    "working_hours": "١١:٠٠ صباحًا - ٩:٠٠ مساءً"
+  
+  
 }

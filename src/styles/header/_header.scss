@@ -146,7 +146,51 @@ Header Styles
       display: block;
       line-height: 1;
       img {
-        max-height: 37px;
+        max-height: 100px;
+        width: auto;
+        object-fit: contain;
+        filter: brightness(1.1) contrast(1.1);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          filter: brightness(1.2) contrast(1.2);
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات الصغيرة */
+    @media #{$large-mobile} {
+      a {
+        img {
+          max-height: 85px;
+        }
+      }
+    }
+    
+    @media #{$small-mobile} {
+      a {
+        img {
+          max-height: 75px;
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات المتوسطة */
+    @media #{$md-layout} {
+      a {
+        img {
+          max-height: 95px;
+        }
+      }
+    }
+    
+    /* تحسين عرض اللوجو في الشاشات الكبيرة */
+    @media #{$lg-layout} {
+      a {
+        img {
+          max-height: 110px;
+        }
       }
     }
   }
@@ -706,4 +750,47 @@ button {
 
 .popup-mobilemenu-area .inner .mobile-menu-top .logo a img.light-logo {
   display: none;
+}
+.custom-header-top {
+  background-color: #a30000; /* أحمر غامق */
+  color: #fff;               /* لون النص أبيض */
+  font-size: 14px;
+  padding: 5px 0;
+  direction: ltr;           /* تثبيت الاتجاه لليسار */
+}
+
+.header-top-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-top-info li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  color: #fff;               /* تأكيد على لون النص */
+}
+
+.header-top-info li i {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.icon-yellow {
+  color: #f9c600; /* أصفر */
+}
+
+@media (max-width: 768px) {
+  .custom-header-top {
+    text-align: center;
+  }
+
+  .header-top-info {
+    justify-content: center !important;
+  }
+
+  .header-top-info li {
+    margin: 5px 10px;
+  }
 }

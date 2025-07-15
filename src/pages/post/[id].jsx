@@ -13,6 +13,7 @@ import SidebarOne from "../../common/components/sidebar/SidebarOne";
 import WidgetVideoPost from "../../common/components/sidebar/WidgetVideoPost";
 import { getAds } from "../../../services/apiAds";
 import AddBanner from "../../common/components/ad-banner/AddBanner";
+import HeadTitle from "../../common/elements/head/HeadTitle";
 
 const NewsDetailsPage = ({ allPosts, initialData }) => {
   const { query, locale } = useRouter();
@@ -46,82 +47,102 @@ const NewsDetailsPage = ({ allPosts, initialData }) => {
 
   return (
     <>
+      <HeadTitle pageTitle={locale === "en" ? details.title_en : details.title_ar} />
       <HeaderOne
         pClass="header-light header-sticky header-with-shadow"
         postData={allPosts}
       />
 
       <PostMetaOne metaData={details} />
-      <div className="post-single-wrapper axil-section-gap bg-color-white">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-8">
-              <div className="axil-post-details">
-                {details?.yt_code ? (
-                  <div className="embed-responsive embed-responsive-16by9 mb-4">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${details.yt_code}`}
-                      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full aspect-video"
-                      title="YouTube video player"
-                    />
-                  </div>
-                ) : null}
+      <div className="post-single-wrapper news-background axil-section-gap">
+  <div className="container">
+    <div className="row justify-content-center">
+      <div className="col-lg-8">
+        <div className="axil-post-details">
+        {details?.feature_img && (
+  <div className="featured-box mb-5">
+    <div className="image-container">
+      <Image
+        src={details.feature_img}
+        alt={details.title}
+        width={800}
+        height={450}
+        className="featured-image"
+      />
+      <div className="overlay-info">
+        <h2 className="post-title">
+          {locale === "en" ? details.title_en : details.title_ar}
+        </h2>
+        <p className="post-price">
+          {details.price ? `${details.price} EGP` : ""}
+        </p>
+      </div>
+    </div>
+  </div>
+)}
 
-                <div
-                  className="post-details-content"
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      locale === "en" ? details.content_en : details.content_ar,
-                  }}
-                ></div>
+          {details?.yt_code && (
+            <div className="embed-responsive embed-responsive-16by9 mb-4">
+              <iframe
+                src={`https://www.youtube.com/embed/${details.yt_code}`}
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full aspect-video"
+                title="YouTube video player"
+              />
+            </div>
+          )}
 
-                {/* Additional Images Gallery */}
-                {additionalImages.length > 0 && (
-                  <div className="additional-images-gallery mt-5">
-                    <h3 className="mb-4">
-                      {locale === "en" ? "More Images" : "المزيد من الصور"}
-                    </h3>
-                    <div className="row g-4">
-                      {additionalImages.map((image, index) => (
-                        <div key={index} className="col-md-4">
-                          <div className="gallery-item">
-                            <Image
-                              src={image}
-                              alt={`${details.title_en} - Image ${index + 2}`}
-                              width={400}
-                              height={300}
-                              className="img-fluid rounded"
-                              style={{ objectFit: "cover" }}
-                            />
-                          </div>
-                        </div>
-                      ))}
+          <div
+            className="post-details-content"
+            dangerouslySetInnerHTML={{
+              __html:
+                locale === "en"
+                  ? details.content_en
+                  : details.content_ar,
+            }}
+          />
+
+          {additionalImages.length > 0 && (
+            <div className="additional-images-gallery mt-5">
+              <h3 className="text-center text-black">
+                {locale === "en" ? "More Images" : "المزيد من الصور"}
+              </h3>
+              <div className="row g-4">
+                {additionalImages.map((image, index) => (
+                  <div key={index} className="col-md-4">
+                    <div className="gallery-item">
+                      <Image
+                        src={image}
+                        alt={`Image ${index + 2}`}
+                        width={400}
+                        height={300}
+                      />
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-            <div className="col-lg-4">
-              <SidebarOne dataPost={postData} />
-              <WidgetVideoPost postData={postData} />
-            </div>
-          </div>
-          {otherads?.length > 0 && (
-            <div className="row">
-              <div className="col-lg-12">
-                <AddBanner
-                  img={otherads[0].image_url}
-                  height="200"
-                  width="1230"
-                  pClass="mt--30"
-                />
+                ))}
               </div>
             </div>
           )}
         </div>
       </div>
+    </div>
+
+    {otherads?.length > 0 && (
+      <div className="row">
+        <div className="col-lg-12">
+          <AddBanner
+            img={otherads[0].image_url}
+            height="200"
+            width="1230"
+            pClass="mt--30"
+          />
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
       <FooterThree />
     </>
   );

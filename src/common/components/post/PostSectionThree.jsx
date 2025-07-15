@@ -1,154 +1,163 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SectionTitleOne } from "../../elements/sectionTitle/SectionTitle";
-import AddBanner from "../ad-banner/AddBanner";
-import { useLocale } from "next-intl";
-// ... باقي الاستيراد زي ما هو
-import { useState } from "react";
-import Modal from "react-bootstrap/Modal";
 import { useRouter } from "next/router";
+import { useQueries } from "@tanstack/react-query";
+import { getCategoryById } from "../../../../services/apicatogry";
+import { useTranslation } from "next-i18next";
+import AddBanner from "../ad-banner/AddBanner";
+import { SectionTitleTwo } from "../../elements/sectionTitle/SectionTitle";
 
 const PostSectionThree = ({ postData, adBanner, bgColor }) => {
-  const locale = useLocale();
-  const router = useRouter();
-  const videoPosts = postData?.filter((post) => post.yt_code || post.video_url); // دعم مؤقت
-  const firstPost = videoPosts?.[0];
+  const { locale } = useRouter();
+  const { t } = useTranslation("common");
 
-  const [showModal, setShowModal] = useState(false);
-  const [activeVideoUrl, setActiveVideoUrl] = useState(null);
+  // الفيديوهات
+  const videoPosts = postData?.filter((post) => post.yt_code || post.video_url) || [];
 
-  const handleOpen = (post) => {
-    // لو فيه video_url نعرضه، لو لأ نحط لينك مؤقت
-    const tempUrl = post.video_url || "https://www.w3schools.com/html/mov_bbb.mp4";
-    setActiveVideoUrl(tempUrl);
-    setShowModal(true);
-  };
+  // استخراج الفيديو الأساسي
+  const firstPost = videoPosts[0];
 
-  const handleClose = () => {
-    setShowModal(false);
-    setActiveVideoUrl(null);
-  };
+  // تحديد الفيديوهات التي نريد عرضها (الباقي بعد أول فيديو)
+  const slicedPosts = videoPosts.slice(1, 5);
 
-  // دالة التنقل للصفحة التالية
-  const handleNavigate = (post) => {
-    // عدل الرابط حسب بنية الروابط لديك
-    router.push(`/post/${post.id}`);
-  };
+  // جلب بيانات الكاتيجوري لكل فيديو
+  const categoriesQueries = useQueries({
+    queries: slicedPosts.map((post) => ({
+      queryKey: ["category", post.category_id],
+      queryFn: () => getCategoryById(post.category_id),
+      enabled: !!post.category_id,
+    })),
+  });
+
+  const firstCategory = categoriesQueries[0]?.data;
 
   return (
-    <div
-      className={`axil-video-post-area axil-section-gap ${bgColor || ""}`}
-      style={{ backgroundColor: "rgb(139, 0, 0)" }}
-    >
-      <div className="container">
-        {/* بانر إعلاني */}
-        {adBanner && (
-          <div className="row">
-            <div className="col-lg-12">
-              <AddBanner img="/images/add-banner/banner-03.webp" pClass="mb--30" />
-            </div>
-          </div>
-        )}
+    <div className="axil-tech-post-banner relative pb-5 post-section-three">
+        <div className="d-flex justify-content-between align-items-center pt-5">
+        <div className="container">
+          <SectionTitleTwo
+          title={locale === "ar" ? "أحدث الفيديوهات" : "LATEST VIDEOS"}
+          btnText={locale === "ar" ? "عرض الكل" : "View All"}
+          btnUrl={`/${locale}/gallery`}
+          className="category-section-title"
+        />
+        </div>
 
-        <SectionTitleOne title={locale === "ar" ? "أحدث الفيديوهات" : "Latest Videos"} />
-
+      </div>
+      <div className="container post-section-three-container">
         <div className="row">
-          {/* الفيديو الأساسي الكبير */}
-          <div className="col-xl-6 col-lg-6 col-md-12 col-12 ">
-            {firstPost && (
-              <div
-                className="text-decoration-none mt--30 custom-card"
-                onClick={() => handleNavigate(firstPost)}
-                tabIndex={0}
-                role="button"
-                style={{ outline: "none" }}
-                onKeyDown={e => { if (e.key === 'Enter') handleNavigate(firstPost); }}
-              >
-                <div className="card bg-white bg-opacity-10 shadow-sm border-0 h-100" style={{ borderRadius: "18px" }}>
-                  <div className="position-relative">
-                    <Image
-                      src={firstPost.images?.[0] || "/images/placeholder.jpg"}
-                      height={500}
-                      width={600}
-                      alt={firstPost.title_en}
-                      style={{ objectFit: "cover", borderRadius: "18px 18px 0 0" }}
-                    />
-                    <div className="position-absolute top-0 start-0 m-1 bg-danger text-white px-2 py-1 rounded fw-bold small">
-                      {locale === "ar" ? firstPost?.category?.name_ar : firstPost?.category?.name_en}
+          {firstPost && (
+            <div className="col-xl-6 col-md-12 col-12 mt--30">
+              <div className="content-block post-grid post-grid-transparent category-card-hover">
+                <div className="post-thumbnail position-relative">
+                  <Link href={`/${locale}/post/${firstPost.id}`}>
+                    <a>
+                      <Image
+                        src={firstPost.images?.[0] || "/"}
+                        height={600}
+                        width={600}
+                        priority={true}
+                        alt=""
+                      />
+                      <div className="video-play-icon video-play-icon-large">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </a>
+                  </Link>
+                </div>
+                <div className="post-grid-content">
+                  <div className="post-content">
+                    <div className="post-cat">
+                      <div className="post-cat-list">
+                        <Link
+                          href={`/${locale}/news?category=${firstPost?.category.id}`}
+                        >
+                          <a className="hover-flip-item-wrapper">
+                            <span className="hover-flip-item">
+                              <span
+                                data-text={
+                                  locale === "en"
+                                    ? firstCategory?.name_en
+                                    : firstCategory?.name_ar
+                                }
+                              >
+                                {locale === "en"
+                                  ? firstCategory?.name_en
+                                  : firstCategory?.name_ar}
+                              </span>
+                            </span>
+                          </a>
+                        </Link>
+                      </div>
                     </div>
-                    <span className="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-50 rounded-circle d-flex justify-content-center align-items-center" style={{ width: "60px", height: "60px" }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </span>
-                  </div>
-                  <div className="p-4 text-center text-white">
-                    <h3 className="mb-3 fw-bold" style={{ fontSize: "20px" }}>
-                      {locale === "ar" ? firstPost.title_ar : firstPost.title_en}
+
+                    <h3 className="title category-title">
+                      <Link href={`/${locale}/post/${firstPost.id}`}>
+                        <a>
+                          {locale === "en"
+                            ? firstPost.title_en
+                            : firstPost.title_ar}
+                        </a>
+                      </Link>
                     </h3>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* باقي الفيديوهات */}
-          <div className="col-xl-6 col-lg-6 col-md-12 col-12">
+          <div className="col-xl-6 col-lg-12 col-md-12 col-md-6 col-12">
             <div className="row">
-              {videoPosts?.slice(1, 5).map((post) => (
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt--30" key={post.id}>
+              {slicedPosts.map((data, index) => {
+                const categoryData = categoriesQueries[index]?.data;
+
+                return (
                   <div
-                    className="text-decoration-none custom-card"
-                    onClick={() => handleNavigate(post)}
-                    tabIndex={0}
-                    role="button"
-                    style={{ outline: "none" }}
-                    onKeyDown={e => { if (e.key === 'Enter') handleNavigate(post); }}
+                    className="col-lg-6 col-md-6 col-sm-6 col-12 mt--30"
+                    key={data.id}
                   >
-                    <div className="card bg-white bg-opacity-10 shadow-sm border-0 h-100" style={{ borderRadius: "18px" }}>
-                      <div className="position-relative">
-                        <Image
-                          src={post.images?.[0] || "/images/placeholder.jpg"}
-                          height={190}
-                          width={285}
-                          alt={post.title_en}
-                          style={{ objectFit: "cover", borderRadius: "18px 18px 0 0" }}
-                        />
-                        <div className="position-absolute top-0 start-0 m-1 bg-danger text-white px-2 py-1 rounded fw-bold small">
-                          {locale === "ar" ? post?.category?.name_ar : post?.category?.name_en}
-                        </div>
-                        <span className="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-50 rounded-circle d-flex justify-content-center align-items-center" style={{ width: "50px", height: "50px" }}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="white">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </span>
+                    <div className="content-block post-default image-rounded category-card-hover">
+                      <div className="post-thumbnail position-relative">
+                        <Link href={`/${locale}/post/${data.id}`}>
+                          <a>
+                            <Image
+                              src={data.images?.[0] || "/"}
+                              height={190}
+                              width={285}
+                              priority={true}
+                              alt=""
+                            />
+
+                            <div className="video-play-icon video-play-icon-small">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="white">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </a>
+                        </Link>
                       </div>
-                      <div className="text-center text-white p-3">
-                        <h5 className="mb-0 fw-bold" style={{ fontSize: "16px" }}>
-                          {locale === "ar" ? post.title_ar : post.title_en}
-                        </h5>
+                      <div className="post-content">
+                        <div className="d-flex flex-column justify-content-between align-items-center">
+                          <h5 className="title category-title">
+                            <Link href={`/${locale}/post/${data.id}`}>
+                              <a>
+                                {locale === "en"
+                                  ? data.title_en
+                                  : data.title_ar}
+                              </a>
+                            </Link>
+                          </h5>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
-
-        {/* نافذة تشغيل الفيديو */}
-        <Modal show={showModal} onHide={handleClose} size="lg" centered>
-          <Modal.Body className="p-0 bg-black">
-            {activeVideoUrl && (
-              <video
-                src={activeVideoUrl}
-                controls
-                autoPlay
-                style={{ width: "100%", height: "100%" }}
-              />
-            )}
-          </Modal.Body>
-        </Modal>
       </div>
     </div>
   );

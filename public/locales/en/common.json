@@ -10,7 +10,8 @@
   "impTitle": "Important News",
   "noImportantNews": "No important news currently.",
 
-  "sectionTitle": "New ",
+  "sectionTitle": "NEW ",
+  "sectionTitle2": "MOST SOLD",
   "categories": {
     "Gadget": "Gadget",
     "Technology": "Technology",
@@ -19,5 +20,8 @@
   },
   "post": {
     "readMore": "Read More"
-  }
+  },
+  "location": "Your Country, Your City, 12345",
+  "hotline": "123 456 789",
+  "working_hours": "11:00 pm - 11:00 pm"
 }

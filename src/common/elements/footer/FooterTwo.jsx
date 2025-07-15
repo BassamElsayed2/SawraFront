@@ -14,10 +14,10 @@ const FooterTwo = () => {
                 <Link href="/">
                     <a>
                     <Image
-                        src="/images/logo/sawra.png"
+                        src="/images/logo/LogoElSawra.png"
                         alt="Logo Images"
-                        height={35}
-                        width={134}
+                        width={200}
+                        height={60}
                     />
                     </a>
                 </Link>
@@ -115,7 +115,7 @@ const FooterTwo = () => {
             </div>
             <div className="col-lg-3 col-md-12">
               <div className="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
-                <p className="b3">All Rights Reserved © {new Date().getFullYear()}</p>
+                <p className="b3 copyright-text">All Rights Reserved © {new Date().getFullYear()}</p>
               </div>
             </div>
           </div>

@@ -59,14 +59,14 @@ const Nav = ({ posts }) => {
         <Link href="/">{locale === "en" ? "Home" : "الرئيسية"}</Link>
       </li>
       <li className="menu-item-has-children">
-        <Link href={`/${locale}/news`}>
-          {locale === "en" ? "All News" : "جميع الأخبار"}
+        <Link href={`/${locale}/menu`}>
+          {locale === "en" ? "Menu" : "المنيو"}
         </Link>
       </li>
 
       <li className="menu-item-has-children">
         <Link href={`/${locale}/gallery`}>
-          <a>{locale === "en" ? "Gallery" : "معرض الصور"}</a>
+          <a>{locale === "en" ? "Gallery" : "المعرض "}</a>
         </Link>
       </li>
       <li>

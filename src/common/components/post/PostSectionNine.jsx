@@ -3,9 +3,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useQueries } from "@tanstack/react-query";
 import { getCategoryById } from "../../../../services/apicatogry";
+import { SectionTitleOne } from "../../elements/sectionTitle/SectionTitle";
+import { useTranslation } from "next-i18next";
 
 const PostSectionNine = ({ news, bgColor }) => {
   const { locale } = useRouter();
+  const { t } = useTranslation("common");
+
 
   // المبيعات المرتفعة
   const postData = news?.filter((item) => item.status === "most_sold") || [];
@@ -29,22 +33,19 @@ const PostSectionNine = ({ news, bgColor }) => {
 
   return (
     <div
-      className={`axil-tech-post-banner relative pb-5`}
-      style={{
-        backgroundColor: "#A00008",
-      }}
+      className={
+        `axil-tech-post-banner relative pb-5 fullwidth-bg`
+      }
     >
       <img
         src="/images/Rectangle.png"
         alt="Rectangle"
-        style={{
-          position: "absolute",
-          top: -100,
-          left: 0,
-          bottom: 0,
-          height: 1200,
-        }}
+        className="rectangle-bg-img"
       />
+      <div className="container pt-5">
+        <SectionTitleOne title={t("sectionTitle2")}
+                        titleClass="BoldTitle" />
+      </div>
       <div className="container" style={{ position: "relative", zIndex: 2 }}>
         <div className="row">
           {/* عرض أول بوست إن وجد */}

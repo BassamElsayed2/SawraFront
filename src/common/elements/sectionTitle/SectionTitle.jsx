@@ -14,9 +14,9 @@ const SectionTitleOne = ({ title }) => {
   );
 };
 
-const SectionTitleTwo = ({ title, btnText, btnUrl }) => {
+const SectionTitleTwo = ({ title, btnText, btnUrl, className = "" }) => {
   return (
-    <div className="section-title d-flex justify-content-between align-items-center mb--30" style={{gap: 16}}>
+    <div className={`section-title d-flex justify-content-between align-items-center mb--30 ${className}`} style={{gap: 16}}>
       <h2 className="title" style={{ color: "#fff", margin: 0 }}>
         {title}
       </h2>

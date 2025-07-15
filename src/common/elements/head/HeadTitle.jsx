@@ -3,21 +3,25 @@ import { useQuery } from "@tanstack/react-query";
 import { getAboutUs } from "../../../../services/apiAboutUs";
 import { useLocale } from "next-intl";
 
-const HeadTitle = () => {
+const HeadTitle = ({ pageTitle }) => {
   const locale = useLocale();
 
-  const { data: pageTitle } = useQuery({
+  const { data: siteSettings } = useQuery({
     queryKey: ["site_settings"],
     queryFn: getAboutUs,
   });
+
+  const title = pageTitle
+    ? pageTitle
+    : locale === "ar"
+    ? siteSettings?.site_name_ar
+    : siteSettings?.site_name_en;
 
   return (
     <Head>
       <meta charSet="utf-8" />
       <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-      <title>
-        {locale === "ar" ? pageTitle?.site_name_ar : pageTitle?.site_name_en}
-      </title>
+      <title>{title}</title>
       <meta name="robots" content="noindex, follow" />
       <meta name="description" content="Personal Blog Next JS Template" />
       <meta

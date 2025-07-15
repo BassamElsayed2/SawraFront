@@ -1,17 +1,73 @@
-// استايلات كروت الفيديو في PostSectionThree
-.custom-card {
-  border-radius: 18px;
-  transition: box-shadow 0.2s, border 0.2s;
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-.custom-card:hover {
-  border-color: #ffa42cd3 !important;
-  box-shadow: 0 0 10px 2px #CC9D2F;
-  color: #fff !important;
-}
-.custom-card .text-white,
-.custom-card h3,
-.custom-card h5 {
-  color: #fff !important;
+.post-section-three {
+  background-color: #ffffff;
+  
+  .post-section-three-container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .title,
+  .category-title,
+  .post-content h3,
+  .post-content h5 {
+    color: #000000 !important;
+  }
+  
+  .title a,
+  .category-title a {
+    color: #000000 !important;
+  }
+  
+  .title a:hover,
+  .category-title a:hover {
+    color: #8b0000 !important;
+  }
+  
+  .content-block {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.162);
+    transition: all 0.3s ease;
+    border: 2px solid #e0e0e0;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+  }
+  
+  .post-default {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.162);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+  }
+  
+  .video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    &.video-play-icon-large {
+      width: 60px;
+      height: 60px;
+    }
+    
+    &.video-play-icon-small {
+      width: 50px;
+      height: 50px;
+    }
+  }
 } 

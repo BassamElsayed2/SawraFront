@@ -88,7 +88,7 @@ export default function NewsPage({ allPosts }) {
   if (error)
     return (
       <div className="container mt-5 text-center text-danger">
-        {locale === "en" ? "Error loading news" : "خطأ في تحميل الأخبار"}
+        {locale === "en" ? "Error loading items" : "خطأ في تحميل العناصر"}
       </div>
     );
 
@@ -97,17 +97,32 @@ export default function NewsPage({ allPosts }) {
 
   return (
     <>
-    
       <div
         className="news-page-wrapper position-relative"
         style={{
           minHeight: "100vh",
           overflow: "hidden",
-          background: "transparent",
+          backgroundColor: "#A00008",
         }}
       >
+        <img
+          src="/images/Rectangle.png"
+          alt="Background"
+          style={{
+            position: "absolute",
+            top: -60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: "120%",
+            width: "100%",
+            objectFit: "cover",
+            zIndex: 1,
+          }}
+        />
+        
         <div style={{ position: "relative", zIndex: 2 }}>
-          <HeadTitle pageTitle={locale === "en" ? "News" : "الأخبار"} />
+          <HeadTitle pageTitle={locale === "en" ? "Menu" : "المنيو"} />
           <HeaderOne
             pClass="header-light header-sticky header-with-shadow"
             postData={allPosts}
@@ -126,8 +141,8 @@ export default function NewsPage({ allPosts }) {
                       className="form-control"
                       placeholder={
                         locale === "en"
-                          ? "Search for news..."
-                          : "ابحث عن الأخبار..."
+                          ? "Search for items..."
+                          : "ابحث عن العناصر..."
                       }
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -156,7 +171,7 @@ export default function NewsPage({ allPosts }) {
                     ? category?.name_en
                     : category?.name_ar;
 
-                return (
+            return (
                   <Nav.Item key={catId}>
                     <Nav.Link eventKey={catId} className="custom-tab">
                       {label}

@@ -1,0 +1,131 @@
+.gallery-title {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  letter-spacing: 1px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.gallery-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffe4b3;
+  margin: 0;
+}
+.gallery-overlay {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.4s ease;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 15px 25px;
+  border-radius: 16px;
+  max-width: 75%;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.gallery-image-wrapper:hover .gallery-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery-card {
+  background: rgba(73, 36, 36, 0.759); 
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(88, 22, 22, 0.1), 0 1.5px 6px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: box-shadow 0.3s, transform 0.3s;
+  border: none;
+}
+
+.gallery-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 3px 12px rgba(0,0,0,0.12);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.gallery-card .card-title {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.gallery-card .card-text {
+  color: #d1d1d1;
+}
+
+.card-img-wrapper {
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.card-img-top {
+  transition: transform 0.3s;
+}
+
+.gallery-card:hover .card-img-top {
+  transform: scale(1.08);
+} 
+
+// Gallery Details Page Styles
+.gallery-background {
+  background-color: rgb(139, 0, 0);
+  background-image: url("/images/Rectangle.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+.gallery-image-wrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px; /* matches image height for vertical centering */
+}
+.gallery-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+.axil-post-details {
+  background: rgb(139, 0, 0);
+  padding: 30px;
+  border-radius: 20px;
+  margin-top: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.axil-post-details:hover {
+  box-shadow: 0 4px 20px rgba(210, 151, 78, 0.436);
+}
+
+.post-images img {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.post-details-content {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.9;
+}
+
+@media (max-width: 768px) {
+  .axil-post-details {
+    padding: 20px;
+  }
+
+  .post-details-content {
+    font-size: 1rem;
+  }
+} 
+html[lang="ar"] .gallery-overlay {
+  left: auto;
+  right: 20px;
+  text-align: right;
+}

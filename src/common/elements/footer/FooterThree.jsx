@@ -65,12 +65,9 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
                     <a>
                       <Image
                         className="dark-logo"
-                        width={141}
-                        height={37}
-                        src={
-                          colorMode === "Dark"
-                            ? lightLogo || "/images/logo/sawra.png"
-                            : darkLogo || "/images/logo/sawra.png"
+                        width={200}
+                        height={70}
+                        src={"/images/logo/LogoElSawra.png"
                         }
                         alt="Blogar logo"
                       />
@@ -155,7 +152,9 @@ const FooterThree = ({ bgColor, darkLogo, lightLogo }) => {
             </div>
             <div className="col-lg-3 col-md-12">
               <div className="copyright-right text-start text-lg-end mt_md--20 mt_sm--20">
-                <p className="b3">
+{/*               Designed And Developed By <a href="https://www.ensegypt.com" target="_blank" rel="noopener noreferrer">ENSEGYPT</a>
+ */}
+                <p className="b3 copyright-text">
                   All Rights Reserved © {new Date().getFullYear()}
                 </p>
               </div>

@@ -5,7 +5,16 @@
 .section-title {
   .title {
     margin-bottom: 0;
-    color: #fff !important;
+  }
+}
+
+/**************************************
+  Category Section Title Custom Style
+***************************************/
+.category-section-title {
+  .title {
+    color: #000 !important;
+    font-weight: bold;
   }
 }
 

@@ -222,10 +222,10 @@ const FooterOne = () => {
                 <a>
                   <Image
                     className="dark-logo"
-                    src={colorMode === "Dark" ? "/images/logo/sawra.png" : "/images/logo/sawra.png"}
+                    src={ "/images/logo/LogoElSawra.png"}
                     alt="Logo Images"
-                    height={37}
-                    width={141}
+                    width={200}
+                        height={60}
                   />
                 </a>
                 </Link>
@@ -323,7 +323,7 @@ const FooterOne = () => {
             </div>
             <div className="col-lg-3 col-md-4">
               <div className="copyright-right text-start text-md-end mt_sm--20">
-                <p className="b3">
+                <p className="b3 copyright-text">
                   All Rights Reserved © {new Date().getFullYear()}
                 </p>
               </div>

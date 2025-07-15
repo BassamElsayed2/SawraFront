@@ -19,12 +19,12 @@ export default function GalleryPage() {
 
   return (
     <>
-      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "معرض الصور"} />
+      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "المعرض "} />
       <HeaderOne pClass="header-light header-sticky header-with-shadow" />
 
       <div className="container py-5">
-        <h1 className="text-center mb-5 fw-bold">
-          {locale === "en" ? "Our Gallery" : "معرض الصور"}
+        <h1 className="gallery-title text-center mb-5 fw-bold">
+          {locale === "en" ? "Our Gallery" : "المعرض "}
         </h1>
 
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -37,7 +37,7 @@ export default function GalleryPage() {
               className="col"
             >
               <Link href={`/${locale}/gallery/${gallery.id}`}>
-                <a className="card h-100 shadow-sm border-0">
+                <a className="gallery-card card h-100 shadow-sm border-0">
                   <div
                     className="card-img-wrapper"
                     style={{ height: "250px", overflow: "hidden" }}

@@ -69,7 +69,24 @@ export default function GalleryDetailsPage() {
         {Array.isArray(details?.image_urls) &&
           details.image_urls.map((data) => (
             <div className="post-images" key={data}>
-              <Image src={data} alt={details?.title_en} height={500} width={810} priority />
+<div className="gallery-image-wrapper">
+  <Image
+    src={data}
+    alt={details?.title_en}
+    height={500}
+    width={810}
+    priority
+    className="gallery-image"
+  />
+  <div className="gallery-overlay">
+    <h3 className="gallery-title">
+      {locale === "ar" ? details?.title_ar : details?.title_en}
+    </h3>
+    <p className="gallery-price">
+      {details?.price ? `${details?.price} EGP` : ""}
+    </p>
+  </div>
+</div>
             </div>
           ))}
       </Slider>
@@ -86,11 +103,11 @@ export default function GalleryDetailsPage() {
 
   return (
     <>
-      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "\u0645\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u0631"} />
+      <HeadTitle pageTitle={locale === "en" ? "Gallery" : "\u0645\u0639\u0631\u0636 \u0627\u0644\u0635\u0648\u0631"}  />
       <HeaderOne pClass="header-light header-sticky header-with-shadow" />
-      <div className="post-single-wrapper axil-section-gap bg-color-white">
-        <div className="container">
-          <div className="row">
+      <div className="post-single-wrapper gallery-background axil-section-gap">
+      <div className="container">
+          <div className="row justify-content-center">
             <div className="col-lg-8">
               <PostMetaTwo metaData={details} />
               <div className="axil-post-details">
@@ -106,9 +123,9 @@ export default function GalleryDetailsPage() {
                 ></div>
               </div>
             </div>
-            <div className="col-lg-4">
+            {/* <div className="col-lg-4">
               {!isLoadingNews && <SidebarOne dataPost={postData} />}
-            </div>
+            </div> */}
           </div>
 
           {otherads?.length > 0 && (

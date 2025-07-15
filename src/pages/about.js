@@ -24,6 +24,7 @@ const AboutUs = ({ allPosts }) => {
     <>
       <HeadTitle pageTitle={locale === "ar" ? "من نحن" : "About Us"} />
       <HeaderOne postData={allPosts} />
+      <div className="breadcrumb-box">
       <BreadcrumbTwo
         title={locale === "ar" ? "من نحن" : "About Us"}
         paragraph={
@@ -33,30 +34,36 @@ const AboutUs = ({ allPosts }) => {
         }
         bgImae="url('/images/about.png')"
       />
-      <div className="axil-post-list-area axil-section-gap bg-color-white">
+      </div>
+      <div className="axil-post-list-area about-background axil-section-gap">
+
         <div className="container">
-          <div className="row">
+          <div className="row justify-content-center">
             <div className="col-lg-8 col-xl-8">
               {/* Start About Area  */}
-              <div className="axil-about-us">
-                <div className="inner">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        locale === "ar"
-                          ? aboutUs?.about_us_ar
-                          : aboutUs?.about_us_en,
-                    }}
-                  />
-                </div>
-              </div>
+              <div className="axil-about-us center-box">
+  <h2 className="about-title">
+    {locale === "ar" ? "معلومات عنا" : "Who We Are"}
+  </h2>
+  <div className="inner">
+    <div
+      dangerouslySetInnerHTML={{
+        __html:
+          locale === "ar"
+            ? aboutUs?.about_us_ar
+            : aboutUs?.about_us_en,
+      }}
+    />
+  </div>
+</div>
+
               {/* End About Area  */}
             </div>
-            <div className="col-lg-4 col-xl-4 mt_md--40 mt_sm--40">
-              <div className="sidebar-inner">
-                <WidgetPostList postData={allPosts} />
-              </div>
-            </div>
+           {/*   <div className="col-lg-4 col-xl-4 mt_md--40 mt_sm--40 about-sidebar">
+             <div className="sidebar-inner">
+               <WidgetPostList postData={allPosts} />
+             </div> 
+            </div>*/}
           </div>
         </div>
       </div>

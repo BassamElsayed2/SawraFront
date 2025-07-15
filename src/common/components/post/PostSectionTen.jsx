@@ -81,22 +81,12 @@ const PostSectionTen = () => {
 
   return (
     <div
-      className="axil-post-grid-area axil-section-gap bg-color-white position-relative"
-      style={{
-        backgroundColor: "#A00008",
-      }}
+      className="axil-post-grid-area axil-section-gap bg-color-white position-relative post-section-ten-bg fullwidth-bg"
     >
       <img
         src="/images/Rectangle.png"
         alt="Rectangle"
-        style={{
-          position: "absolute",
-          top: -60,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: 1200,
-        }}
+        className="rectangle-bg-img"
       />
       <div className="container" style={{ position: "relative", zIndex: 2 }}>
         <SectionTitleOne title={t("sectionTitle")} />
@@ -130,7 +120,7 @@ const PostSectionTen = () => {
                 <Tab.Pane className="single-post-grid" eventKey={activeNav}>
                   <div className="row mt--40">
                     <div className="col-xl-5 col-lg-6 col-md-12 col-12">
-                      {tabPostData.slice(-5).map((data, index) => (
+                      {tabPostData.slice(-4).map((data, index) => (
                         <Link href={`/${locale}/post/${data.id}`} key={data.id} passHref>
                           <a
                             style={{ textDecoration: "none" }}

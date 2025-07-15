@@ -22,9 +22,9 @@ const Maintenance = () => {
                                         <a>
                                             <Image
                                                 className="dark-logo"
-                                                width={153}
-                                                height={40}
-                                                src={(colorMode === "Dark" ? "/images/logo/logo-white2.webp" : "/images/logo/logo-black.webp") || "/images/logo/logo-black.webp"}
+                                                width={200}
+                                                height={70}
+                                                src={(colorMode === "Dark" ? "/images/logo/LogoElSawra.png" : "/images/logo/LogoElSawra.png") || "/images/logo/LogoElSawra.png"}
                                                 alt="Blogar logo"
                                             />
                                         </a>

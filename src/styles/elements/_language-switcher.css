@@ -1,10 +1,10 @@
 .langSwitcher {
-  background-color: #A00008 !important; /* أحمر غامق */
+  background-color: #A00008 !important; 
   font-weight: bold;
   color: white !important;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: 2px solid #CC9D2F !important; /* بوردر أصفر */
+  border: 2px solid #CC9D2F !important; 
   width: 90px;
   font-size: 16px;
   cursor: pointer;
@@ -14,15 +14,14 @@
 .langSwitcher:hover {
   background-color: #A00008 !important;
   color: #fff !important;
-  border-color: #ffa42cd3 !important; /* بوردر أصفر أفتح عند الهوفر */
+  border-color: #ffa42cd3 !important; 
   box-shadow: 0 0 10px 2px #CC9D2F;
 }
 
-.langSwitcher:active,
-.langSwitcher:focus {
-  background-color: #FFA52A !important; /* لون أصفر غامق عند التفعيل */
+.langSwitcher:active {
+  background-color: #FFA52A !important; 
   color: #fff !important;
-  border-color: #A00008 !important; /* بوردر أحمر غامق عند التفعيل */
+  border-color: #A00008 !important;
   box-shadow: 0 0 12px 2px #ffe082;
   outline: none;
 }
