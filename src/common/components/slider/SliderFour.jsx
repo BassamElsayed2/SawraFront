@@ -74,19 +74,21 @@ export default function CardSlider() {
               }}
             >
               {item.images?.[0] && (
-                <Image
-                  src={item.images[0]}
-                  alt={locale === "en" ? item.title_en : item.title_ar}
-                  width={282}
-                  height={345}
-                  className="card-img-top"
-                  style={{
-                    objectFit: "cover",
-                    borderTopLeftRadius: 18,
-                    borderTopRightRadius: 18,
-                    minHeight: 180,
-                  }}
-                />
+                <Link href={`/${locale}/menu`}>
+                  <Image
+                    src={item.images[0]}
+                    alt={locale === "en" ? item.title_en : item.title_ar}
+                    width={282}
+                    height={345}
+                    className="card-img-top"
+                    style={{
+                      objectFit: "cover",
+                      borderTopLeftRadius: 18,
+                      borderTopRightRadius: 18,
+                      minHeight: 180,
+                    }}
+                  />
+                </Link>
               )}
             </div>
           </div>
