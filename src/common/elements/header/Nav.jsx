@@ -86,7 +86,7 @@ const Nav = ({ posts }) => {
         <li className="menu-item-has-children" key={idx}>
           <Link href={link.href}>
             <a>
-              <img className={link.cn} src={link.img.src} alt={link.img.alt} />
+              <img className={link.img.className} src={link.img.src} alt={link.img.alt} />
             </a>
           </Link>
         </li>

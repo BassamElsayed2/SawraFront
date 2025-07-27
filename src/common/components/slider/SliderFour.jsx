@@ -22,8 +22,6 @@ export default function CardSlider() {
     ? news.filter((item) => item.status === "offer")
     : [];
 
-  console.log(offersNews);
-
   const settings = {
     dots: true,
     infinite: true,
@@ -74,21 +72,19 @@ export default function CardSlider() {
               }}
             >
               {item.images?.[0] && (
-                <Link href={`/${locale}/menu`}>
-                  <Image
-                    src={item.images[0]}
-                    alt={locale === "en" ? item.title_en : item.title_ar}
-                    width={282}
-                    height={345}
-                    className="card-img-top"
-                    style={{
-                      objectFit: "cover",
-                      borderTopLeftRadius: 18,
-                      borderTopRightRadius: 18,
-                      minHeight: 180,
-                    }}
-                  />
-                </Link>
+                <Image
+                  src={item.images[0]}
+                  alt={locale === "en" ? item.title_en : item.title_ar}
+                  width={282}
+                  height={345}
+                  className="card-img-top"
+                  style={{
+                    objectFit: "cover",
+                    borderTopLeftRadius: 18,
+                    borderTopRightRadius: 18,
+                    minHeight: 180,
+                  }}
+                />
               )}
             </div>
           </div>

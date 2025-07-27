@@ -1,7 +1,7 @@
 // Modal Styles
 .modal {
   .modal-dialog {
-    max-width: 900px;
+    max-width: 700px;
   }
 
   .modal-content {
@@ -21,6 +21,9 @@
       padding: 0.5rem;
       border-radius: 50%;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover {
         background-color: #f8f9fa;

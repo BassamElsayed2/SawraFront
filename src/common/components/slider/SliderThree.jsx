@@ -10,29 +10,28 @@ function SliderThree() {
     queryFn: getAds,
   });
 
-  console.log(bannars);
-
   return (
     <div className="slidez">
-    <Carousel>
-      {bannars?.map((banner) => (
-        <Carousel.Item key={banner.id}>
-          <Link href={banner.link || "#"}>
-            <img
-              className="d-block  "
-              style={{
-                objectFit: "cover",
-                height: "244px",
-                width: "1135px",
-                margin: "auto",
-              }}
-              src={banner.image_url}
-              alt={banner.title_en || "bannar"}
-            />
-          </Link>
-        </Carousel.Item>
-      ))}
-    </Carousel></div>
+      <Carousel>
+        {bannars?.map((banner) => (
+          <Carousel.Item key={banner.id}>
+            <Link href={banner.link || "#"}>
+              <img
+                className="d-block  "
+                style={{
+                  objectFit: "cover",
+                  height: "244px",
+                  width: "1135px",
+                  margin: "auto",
+                }}
+                src={banner.image_url}
+                alt={banner.title_en || "bannar"}
+              />
+            </Link>
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    </div>
   );
 }
 

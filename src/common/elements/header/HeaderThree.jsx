@@ -51,43 +51,47 @@ const HeaderThree = ({ postData }) => {
     <>
       <header className="header axil-header header-style-3  header-light header-sticky">
         <div className="header-top">
-          <div className="container">
-            <div className=" d-flex justify-content-between align-items-center">
-              <div className="">
-                <div className="header-top-bar d-flex flex-wrap align-items-center justify-content-center justify-content-md-start">
-                  <ul className="header-top-date liststyle  align-items-center mr--20">
-                    <li>
-                      <Link href="#">
-                        <a>{dateFormate()}</a>
-                      </Link>
-                    </li>
-                  </ul>
-                  <ul className="header-top-nav liststyle d-flex flrx-wrap align-items-center">
-                    <li>
-                      <Link href="#">
-                        <a>{t("advertisement")}</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="#">
-                        <a href="#">{t("about")}</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="#">
-                        <a>{t("contact")}</a>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="">
-                <ul className="social-share-transparent md-size justify-content-center justify-content-md-end">
-                  <LanguageSwitcher />
-                </ul>
-              </div>
-            </div>
-          </div>
+        <div className="container">
+  <div className="row align-items-center">
+    {/* Left side - Date and Top Nav */}
+    <div className="top col-sm-8 col-md-8 col-lg-6">
+      <div className="header-top-bar d-flex flex-wrap align-items-center justify-content-center justify-content-md-start">
+        <ul className="header-top-date liststyle d-flex flex-wrap align-items-center mr--20">
+          <li>
+            <Link href="#">
+              <a>{dateFormate()}</a>
+            </Link>
+          </li>
+        </ul>
+        <ul className="header-top-nav liststyle d-flex flex-wrap align-items-center">
+          <li>
+            <Link href="#">
+              <a>{t("advertisement")}</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="#">
+              <a>{t("about")}</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="#">
+              <a>{t("contact")}</a>
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Right side - Language switcher */}
+    <div className="topz col-sm-6 col-md-4 col-lg-6">
+      <ul className="social-share-transparent md-size justify-content-center justify-content-md-end d-flex align-items-center">
+        <LanguageSwitcher />
+      </ul>
+    </div>
+  </div>
+</div>
+
         </div>
 
         <div className="header-middle">

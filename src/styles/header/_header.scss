@@ -322,7 +322,7 @@ button {
     Header Style Three  
 ---------------------------*/
 .header-top {
-  background-color: #8b0000;
+  background-color: #680303;
   .header-top-nav {
     li {
       margin: 0 20px;
@@ -388,6 +388,8 @@ button {
   padding-top: 10px;
   padding-right: 40px !important;
 }
+.langSwitcher{background: linear-gradient(to right, #ff7e5f, #feb47b);
+color:rgb(92, 92, 92)}
 .axil-header {
   background-image: url("/images/headerbg.jpg");
   height: 522px;
@@ -395,7 +397,7 @@ button {
   &.header-style-3 {
     padding: 0;
     .header-top {
-      padding: 12px 0;
+      padding: 4px 0;
       @media #{$lg-layout} {
         padding: 20px 0;
       }
@@ -466,7 +468,7 @@ button {
     }
     .header-bottom {
       @media #{$lg-layout} {
-        padding: 20px 0;
+        padding: 59px 0;
       }
       @media #{$md-layout} {
         padding: 20px 0;
@@ -768,6 +770,11 @@ button {
   .nav-home {
     display: none;
   }
+  
+  .header-top-nav{display: none !important;}
+  .header-top{padding: 0px !important;}
+  .topz{display:flex;width:20%;}
+  .top{display:flex;width:80%;}
   .footerz {
     background-image: url(/images/mfbg.jpg) !important;
     height: 154px;
@@ -778,14 +785,14 @@ button {
 }
 
 .nav-menu {
-  width: 105px;
-  height: 40px;
+  width: 79px;
+  height: 30px;
 }
 .nav-branches {
-  width: 105px;
-  height: 40px;
+  width: 79px;
+  height: 30px;
 }
 .nav-home {
-  width: 149px;
-  height: 40px;
+  width: 112px;
+  height: 30px;
 }

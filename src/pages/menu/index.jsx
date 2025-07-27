@@ -32,6 +32,7 @@ export default function NewsPage({ allPosts }) {
   const [selectedSize, setSelectedSize] = useState("price");
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const itemsPerPage = 9;
+  const [successMessage, setSuccessMessage] = useState("");
 
   const {
     data: news = [],
@@ -105,13 +106,15 @@ export default function NewsPage({ allPosts }) {
   const handleAddToCart = () => {
     if (selectedItem) {
       addToCart(selectedItem, quantity, selectedSize);
-      closeModal();
-      // إظهار رسالة نجاح
-      alert(
+      setSuccessMessage(
         locale === "en"
           ? "Product added to cart successfully!"
           : "تم إضافة المنتج إلى السلة بنجاح!"
       );
+      setTimeout(() => {
+        setSuccessMessage("");
+        closeModal();
+      }, 1200);
     }
   };
 
@@ -477,31 +480,80 @@ export default function NewsPage({ allPosts }) {
           className="modal fade show"
           style={{
             display: "block",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0,0,0,0.5)",
             zIndex: 1050,
           }}
           onClick={closeModal}
         >
           <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header border-0">
+            <div
+              className="modal-content"
+              style={{
+                borderRadius: 24,
+                boxShadow: "0 12px 48px rgba(0,0,0,0.25)",
+                border: "none",
+                overflow: "hidden",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="modal-header border-0"
+                style={{
+                  padding: "1.5rem 2rem 0 2rem",
+                  background: "linear-gradient(90deg,#FFA52A,#FFC773)",
+                  minHeight: 0,
+                }}
+              >
                 <button
                   type="button"
                   className="btn-close"
                   onClick={closeModal}
                   aria-label="Close"
+                  style={{
+                    fontSize: 24,
+                    color: "#8b0000",
+                    background: "#fff",
+                    borderRadius: 8,
+                    boxShadow: "0 2px 8px #ffa52a33",
+                  }}
                 >
                   <i className="fas fa-times"></i>
                 </button>
               </div>
-              <div className="modal-body p-4">
+              {successMessage && (
+                <div
+                  style={{
+                    background: "#16a34a",
+                    color: "#fff",
+                    fontWeight: 600,
+                    textAlign: "center",
+                    padding: "0.75rem 1rem",
+                    borderRadius: 8,
+                    margin: "1rem 2rem 0 2rem",
+                    fontSize: "1.1rem",
+                    boxShadow: "0 2px 8px #16a34a33",
+                    zIndex: 2,
+                  }}
+                >
+                  {successMessage}
+                </div>
+              )}
+              <div
+                className="modal-body p-4"
+                style={{ paddingTop: successMessage ? 12 : 32 }}
+              >
                 <div className="row">
                   {/* صورة المنتج */}
                   <div className="col-md-6 mb-4">
                     {selectedItem.images?.[0] && (
                       <div
                         className="product-image-container position-relative"
-                        style={{ height: "400px" }}
+                        style={{
+                          height: 320,
+                          borderRadius: 18,
+                          overflow: "hidden",
+                          boxShadow: "0 4px 24px #ffa52a22",
+                        }}
                       >
                         <Image
                           src={selectedItem.images[0]}
@@ -512,15 +564,15 @@ export default function NewsPage({ allPosts }) {
                           }
                           layout="fill"
                           objectFit="cover"
-                          style={{ borderRadius: "1rem" }}
                         />
                         {getCurrentOffer(selectedItem) > 0 && (
                           <span
                             className="position-absolute top-0 start-0 m-3 px-3 py-2 text-white fw-bold"
                             style={{
-                              backgroundColor: "rgba(220, 38, 38, 0.9)",
-                              borderRadius: "9999px",
+                              backgroundColor: "#dc2626",
+                              borderRadius: 12,
                               fontSize: "1rem",
+                              boxShadow: "0 2px 8px #dc262633",
                             }}
                           >
                             {locale === "en"
@@ -539,31 +591,50 @@ export default function NewsPage({ allPosts }) {
                       </div>
                     )}
                   </div>
-
                   {/* تفاصيل المنتج */}
                   <div className="col-md-6">
-                    <h3 className="fw-bold mb-3" style={{ color: "#000" }}>
+                    <h3
+                      className="fw-bold mb-3"
+                      style={{
+                        color: "#222",
+                        fontSize: 28,
+                        letterSpacing: 0.5,
+                      }}
+                    >
                       {locale === "en"
                         ? selectedItem.title_en
                         : selectedItem.title_ar}
                     </h3>
-
-                    {/* التصنيف */}
                     <div className="mb-3">
-                      <span className="category-badge">
+                      <span
+                        className="category-badge"
+                        style={{
+                          background: "#FFA52A",
+                          color: "#fff",
+                          fontWeight: 700,
+                          borderRadius: 12,
+                          padding: "0.4rem 1.2rem",
+                          fontSize: 15,
+                        }}
+                      >
                         {locale === "en"
                           ? selectedItem.category?.name_en
                           : selectedItem.category?.name_ar}
                       </span>
                     </div>
-
-                    {/* الوصف */}
                     <div className="mb-4">
-                      <h6 className="fw-bold mb-2">
+                      <h6 className="fw-bold mb-2" style={{ color: "#8b0000" }}>
                         {locale === "en" ? "Description" : "الوصف"}
                       </h6>
                       <div
                         className="product-description"
+                        style={{
+                          color: "#444",
+                          fontSize: 16,
+                          lineHeight: 1.7,
+                          maxHeight: 120,
+                          overflowY: "auto",
+                        }}
                         dangerouslySetInnerHTML={{
                           __html:
                             locale === "en"
@@ -572,11 +643,12 @@ export default function NewsPage({ allPosts }) {
                         }}
                       ></div>
                     </div>
-
-                    {/* اختيار الحجم */}
                     {hasMultipleSizes(selectedItem) && (
                       <div className="mb-4">
-                        <h6 className="fw-bold mb-2">
+                        <h6
+                          className="fw-bold mb-2"
+                          style={{ color: "#8b0000" }}
+                        >
                           {locale === "en" ? "Size" : "الحجم"}
                         </h6>
                         <div className="size-selector d-flex flex-wrap gap-2">
@@ -586,6 +658,17 @@ export default function NewsPage({ allPosts }) {
                                 selectedSize === "price" ? "active" : ""
                               }`}
                               onClick={() => setSelectedSize("price")}
+                              style={{
+                                border: "2px solid #ffa52a",
+                                borderRadius: 8,
+                                padding: "0.4rem 1.2rem",
+                                background:
+                                  selectedSize === "price" ? "#FFA52A" : "#fff",
+                                color:
+                                  selectedSize === "price" ? "#fff" : "#8b0000",
+                                fontWeight: 600,
+                                transition: "all 0.2s",
+                              }}
                             >
                               {locale === "en" ? "Regular" : "عادي"}
                             </button>
@@ -596,6 +679,21 @@ export default function NewsPage({ allPosts }) {
                                 selectedSize === "price_small" ? "active" : ""
                               }`}
                               onClick={() => setSelectedSize("price_small")}
+                              style={{
+                                border: "2px solid #ffa52a",
+                                borderRadius: 8,
+                                padding: "0.4rem 1.2rem",
+                                background:
+                                  selectedSize === "price_small"
+                                    ? "#FFA52A"
+                                    : "#fff",
+                                color:
+                                  selectedSize === "price_small"
+                                    ? "#fff"
+                                    : "#8b0000",
+                                fontWeight: 600,
+                                transition: "all 0.2s",
+                              }}
                             >
                               {locale === "en" ? "Small" : "صغير"}
                             </button>
@@ -606,6 +704,21 @@ export default function NewsPage({ allPosts }) {
                                 selectedSize === "price_medium" ? "active" : ""
                               }`}
                               onClick={() => setSelectedSize("price_medium")}
+                              style={{
+                                border: "2px solid #ffa52a",
+                                borderRadius: 8,
+                                padding: "0.4rem 1.2rem",
+                                background:
+                                  selectedSize === "price_medium"
+                                    ? "#FFA52A"
+                                    : "#fff",
+                                color:
+                                  selectedSize === "price_medium"
+                                    ? "#fff"
+                                    : "#8b0000",
+                                fontWeight: 600,
+                                transition: "all 0.2s",
+                              }}
                             >
                               {locale === "en" ? "Medium" : "متوسط"}
                             </button>
@@ -616,6 +729,21 @@ export default function NewsPage({ allPosts }) {
                                 selectedSize === "price_large" ? "active" : ""
                               }`}
                               onClick={() => setSelectedSize("price_large")}
+                              style={{
+                                border: "2px solid #ffa52a",
+                                borderRadius: 8,
+                                padding: "0.4rem 1.2rem",
+                                background:
+                                  selectedSize === "price_large"
+                                    ? "#FFA52A"
+                                    : "#fff",
+                                color:
+                                  selectedSize === "price_large"
+                                    ? "#fff"
+                                    : "#8b0000",
+                                fontWeight: 600,
+                                transition: "all 0.2s",
+                              }}
                             >
                               {selectedItem.category?.name_en === "Crepe"
                                 ? locale === "en"
@@ -632,6 +760,21 @@ export default function NewsPage({ allPosts }) {
                                 selectedSize === "price_family" ? "active" : ""
                               }`}
                               onClick={() => setSelectedSize("price_family")}
+                              style={{
+                                border: "2px solid #ffa52a",
+                                borderRadius: 8,
+                                padding: "0.4rem 1.2rem",
+                                background:
+                                  selectedSize === "price_family"
+                                    ? "#FFA52A"
+                                    : "#fff",
+                                color:
+                                  selectedSize === "price_family"
+                                    ? "#fff"
+                                    : "#8b0000",
+                                fontWeight: 600,
+                                transition: "all 0.2s",
+                              }}
                             >
                               {selectedItem.category?.name_en === "Crepe"
                                 ? locale === "en"
@@ -645,10 +788,8 @@ export default function NewsPage({ allPosts }) {
                         </div>
                       </div>
                     )}
-
-                    {/* العداد */}
                     <div className="mb-4">
-                      <h6 className="fw-bold mb-2">
+                      <h6 className="fw-bold mb-2" style={{ color: "#8b0000" }}>
                         {locale === "en" ? "Quantity" : "الكمية"}
                       </h6>
                       <div className="quantity-counter d-flex align-items-center">
@@ -656,30 +797,55 @@ export default function NewsPage({ allPosts }) {
                           className="btn btn-outline-secondary"
                           onClick={decreaseQuantity}
                           disabled={quantity <= 1}
+                          style={{
+                            borderRadius: 8,
+                            width: 38,
+                            height: 38,
+                            fontWeight: 700,
+                            fontSize: 20,
+                          }}
                         >
                           -
                         </button>
-                        <span className="quantity-display mx-3 fw-bold">
+                        <span
+                          className="quantity-display mx-3 fw-bold"
+                          style={{ fontSize: 18 }}
+                        >
                           {quantity}
                         </span>
                         <button
                           className="btn btn-outline-secondary"
                           onClick={increaseQuantity}
+                          style={{
+                            borderRadius: 8,
+                            width: 38,
+                            height: 38,
+                            fontWeight: 700,
+                            fontSize: 20,
+                          }}
                         >
                           +
                         </button>
                       </div>
                     </div>
-
-                    {/* السعر */}
                     <div className="mb-4">
-                      <h6 className="fw-bold mb-2">
+                      <h6 className="fw-bold mb-2" style={{ color: "#8b0000" }}>
                         {locale === "en" ? "Price" : "السعر"}
                       </h6>
-                      <div className="price-display">
+                      <div
+                        className="price-display"
+                        style={{
+                          fontSize: 22,
+                          fontWeight: 700,
+                          color: "#dc2626",
+                        }}
+                      >
                         {getCurrentOffer(selectedItem) > 0 ? (
                           <div className="d-flex align-items-center gap-3">
-                            <span className="current-price">
+                            <span
+                              className="current-price"
+                              style={{ color: "#16a34a", fontSize: 22 }}
+                            >
                               {locale === "en"
                                 ? `${
                                     getCurrentPrice(selectedItem) -
@@ -690,7 +856,14 @@ export default function NewsPage({ allPosts }) {
                                     getCurrentOffer(selectedItem)
                                   } ج.م`}
                             </span>
-                            <span className="original-price">
+                            <span
+                              className="original-price"
+                              style={{
+                                textDecoration: "line-through",
+                                opacity: 0.7,
+                                fontSize: 16,
+                              }}
+                            >
                               {locale === "en"
                                 ? `${getCurrentPrice(selectedItem)} EGP`
                                 : `${getCurrentPrice(selectedItem)} ج.م`}
@@ -705,13 +878,18 @@ export default function NewsPage({ allPosts }) {
                         )}
                       </div>
                     </div>
-
-                    {/* إجمالي السعر */}
                     <div className="mb-4">
-                      <h6 className="fw-bold mb-2">
+                      <h6 className="fw-bold mb-2" style={{ color: "#8b0000" }}>
                         {locale === "en" ? "Total" : "الإجمالي"}
                       </h6>
-                      <span className="total-price">
+                      <span
+                        className="total-price"
+                        style={{
+                          fontSize: 26,
+                          fontWeight: 700,
+                          color: "#FFA52A",
+                        }}
+                      >
                         {locale === "en"
                           ? `${
                               (getCurrentOffer(selectedItem) > 0
@@ -727,17 +905,29 @@ export default function NewsPage({ allPosts }) {
                             } ج.م`}
                       </span>
                     </div>
-
-                    {/* أزرار الإجراءات */}
-                    <div className="action-buttons d-grid gap-2">
+                    <div className="action-buttons d-grid gap-2 mt-4">
                       <button
                         className="btn btn-primary btn-lg"
+                        style={{
+                          background: "linear-gradient(90deg,#FFA52A,#FFC773)",
+                          color: "#8b0000",
+                          fontWeight: 700,
+                          border: "none",
+                          borderRadius: 10,
+                          fontSize: 20,
+                          boxShadow: "0 2px 8px #ffa52a33",
+                        }}
                         onClick={handleAddToCart}
                       >
                         {locale === "en" ? "Add to Cart" : "أضف إلى السلة"}
                       </button>
                       <button
                         className="btn btn-outline-secondary"
+                        style={{
+                          borderRadius: 10,
+                          fontWeight: 600,
+                          fontSize: 18,
+                        }}
                         onClick={closeModal}
                       >
                         {locale === "en" ? "Close" : "إغلاق"}
