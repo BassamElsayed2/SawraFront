@@ -340,14 +340,6 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
         ))}
       </div>
 
-      {/* Products Count */}
-      <div className="text-center mb-8">
-        <p className="text-gray-600">
-          {lang === "ar" ? "تم العثور على" : "Found"} {totalProducts}{" "}
-          {lang === "ar" ? "منتج" : "products"}
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((item, index) => (
           <Card
@@ -382,11 +374,11 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
               </div>
 
               <div className="p-6 space-y-4">
-                <h3 className="text-xl font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors duration-300">
+                <h3 className="text-lg font-bold text-gray-800 leading-tight group-hover:text-red-600 transition-colors duration-300">
                   {lang === "ar" ? item.title_ar : item.title_en}
                 </h3>
 
-                <p className="text-gray-600 line-clamp-2 leading-relaxed">
+                <p className="text-gray-600 line-clamp-2 leading-relaxed text-[13px]">
                   {lang === "ar" ? item.description_ar : item.description_en}
                 </p>
 
@@ -489,7 +481,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                                         : size.size_en}
                                     </div>
                                   </div>
-                                  <div className="text-2xl font-bold text-red-600">
+                                  <div className="text-xl font-bold text-red-600">
                                     $
                                     {size.offer_price
                                       ? size.offer_price.toFixed(2)
@@ -519,31 +511,31 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                         variant="outline"
                         size="icon"
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-10 h-10"
                       >
-                        <Minus className="h-5 w-5" />
+                        <Minus className="h-3 w-3 " />
                       </Button>
-                      <span className="text-3xl font-bold w-16 text-center">
+                      <span className="text-2xl font-bold w-16 text-center">
                         {quantity}
                       </span>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => setQuantity(quantity + 1)}
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-10 h-10"
                       >
-                        <Plus className="h-5 w-5" />
+                        <Plus className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
 
                   {/* Total Price */}
-                  <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-2xl">
+                  <div className="bg-gradient-to-r from-red-50 to-red-100 p-2 rounded-2xl">
                     <div className="text-center">
                       <div className="text-lg text-gray-600 mb-2">
                         {lang === "ar" ? "الإجمالي" : "Total"}
                       </div>
-                      <div className="text-4xl font-bold text-red-600">
+                      <div className="text-3xl font-bold text-red-600">
                         ${calculateTotalPrice().toFixed(2)}
                       </div>
                     </div>

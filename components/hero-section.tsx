@@ -9,15 +9,23 @@ interface HeroSectionProps {
 export default function HeroSection({ lang, dict }: HeroSectionProps) {
   return (
     <section className="relative h-screen flex items-center justify-center">
-      <div
+      {/* <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: "url('/elegant-restaurant.png')",
         }}
+      /> */}
+      <video
+        src={"/main-comp.mp4"}
+        autoPlay
+        muted
+        loop
+        className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 hero-overlay" />
 
-      <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
+      {/* <div className="absolute inset-0 hero-overlay" /> */}
+
+      {/* <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
           {dict.hero.title}
         </h1>
@@ -31,7 +39,7 @@ export default function HeroSection({ lang, dict }: HeroSectionProps) {
         >
           <Link href={`/${lang}/menu`}>{dict.hero.cta}</Link>
         </Button>
-      </div>
+      </div> */}
     </section>
   );
 }

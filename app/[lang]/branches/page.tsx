@@ -1,15 +1,16 @@
-import { getDictionary } from '../dictionaries'
-import Navbar from '@/components/navbar'
-import BranchesGrid from '@/components/branches-grid'
-import Footer from '@/components/footer'
+import { getDictionary } from "../dictionaries";
+
+import BranchesGrid from "@/components/branches-grid";
+import Footer from "@/components/footer";
+import Navbar from "@/components/navBarTwo";
 
 export default async function BranchesPage({
   params,
 }: {
-  params: Promise<{ lang: 'en' | 'ar' }>
+  params: Promise<{ lang: "en" | "ar" }>;
 }) {
-  const { lang } = await params
-  const dict = await getDictionary(lang)
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -25,5 +26,5 @@ export default async function BranchesPage({
       </div>
       <Footer lang={lang} dict={dict} />
     </main>
-  )
+  );
 }
