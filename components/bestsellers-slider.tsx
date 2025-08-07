@@ -36,7 +36,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
   const [mounted, setMounted] = useState(false);
   const [offers, setOffers] = useState<ComboOffer[]>([]);
   const [loading, setLoading] = useState(true);
-  const itemsPerView = 3;
+  const [itemsPerView, setItemsPerView] = useState(3);
 
   useEffect(() => {
     setMounted(true);
@@ -53,6 +53,20 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     } finally {
       setLoading(false);
     }
+
+    const updateItemsPerView = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerView(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerView(2);
+      } else {
+        setItemsPerView(3);
+      }
+    };
+
+    updateItemsPerView();
+    window.addEventListener("resize", updateItemsPerView);
+    return () => window.removeEventListener("resize", updateItemsPerView);
   };
 
   const nextSlide = () => {
@@ -126,44 +140,15 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     return (!start || now >= start) && (!end || now <= end);
   };
 
-  if (!mounted || loading) {
-    return (
-      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-4 animate-pulse"></div>
-            <div className="h-12 w-96 bg-gray-300 rounded mx-auto mb-6 animate-pulse"></div>
-            <div className="h-6 w-64 bg-gray-200 rounded mx-auto animate-pulse"></div>
-          </div>
-          <div className="flex justify-center space-x-4">
-            {Array.from({ length: itemsPerView }).map((_, i) => (
-              <Card key={i} className="w-1/3 flex-shrink-0 px-4 animate-pulse">
-                <CardContent className="p-0">
-                  <div className="aspect-[4/3] bg-gray-200"></div>
-                  <div className="p-6 space-y-4">
-                    <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                    <div className="h-6 w-48 bg-gray-300 rounded"></div>
-                    <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                    <div className="h-10 w-full bg-gray-300 rounded-xl"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   if (offers.length === 0) {
     return (
-      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
+      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-red-50/30">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="max-w-md mx-auto">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-orange-100">
-                <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Calendar className="w-12 h-12 text-orange-500" />
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-red-100">
+                <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Calendar className="w-12 h-12 text-red-500" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">
                   {lang === "en" ? "No Offers Available" : "لا توجد عروض متاحة"}
@@ -173,14 +158,14 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                     ? "We're preparing amazing offers for you! Check back soon for exclusive deals and special discounts."
                     : "نحن نعد عروضاً مذهلة لك! عد قريباً للحصول على عروض حصرية وخصومات خاصة."}
                 </p>
-                <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-orange-500">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-red-500">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                   <div
-                    className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"
+                    className="w-2 h-2 bg-red-500 rounded-full animate-pulse"
                     style={{ animationDelay: "0.2s" }}
                   ></div>
                   <div
-                    className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"
+                    className="w-2 h-2 bg-red-500 rounded-full animate-pulse"
                     style={{ animationDelay: "0.4s" }}
                   ></div>
                 </div>
@@ -193,7 +178,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-orange-50/30">
+    <section className="py-5 bg-gradient-to-br from-gray-50 via-white to-red-50/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge
@@ -202,10 +187,8 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
           >
             {lang === "en" ? "🔥 Special Offers" : "🔥 عروض خاصة"}
           </Badge>
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-            {lang === "en" ? "Combo Offers" : "عروض كومبو"}
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+
+          <p className="text-[14px] text-gray-600 max-w-2xl mx-auto leading-relaxed">
             {lang === "en"
               ? "Discover our amazing combo deals and save big on your favorite meals!"
               : "اكتشف عروض الكومبو المذهلة ووفر الكثير على وجباتك المفضلة!"}
@@ -227,7 +210,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
               {offers.map((offer, index) => (
                 <div
                   key={offer.id}
-                  className="w-1/3 flex-shrink-0 px-4"
+                  className="w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 px-4"
                   style={{
                     animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
                   }}
@@ -304,13 +287,13 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xl font-bold text-gray-800 leading-tight group-hover:text-orange-600 transition-colors">
+                        <h3 className="text-[15px] font-medium text-gray-800 leading-tight group-hover:text-red-600 transition-colors">
                           {lang === "en" ? offer.title_en : offer.title_ar}
                         </h3>
 
                         {/* Description */}
                         {offer.description_ar && offer.description_en && (
-                          <p className="text-gray-600 text-sm line-clamp-2">
+                          <p className="text-gray-600 text-[12px] line-clamp-2">
                             {lang === "en"
                               ? offer.description_en
                               : offer.description_ar}
@@ -319,7 +302,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
 
                         {/* Price */}
                         <div className="flex items-center justify-between">
-                          <div className="text-3xl font-bold text-orange-600">
+                          <div className="text-xl font-bold text-red-600">
                             ${offer.total_price.toFixed(2)}
                           </div>
                         </div>
@@ -361,7 +344,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                 onClick={nextSlide}
                 variant="outline"
                 size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm shadow-xl hover:bg-white border-0 text-gray-600 hover:text-orange-500 rounded-full w-12 h-12"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm shadow-xl hover:bg-white border-0 text-gray-600 hover:text-red-500 rounded-full w-12 h-12"
               >
                 <ChevronRight className="h-6 w-6" />
               </Button>
@@ -380,7 +363,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   Math.floor(currentIndex / itemsPerView) === index
-                    ? "bg-orange-500 w-8"
+                    ? "bg-red-500 w-8"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
               />
@@ -422,8 +405,8 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                   {(() => {
                     const daysRemaining = getDaysRemaining(selectedOffer);
                     return daysRemaining !== null && daysRemaining > 0 ? (
-                      <div className="bg-orange-50 p-4 rounded-xl">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse text-orange-700">
+                      <div className="bg-red-50 p-4 rounded-xl">
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse text-red-700">
                           <Clock className="h-5 w-5" />
                           <span className="font-semibold">
                             {lang === "en"
@@ -453,7 +436,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                         <h4 className="font-bold text-xl mb-4">
                           {lang === "en" ? "Description" : "الوصف"}:
                         </h4>
-                        <p className="text-gray-600 text-lg leading-relaxed">
+                        <p className="text-gray-600 text-[13px] leading-relaxed">
                           {lang === "en"
                             ? selectedOffer.description_en
                             : selectedOffer.description_ar}
@@ -463,7 +446,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
 
                   {/* Quantity Selection */}
                   <div>
-                    <h4 className="font-bold text-xl mb-4">
+                    <h4 className="font-bold text-lg mb-4">
                       {lang === "en" ? "Quantity" : "الكمية"}:
                     </h4>
                     <div className="flex items-center space-x-4 rtl:space-x-reverse">
@@ -473,9 +456,9 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                         className="rounded-full"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-3 w-3" />
                       </Button>
-                      <span className="text-2xl font-bold w-12 text-center">
+                      <span className="text-xl font-bold w-1 text-center">
                         {quantity}
                       </span>
                       <Button
@@ -484,14 +467,14 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                         onClick={() => setQuantity(quantity + 1)}
                         className="rounded-full"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
 
                   {/* Total Price */}
-                  <div className="bg-orange-50 p-6 rounded-2xl">
-                    <div className="text-3xl font-bold text-orange-600 text-center">
+                  <div className="bg-red-50 p-6 rounded-2xl">
+                    <div className="text-2xl font-bold text-red-600 text-center">
                       {lang === "en" ? "Total" : "الإجمالي"}: $
                       {(selectedOffer.total_price * quantity).toFixed(2)}
                     </div>
@@ -500,7 +483,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                   <Button
                     onClick={addToCart}
                     disabled={!isOfferActive(selectedOffer)}
-                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isOfferActive(selectedOffer)
                       ? lang === "en"
@@ -521,7 +504,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
       {cart.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-white p-6 rounded-2xl shadow-2xl border z-50 animate-bounce">
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <div className="bg-orange-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+            <div className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
               {cart.length}
             </div>
             <div>

@@ -68,6 +68,28 @@
   }
 }
 
+.nav {
+  max-width: 1250px;
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  border-radius: 9999px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
 .font-arabic {
   font-family: var(--font-arabic), sans-serif;
 }
@@ -89,4 +111,126 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Hotline Button Styles */
+.hotline-container {
+  display: flex;
+  align-items: center;
+}
+
+.hotline-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.hotline-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.hotline-button:hover::before {
+  left: 100%;
+}
+
+.hotline-button:hover {
+  transform: translateY(-2px);
+
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.hotline-button:active {
+  transform: translateY(0);
+}
+
+.hotline-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.hotline-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.hotline-label {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.hotline-number {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hotline-button {
+    padding: 6px 12px;
+    min-width: 50px;
+  }
+
+  .hotline-text {
+    display: none;
+  }
+
+  .hotline-icon {
+    margin: 0 auto;
+  }
+
+  .hotline-button::after {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .hotline-button:hover::after {
+    opacity: 1;
+  }
 }

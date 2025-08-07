@@ -19,7 +19,7 @@ export default function Footer({ lang, dict }: FooterProps) {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Logo and Description */}
           <div className="">
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -30,10 +30,10 @@ export default function Footer({ lang, dict }: FooterProps) {
                 height={100}
               />
             </div>
-            <p className="text-gray-300 leading-relaxed">
+            <p className="text-gray-300 leading-relaxed text-[13px] mt-2">
               {lang === "en"
-                ? "Experience authentic flavors and traditional recipes passed down through generations. We serve the finest Middle Eastern cuisine with love and passion."
-                : "استمتع بالنكهات الأصيلة والوصفات التقليدية المتوارثة عبر الأجيال. نقدم أفضل المأكولات  في الشرق الاوسط بحب وشغف."}
+                ? "The restaurant is known for its variety of dishes such as pizza, crepes, waffles, pasta, and fast food (broasted chicken and sandwiches). It has specialties in several locations, including Minya Al Tabkh, in addition to Tenth of Ramadan and Zagazig."
+                : "المطعم يُقدّم مجموعة متنوعة من الوجبات مثل البيتزا، الكريب، الوافل، المكرونة، والوجبات السريعة (بروست وسندوتشات) لديه فروع في عدة أماكن بما في ذلك منيا القمح تحديدًا، بالإضافة إلى العاشر من رمضان والزقازي"}
             </p>
           </div>
 
@@ -67,14 +67,6 @@ export default function Footer({ lang, dict }: FooterProps) {
                   {dict.nav.branches}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href={`/${lang}/about`}
-                  className="text-gray-300 hover:text-red-500 transition-colors"
-                >
-                  {lang === "en" ? "About Us" : "من نحن"}
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -90,21 +82,21 @@ export default function Footer({ lang, dict }: FooterProps) {
               </li>
               <li className="flex items-center space-x-3 rtl:space-x-reverse">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
-                <span className="text-gray-300">info@restaurant.com</span>
+                <span className="text-gray-300">info@elsawra.com</span>
               </li>
               <li className="flex items-start space-x-3 rtl:space-x-reverse">
                 <MapPin className="h-5 w-5 text-red-500 flex-shrink-0 mt-1" />
                 <span className="text-gray-300">
                   {lang === "en"
-                    ? "123 Main Street, Downtown City, State 12345"
-                    : "شارع الرئيسي 123، وسط المدينة، المحافظة 12345"}
+                    ? "Mina Al-Qamah - Abd El-Makki Square, Sade Zaghloul Street, next to the Revolution Restaurant"
+                    : "منيا القمح - ميدان عبدة مكي شارع سعد زغلول بجوار مطعم الثورة "}
                 </span>
               </li>
             </ul>
           </div>
 
           {/* Opening Hours */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h3 className="text-xl font-semibold text-red-500">
               {lang === "en" ? "Opening Hours" : "ساعات العمل"}
             </h3>
@@ -113,20 +105,20 @@ export default function Footer({ lang, dict }: FooterProps) {
                 <span>
                   {lang === "en" ? "Monday - Thursday" : "الاثنين - الخميس"}
                 </span>
-                <span>11:00 AM - 10:00 PM</span>
+                <span>9:00 AM - 4:00 AM</span>
               </li>
               <li className="flex justify-between">
                 <span>
                   {lang === "en" ? "Friday - Saturday" : "الجمعة - السبت"}
                 </span>
-                <span>11:00 AM - 11:00 PM</span>
+                <span>9:00 AM - 4:00 AM</span>
               </li>
               <li className="flex justify-between">
                 <span>{lang === "en" ? "Sunday" : "الأحد"}</span>
                 <span>12:00 PM - 9:00 PM</span>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Social Media and Copyright */}
@@ -139,25 +131,20 @@ export default function Footer({ lang, dict }: FooterProps) {
               </span>
               <div className="flex space-x-4 rtl:space-x-reverse">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/mat3amelsawrazag12"
                   className="text-gray-300 hover:text-red-500 transition-colors"
                   aria-label="Facebook"
+                  target="_blank"
                 >
                   <Facebook className="h-6 w-6" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/elthawra_restaurant/"
                   className="text-gray-300 hover:text-red-500 transition-colors"
                   aria-label="Instagram"
+                  target="_blank"
                 >
                   <Instagram className="h-6 w-6" />
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-red-500 transition-colors"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="h-6 w-6" />
                 </a>
               </div>
             </div>
@@ -165,9 +152,18 @@ export default function Footer({ lang, dict }: FooterProps) {
             {/* Copyright */}
             <div className="text-gray-400 text-center md:text-right">
               <p>
-                © 2024 Restaurant.{" "}
-                {lang === "en" ? "All rights reserved." : "جميع الحقوق محفوظة."}
+                {lang === "en"
+                  ? "All rights reserved to © Elsawra."
+                  : "جميع الحقوق محفوظة © لمطعم الثورة."}
               </p>
+            </div>
+            <div className="text-gray-400 text-center md:text-right flex gap-2">
+              <p>
+                {lang === "en" ? "Design and develop by " : "تصميم وبرمجة "}
+              </p>
+              <Link href={"https://ens.eg/"} className="hover:text-red-400">
+                ENS
+              </Link>
             </div>
           </div>
         </div>
