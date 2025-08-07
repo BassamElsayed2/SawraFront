@@ -37,7 +37,7 @@ export default function Navbar({ lang, dict }: NavbarProps) {
   // Render null or a placeholder until mounted to prevent hydration issues
   if (!mounted) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 z-50  backdrop-blur-md border-b border-border/50 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -54,7 +54,7 @@ export default function Navbar({ lang, dict }: NavbarProps) {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50  backdrop-blur-md border-b border-border/50 shadow-sm">
       <div className="container mx-auto px-6 ">
         <div className="flex items-center justify-between">
           {/* Logo */}

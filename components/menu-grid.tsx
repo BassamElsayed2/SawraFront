@@ -140,20 +140,21 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   const calculateTotalPrice = () => {
     if (!selectedItem || !selectedSize) return 0;
 
-    // Find the selected size price
     let basePrice = 0;
+
     for (const type of selectedItem.types || []) {
       const size = type.sizes?.find((s) => s.id === selectedSize);
       if (size) {
-        basePrice = size.price;
+        // Use offer price if available, otherwise use regular price
+        basePrice = size.offer_price ?? size.price;
         break;
       }
     }
 
-    // Add variants price (if any)
+    // Add variants price (you need to update this if variants have offers too)
     const variantsPrice = selectedVariants.reduce((total, variantId) => {
-      // This would need to be implemented based on your variant structure
-      return total + 0; // Placeholder
+      // Example placeholder – modify as per your data
+      return total + 0;
     }, 0);
 
     return (basePrice + variantsPrice) * quantity;
@@ -489,10 +490,13 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                                     </div>
                                   </div>
                                   <div className="text-2xl font-bold text-red-600">
-                                    ${size.price.toFixed(2)}
+                                    $
+                                    {size.offer_price
+                                      ? size.offer_price.toFixed(2)
+                                      : size.price.toFixed(2)}
                                     {size.offer_price && (
                                       <span className="text-sm text-gray-500 line-through ml-2">
-                                        ${size.offer_price.toFixed(2)}
+                                        ${size.price.toFixed(2)}
                                       </span>
                                     )}
                                   </div>
