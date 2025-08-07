@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "branches": "Branches",
+    "home": "Home"
+  },
+  "hero": {
+    "title": "Authentic Flavors",
+    "subtitle": "Experience the finest dining with traditional recipes passed down through generations",
+    "cta": "Explore Menu"
+  },
+  "bestsellers": {
+    "title": "Best Sellers",
+    "subtitle": "Our most popular dishes loved by customers"
+  },
+  "menu": {
+    "title": "Our Menu",
+    "subtitle": "Discover our delicious selection of authentic dishes",
+    "choose": "Choose",
+    "addToCart": "Add to Cart",
+    "sendToWhatsApp": "Send Order to WhatsApp",
+    "quantity": "Quantity",
+    "price": "Price",
+    "description": "Description",
+    "sizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    }
+  },
+  "branches": {
+    "title": "Our Branches",
+    "subtitle": "Visit us at any of our convenient locations",
+    "call": "Call Branch",
+    "maps": "Open in Google Maps"
+  },
+  "common": {
+    "close": "Close",
+    "loading": "Loading..."
+  }
+}
