@@ -21,6 +21,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { getComboOffers, ComboOffer } from "@/services/apiOffers";
+import { useCart } from "@/contexts/cart-context";
+import CartSummary from "./cart-summary";
 
 interface OffersSliderProps {
   lang: "en" | "ar";
@@ -29,14 +31,13 @@ interface OffersSliderProps {
 
 export default function OffersSlider({ lang, dict }: OffersSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const [selectedOffer, setSelectedOffer] = useState<ComboOffer | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [cart, setCart] = useState<any[]>([]);
   const [mounted, setMounted] = useState(false);
   const [offers, setOffers] = useState<ComboOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -86,36 +87,20 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     setQuantity(1);
   };
 
-  const addToCart = () => {
+  const handleAddToCart = () => {
     if (selectedOffer) {
       const cartItem = {
-        ...selectedOffer,
+        id: selectedOffer.id.toString(),
+        type: "offer" as const,
+        title_ar: selectedOffer.title_ar,
+        title_en: selectedOffer.title_en,
+        image_url: selectedOffer.image_url || undefined,
         quantity,
         totalPrice: selectedOffer.total_price * quantity,
+        offer_id: selectedOffer.id.toString(),
       };
-      setCart([...cart, cartItem]);
+      addToCart(cartItem);
       setSelectedOffer(null);
-    }
-  };
-
-  const sendToWhatsApp = () => {
-    if (cart.length === 0) return;
-
-    const orderText = cart
-      .map(
-        (item) =>
-          `${lang === "en" ? item.title_en : item.title_ar} x${
-            item.quantity
-          } - $${item.totalPrice.toFixed(2)}`
-      )
-      .join("\n");
-
-    const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-    const message = `الطلب:\n${orderText}\n\nالإجمالي: $${total.toFixed(2)}`;
-
-    if (mounted) {
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
     }
   };
 
@@ -481,7 +466,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                   </div>
 
                   <Button
-                    onClick={addToCart}
+                    onClick={handleAddToCart}
                     disabled={!isOfferActive(selectedOffer)}
                     className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -501,32 +486,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
       </Dialog>
 
       {/* Cart Summary */}
-      {cart.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white p-6 rounded-2xl shadow-2xl border z-50 animate-bounce">
-          <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <div className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
-              {cart.length}
-            </div>
-            <div>
-              <div className="font-semibold text-lg">
-                {lang === "en" ? "Items in Cart" : "عنصر في السلة"}
-              </div>
-              <div className="text-gray-500 text-sm">
-                {lang === "en" ? "Total" : "الإجمالي"}: $
-                {cart
-                  .reduce((sum, item) => sum + item.totalPrice, 0)
-                  .toFixed(2)}
-              </div>
-            </div>
-            <Button
-              onClick={sendToWhatsApp}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold"
-            >
-              {lang === "en" ? "Send via WhatsApp" : "إرسال عبر واتساب"}
-            </Button>
-          </div>
-        </div>
-      )}
+      <CartSummary lang={lang} />
 
       <style jsx>{`
         @keyframes fadeInUp {

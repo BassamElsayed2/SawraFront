@@ -38,25 +38,6 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
     window.location.href = "tel:+17533";
   };
 
-  // Render null or a placeholder until mounted to prevent hydration issues
-  if (!mounted) {
-    return (
-      <nav className="fixed top-0 left-0 right-0 z-50  backdrop-blur-md border-b border-border/50 shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <ChefHat className="h-10 w-10 text-foreground" />
-              <span className="text-2xl font-bold text-foreground">
-                Restaurant
-              </span>
-            </div>
-            <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
   return (
     <nav className="nav">
       <div className="container mx-auto px-6 ">
