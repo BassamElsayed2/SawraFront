@@ -35,7 +35,9 @@ import {
 } from "lucide-react";
 import { getProducts, ProductWithTypes } from "@/services/apiProduct";
 import { getCategories as getCategoriesData } from "@/services/apiCategories";
-import { getBranches, Branch } from "@/services/apiBranches";
+
+import { useCart } from "@/contexts/cart-context";
+import CartSummary from "./cart-summary";
 
 interface MenuGridProps {
   lang: "en" | "ar";
@@ -49,20 +51,10 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
-  const [cart, setCart] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [mounted, setMounted] = useState(false);
-
-  // Customer info dialog state
-  const [showCustomerDialog, setShowCustomerDialog] = useState(false);
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [customerAddress, setCustomerAddress] = useState("");
-  const [deliveryType, setDeliveryType] = useState<"delivery" | "pickup">(
-    "delivery"
-  );
-  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -89,17 +81,6 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
       getProducts(1, 100, {
         categoryId: selectedCategory === "all" ? undefined : selectedCategory,
       }),
-    enabled: mounted,
-  });
-
-  // Fetch branches
-  const {
-    data: branches = [],
-    isLoading: branchesLoading,
-    error: branchesError,
-  } = useQuery({
-    queryKey: ["branches"],
-    queryFn: getBranches,
     enabled: mounted,
   });
 
@@ -160,85 +141,26 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     return (basePrice + variantsPrice) * quantity;
   };
 
-  const addToCart = () => {
+  const handleAddToCart = () => {
     if (selectedItem && selectedSize) {
       const selectedSizeData = selectedItem.types
         ?.find((type) => type.sizes?.some((size) => size.id === selectedSize))
         ?.sizes?.find((size) => size.id === selectedSize);
 
       const cartItem = {
-        ...selectedItem,
+        id: selectedItem.id?.toString() || "",
+        type: "product" as const,
+        title_ar: selectedItem.title_ar,
+        title_en: selectedItem.title_en,
+        image_url: selectedItem.image_url,
         size: selectedSize,
         sizeData: selectedSizeData,
         variants: selectedVariants,
         quantity,
         totalPrice: calculateTotalPrice(),
       };
-      setCart([...cart, cartItem]);
+      addToCart(cartItem);
       setSelectedItem(null);
-    }
-  };
-
-  const openCustomerDialog = () => {
-    if (cart.length === 0) return;
-    setShowCustomerDialog(true);
-  };
-
-  const sendToWhatsApp = () => {
-    if (cart.length === 0) return;
-
-    const orderText = cart
-      .map((item) => {
-        const variants =
-          item.variants.length > 0 ? ` (${item.variants.join(", ")})` : "";
-        const title = lang === "ar" ? item.title_ar : item.title_en;
-        const sizeName = item.sizeData
-          ? lang === "ar"
-            ? item.sizeData.size_ar
-            : item.sizeData.size_en
-          : "";
-        return `${title} - ${sizeName}${variants} x${
-          item.quantity
-        } - $${item.totalPrice.toFixed(2)}`;
-      })
-      .join("\n");
-
-    const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-
-    // Customer info
-    const customerInfo = `معلومات العميل:\nالاسم: ${customerName}\nالهاتف: ${customerPhone}`;
-
-    // Delivery info
-    let deliveryInfo = "";
-    if (deliveryType === "delivery") {
-      deliveryInfo = `\nنوع التوصيل: توصيل للمنزل\nالعنوان: ${customerAddress}`;
-    } else {
-      const selectedBranchData = branches.find(
-        (b) => b.id.toString() === selectedBranch
-      );
-      deliveryInfo = `\nنوع التوصيل: استلام من الفرع\nالفرع: ${
-        selectedBranchData
-          ? lang === "ar"
-            ? selectedBranchData.name_ar
-            : selectedBranchData.name_en
-          : ""
-      }`;
-    }
-
-    const message = `${customerInfo}${deliveryInfo}\n\nالطلب:\n${orderText}\n\nالإجمالي: $${total.toFixed(
-      2
-    )}`;
-
-    if (mounted) {
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
-      setShowCustomerDialog(false);
-      // Reset form
-      setCustomerName("");
-      setCustomerPhone("");
-      setCustomerAddress("");
-      setDeliveryType("delivery");
-      setSelectedBranch("");
     }
   };
 
@@ -542,7 +464,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                   </div>
 
                   <Button
-                    onClick={addToCart}
+                    onClick={handleAddToCart}
                     disabled={!selectedSize}
                     className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -556,230 +478,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
       </Dialog>
 
       {/* Cart Summary */}
-      {cart.length > 0 && (
-        <div className="fixed bottom-6 right-6 bg-white p-6 rounded-2xl shadow-2xl border z-50 animate-bounce">
-          <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <div className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
-              {cart.length}
-            </div>
-            <div>
-              <div className="font-semibold text-lg">
-                {lang === "ar" ? "عنصر في السلة" : "items in cart"}
-              </div>
-              <div className="text-gray-500 text-sm">
-                {lang === "ar" ? "الإجمالي:" : "Total:"} $
-                {cart
-                  .reduce((sum, item) => sum + item.totalPrice, 0)
-                  .toFixed(2)}
-              </div>
-            </div>
-            <Button
-              onClick={openCustomerDialog}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold"
-            >
-              {lang === "ar" ? "إرسال عبر واتساب" : "Send via WhatsApp"}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Customer Info Dialog */}
-      <Dialog open={showCustomerDialog} onOpenChange={setShowCustomerDialog}>
-        <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center">
-              {lang === "ar" ? "معلومات التوصيل" : "Delivery Information"}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            {/* Customer Name */}
-            <div className="space-y-2">
-              <Label htmlFor="customerName" className="text-lg font-semibold">
-                {lang === "ar" ? "الاسم الكامل" : "Full Name"}
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  id="customerName"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder={
-                    lang === "ar" ? "أدخل اسمك الكامل" : "Enter your full name"
-                  }
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Customer Phone */}
-            <div className="space-y-2">
-              <Label htmlFor="customerPhone" className="text-lg font-semibold">
-                {lang === "ar" ? "رقم الهاتف" : "Phone Number"}
-              </Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  id="customerPhone"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  placeholder={
-                    lang === "ar" ? "أدخل رقم هاتفك" : "Enter your phone number"
-                  }
-                  className="pl-10"
-                  type="tel"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Delivery Type */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">
-                {lang === "ar" ? "نوع التوصيل" : "Delivery Type"}
-              </Label>
-              <RadioGroup
-                value={deliveryType}
-                onValueChange={(value) =>
-                  setDeliveryType(value as "delivery" | "pickup")
-                }
-                className="grid grid-cols-2 gap-4"
-              >
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <RadioGroupItem value="delivery" id="delivery" />
-                  <Label
-                    htmlFor="delivery"
-                    className="text-base cursor-pointer"
-                  >
-                    {lang === "ar" ? "توصيل للمنزل" : "Home Delivery"}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup" className="text-base cursor-pointer">
-                    {lang === "ar" ? "استلام من الفرع" : "Pickup from Branch"}
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* Address (for delivery) */}
-            {deliveryType === "delivery" && (
-              <div className="space-y-2">
-                <Label
-                  htmlFor="customerAddress"
-                  className="text-lg font-semibold"
-                >
-                  {lang === "ar" ? "عنوان التوصيل" : "Delivery Address"}
-                </Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <Input
-                    id="customerAddress"
-                    value={customerAddress}
-                    onChange={(e) => setCustomerAddress(e.target.value)}
-                    placeholder={
-                      lang === "ar"
-                        ? "أدخل عنوان التوصيل"
-                        : "Enter delivery address"
-                    }
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Branch Selection (for pickup) */}
-            {deliveryType === "pickup" && (
-              <div className="space-y-2">
-                <Label htmlFor="branch" className="text-lg font-semibold">
-                  {lang === "ar" ? "اختر الفرع" : "Select Branch"}
-                </Label>
-                <Select
-                  value={selectedBranch}
-                  onValueChange={setSelectedBranch}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        lang === "ar" ? "اختر الفرع" : "Select a branch"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {branches.map((branch) => (
-                      <SelectItem key={branch.id} value={branch.id.toString()}>
-                        {lang === "ar" ? branch.name_ar : branch.name_en}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {/* Order Summary */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-bold text-lg mb-3">
-                {lang === "ar" ? "ملخص الطلب" : "Order Summary"}
-              </h3>
-              <div className="space-y-2">
-                {cart.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center"
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {lang === "ar" ? item.title_ar : item.title_en}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {item.sizeData
-                          ? lang === "ar"
-                            ? item.sizeData.size_ar
-                            : item.sizeData.size_en
-                          : ""}{" "}
-                        x {item.quantity}
-                      </div>
-                    </div>
-                    <div className="font-semibold">
-                      ${item.totalPrice.toFixed(2)}
-                    </div>
-                  </div>
-                ))}
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between items-center font-bold text-lg">
-                    <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
-                    <span>
-                      $
-                      {cart
-                        .reduce((sum, item) => sum + item.totalPrice, 0)
-                        .toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              onClick={sendToWhatsApp}
-              disabled={
-                !customerName ||
-                !customerPhone ||
-                (deliveryType === "delivery" && !customerAddress) ||
-                (deliveryType === "pickup" && !selectedBranch)
-              }
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {lang === "ar"
-                ? "إرسال الطلب عبر واتساب"
-                : "Send Order via WhatsApp"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CartSummary lang={lang} />
 
       <style jsx>{`
         @keyframes fadeInUp {
