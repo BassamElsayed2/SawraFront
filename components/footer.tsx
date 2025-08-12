@@ -78,7 +78,7 @@ export default function Footer({ lang, dict }: FooterProps) {
             <ul className="space-y-3">
               <li className="flex items-center space-x-3 rtl:space-x-reverse">
                 <Phone className="h-5 w-5 text-red-500 flex-shrink-0" />
-                <span className="text-gray-300">+17533</span>
+                <span className="text-gray-300">17533</span>
               </li>
               <li className="flex items-center space-x-3 rtl:space-x-reverse">
                 <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />

@@ -18,9 +18,6 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const toggleLanguage = () => {
     const newLang = lang === "en" ? "ar" : "en";
@@ -34,9 +31,25 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
     { href: `/${lang}/branches`, label: dict.nav.branches },
   ];
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
   const handleHotlineClick = () => {
-    window.location.href = "tel:+17533";
+    if (!mounted) return;
+  
+    const isMobile =
+      /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
+        navigator.userAgent
+      );
+  
+    if (isMobile) {
+      window.open("tel:17533", "_self");
+    } else {
+      alert(lang === "ar" ? "الاتصال متاح فقط من الهاتف" : "Calling is available only on mobile");
+    }
   };
+  
 
   return (
     <nav className="nav">
