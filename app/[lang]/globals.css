@@ -119,6 +119,12 @@ html {
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  .hotline-container {
+    display: none;
+  }
+}
+
 .hotline-button {
   display: flex;
   align-items: center;
