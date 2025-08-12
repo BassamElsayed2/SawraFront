@@ -288,7 +288,8 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                         {/* Price */}
                         <div className="flex items-center justify-between">
                           <div className="text-xl font-bold text-red-600">
-                            ${offer.total_price.toFixed(2)}
+                            {lang === "ar" ? "ج.م" : "EGP"}{" "}
+                            {offer.total_price.toFixed(2)}
                           </div>
                         </div>
 
@@ -460,7 +461,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                   {/* Total Price */}
                   <div className="bg-red-50 p-6 rounded-2xl">
                     <div className="text-2xl font-bold text-red-600 text-center">
-                      {lang === "en" ? "Total" : "الإجمالي"}: $
+                      {lang === "en" ? "Total" : "الإجمالي"}: {lang === "ar" ? "ج.م" : "EGP"} 
                       {(selectedOffer.total_price * quantity).toFixed(2)}
                     </div>
                   </div>

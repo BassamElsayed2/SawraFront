@@ -404,13 +404,13 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                                     </div>
                                   </div>
                                   <div className="text-xl font-bold text-red-600">
-                                    $
+                                    ج.م
                                     {size.offer_price
                                       ? size.offer_price.toFixed(2)
                                       : size.price.toFixed(2)}
                                     {size.offer_price && (
                                       <span className="text-sm text-gray-500 line-through ml-2">
-                                        ${size.price.toFixed(2)}
+                                        ج.م {size.price.toFixed(2)}
                                       </span>
                                     )}
                                   </div>
@@ -458,7 +458,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                         {lang === "ar" ? "الإجمالي" : "Total"}
                       </div>
                       <div className="text-3xl font-bold text-red-600">
-                        ${calculateTotalPrice().toFixed(2)}
+                        ج.م {calculateTotalPrice().toFixed(2)}
                       </div>
                     </div>
                   </div>

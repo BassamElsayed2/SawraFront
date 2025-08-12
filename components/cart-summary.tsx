@@ -81,7 +81,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
 
         return `${title}${details} x${
           item.quantity
-        } - $${item.totalPrice.toFixed(2)}`;
+        } - ج.م ${item.totalPrice.toFixed(2)}`;
       });
 
       const total = getTotalPrice();
@@ -119,7 +119,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
       parts.push(`تفاصيل الطلب:`);
       parts.push(...orderLines);
       parts.push(``);
-      parts.push(`الإجمالي: $${total.toFixed(2)}`);
+      parts.push(`الإجمالي: ج.م ${total.toFixed(2)}`);
 
       const message = parts.join("\n");
 
@@ -145,7 +145,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
       // Check if URL is too long (WhatsApp Web has a limit around 2000 chars)
       if (whatsappUrl.length > 1800) {
         // Fallback: shorter message
-        const shortMessage = `🍕 طلب جديد\n\n👤 العميل: ${customerName}\n📞 الهاتف: ${customerPhone}\n💰 الإجمالي: $${total.toFixed(
+        const shortMessage = `🍕 طلب جديد\n\n👤 العميل: ${customerName}\n📞 الهاتف: ${customerPhone}\n💰 الإجمالي: ج.م ${total.toFixed(
           2
         )}\n📦 عدد الأصناف: ${cart.length}`;
         // Use same logic for short message
@@ -198,7 +198,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                 {lang === "ar" ? "عنصر في السلة" : "items in cart"}
               </div>
               <div className="text-gray-500 text-sm">
-                {lang === "ar" ? "الإجمالي:" : "Total:"} $
+                {lang === "ar" ? "الإجمالي:" : "Total:"} ج.م
                 {getTotalPrice().toFixed(2)}
               </div>
             </div>
@@ -260,8 +260,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                   )}
 
                   <div className="text-sm text-gray-500">
-                    ${(item.totalPrice / item.quantity).toFixed(2)}{" "}
-                    {lang === "ar" ? "للقطعة" : "each"}
+                    ج.م {(item.totalPrice / item.quantity).toFixed(2)}{" "}
                   </div>
                 </div>
 
@@ -290,7 +289,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                 </div>
 
                 <div className="text-lg font-bold text-red-600">
-                  ${item.totalPrice.toFixed(2)}
+                  ج.م {item.totalPrice.toFixed(2)}
                 </div>
 
                 <Button
@@ -308,7 +307,7 @@ export default function CartSummary({ lang }: CartSummaryProps) {
               <div className="flex justify-between items-center text-xl font-bold">
                 <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
                 <span className="text-red-600">
-                  ${getTotalPrice().toFixed(2)}
+                  ج.م {getTotalPrice().toFixed(2)}
                 </span>
               </div>
             </div>
@@ -496,14 +495,14 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                       </div>
                     </div>
                     <div className="font-semibold">
-                      ${item.totalPrice.toFixed(2)}
+                      ج.م {item.totalPrice.toFixed(2)}
                     </div>
                   </div>
                 ))}
                 <div className="border-t pt-2 mt-2">
                   <div className="flex justify-between items-center font-bold text-lg">
                     <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
-                    <span>${getTotalPrice().toFixed(2)}</span>
+                    <span>ج.م {getTotalPrice().toFixed(2)}</span>
                   </div>
                 </div>
               </div>
