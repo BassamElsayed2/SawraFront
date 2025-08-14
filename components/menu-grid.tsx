@@ -300,9 +300,15 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                   {lang === "ar" ? item.title_ar : item.title_en}
                 </h3>
 
-                <p className="text-gray-600 line-clamp-2 leading-relaxed text-[13px]">
-                  {lang === "ar" ? item.description_ar : item.description_en}
-                </p>
+                <div
+                  className="text-gray-600 line-clamp-2 leading-relaxed text-[13px]"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      lang === "ar"
+                        ? item.description_ar ?? ""
+                        : item.description_en ?? "",
+                  }}
+                />
 
                 <div className="flex items-center justify-between">
                   <div className="text-gray-500 text-sm">
@@ -365,11 +371,15 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                 </div>
 
                 <div className="space-y-6">
-                  <p className="text-gray-600 text-lg leading-relaxed">
-                    {lang === "ar"
-                      ? selectedItem.description_ar
-                      : selectedItem.description_en}
-                  </p>
+                  <div
+                    className="text-gray-600 line-clamp-2 leading-relaxed text-[13px]"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        lang === "ar"
+                          ? selectedItem.description_ar ?? ""
+                          : selectedItem.description_en ?? "",
+                    }}
+                  />
 
                   {/* Types and Sizes Selection */}
                   <div>
