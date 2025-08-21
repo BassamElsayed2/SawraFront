@@ -32,6 +32,8 @@ import {
   User,
   MapPin,
   Phone,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { getProducts, ProductWithTypes } from "@/services/apiProduct";
 import { getCategories as getCategoriesData } from "@/services/apiCategories";
@@ -54,11 +56,23 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [mounted, setMounted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
   const { addToCart } = useCart();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   // Fetch categories
   const {
@@ -70,15 +84,15 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     queryFn: getCategoriesData,
   });
 
-  // Fetch products with category filter
+  // Fetch products with category filter and pagination
   const {
     data: productsData,
     isLoading: productsLoading,
     error: productsError,
   } = useQuery({
-    queryKey: ["products", selectedCategory],
+    queryKey: ["products", selectedCategory, currentPage, itemsPerPage],
     queryFn: () =>
-      getProducts(1, 100, {
+      getProducts(currentPage, itemsPerPage, {
         categoryId: selectedCategory === "all" ? undefined : selectedCategory,
       }),
     enabled: mounted,
@@ -86,6 +100,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
 
   const products = productsData?.products || [];
   const totalProducts = productsData?.total || 0;
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
   const openItemDialog = (item: ProductWithTypes) => {
     setSelectedItem(item);
@@ -335,6 +350,121 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
           </Card>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalProducts > 0 && (
+        <div className="mt-12 space-y-6">
+          {/* Items per page selector */}
+          <div className="flex justify-center items-center gap-4">
+            <Label className="text-sm font-medium">
+              {lang === "ar" ? "العناصر في الصفحة:" : "Items per page:"}
+            </Label>
+            <Select
+              value={itemsPerPage.toString()}
+              onValueChange={(value) => {
+                setItemsPerPage(parseInt(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="6">6</SelectItem>
+                <SelectItem value="9">9</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+                <SelectItem value="18">18</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Pagination info */}
+          <div className="text-center text-sm text-gray-600">
+            {lang === "ar" ? (
+              <>
+                عرض{" "}
+                {totalProducts > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}{" "}
+                إلى {Math.min(currentPage * itemsPerPage, totalProducts)} من أصل{" "}
+                {totalProducts} منتج
+              </>
+            ) : (
+              <>
+                Showing{" "}
+                {totalProducts > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}{" "}
+                to {Math.min(currentPage * itemsPerPage, totalProducts)} of{" "}
+                {totalProducts} products
+              </>
+            )}
+          </div>
+
+          {/* Pagination buttons */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2">
+              {/* Previous button */}
+              <Button
+                variant="outline"
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1 || productsLoading}
+                className="rounded-full w-10 h-10 hover:bg-red-50 hover:border-red-300"
+              >
+                {productsLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ChevronLeft className="h-4 w-4" />
+                )}
+              </Button>
+
+              {/* Page numbers */}
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      onClick={() => setCurrentPage(pageNum)}
+                      disabled={productsLoading}
+                      className={`w-10 h-10 rounded-full font-semibold transition-all duration-300 ${
+                        currentPage === pageNum
+                          ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
+                          : "hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+                      }`}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              {/* Next button */}
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setCurrentPage(Math.min(totalPages, currentPage + 1))
+                }
+                disabled={currentPage === totalPages || productsLoading}
+                className="rounded-full w-10 h-10 hover:bg-red-50 hover:border-red-300"
+              >
+                {productsLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Item Detail Dialog */}
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
