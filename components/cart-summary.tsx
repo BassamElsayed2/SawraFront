@@ -79,11 +79,9 @@ export default function CartSummary({ lang }: CartSummaryProps) {
           }
         }
 
-        return `${index + 1}. ${title}${details}\n   الكمية: ${
-          item.quantity
-        } × ج.م ${(item.totalPrice / item.quantity).toFixed(
-          2
-        )} = ج.م ${item.totalPrice.toFixed(2)}`;
+        return `${title}${details}\n   الكمية: ${item.quantity} × ج.م ${(
+          item.totalPrice / item.quantity
+        ).toFixed(2)} = ج.م ${item.totalPrice.toFixed(2)}`;
       });
 
       const total = getTotalPrice();
