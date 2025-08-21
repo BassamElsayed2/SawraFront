@@ -65,8 +65,8 @@ export default function CartSummary({ lang }: CartSummaryProps) {
     if (cart.length === 0) return;
 
     try {
-      // Build order text
-      const orderLines = cart.map((item) => {
+      // Build order text with better formatting
+      const orderLines = cart.map((item, index) => {
         const title = lang === "ar" ? item.title_ar : item.title_en;
         let details = "";
 
@@ -79,18 +79,20 @@ export default function CartSummary({ lang }: CartSummaryProps) {
           }
         }
 
-        return `${title}${details} x${
+        return `${index + 1}. ${title}${details}\n   الكمية: ${
           item.quantity
-        } - ج.م ${item.totalPrice.toFixed(2)}`;
+        } × ج.م ${(item.totalPrice / item.quantity).toFixed(
+          2
+        )} = ج.م ${item.totalPrice.toFixed(2)}`;
       });
 
       const total = getTotalPrice();
 
-      // Build message parts
+      // Build message parts with better formatting
       const parts = [
-        `مرحبا! لدي طلب جديد:`,
+        `🍕 *طلب جديد*`,
         ``,
-        `معلومات العميل:`,
+        `👤 *معلومات العميل:*`,
         `الاسم: ${customerName}`,
         `الهاتف: ${customerPhone}`,
         ``,
@@ -98,28 +100,28 @@ export default function CartSummary({ lang }: CartSummaryProps) {
 
       // Add delivery info
       if (deliveryType === "delivery") {
-        parts.push(`نوع التوصيل: توصيل للمنزل`);
-        parts.push(`العنوان: ${customerAddress}`);
+        parts.push(`🚚 *نوع التوصيل:* توصيل للمنزل`);
+        parts.push(`📍 *العنوان:* ${customerAddress}`);
       } else {
         const selectedBranchData = branches.find(
           (b) => b.id.toString() === selectedBranch
         );
-        parts.push(`نوع التوصيل: استلام من الفرع`);
+        parts.push(`🏪 *نوع التوصيل:* استلام من الفرع`);
         if (selectedBranchData) {
           const branchName =
             lang === "ar"
               ? selectedBranchData.name_ar
               : selectedBranchData.name_en;
-          parts.push(`الفرع: ${branchName}`);
+          parts.push(`🏪 *الفرع:* ${branchName}`);
         }
       }
 
       // Add order details
       parts.push(``);
-      parts.push(`تفاصيل الطلب:`);
+      parts.push(`📋 *تفاصيل الطلب:*`);
       parts.push(...orderLines);
       parts.push(``);
-      parts.push(`الإجمالي: ج.م ${total.toFixed(2)}`);
+      parts.push(`💰 *الإجمالي:* ج.م ${total.toFixed(2)}`);
 
       const message = parts.join("\n");
 
@@ -142,24 +144,8 @@ export default function CartSummary({ lang }: CartSummaryProps) {
         whatsappUrl = `https://web.whatsapp.com/send?phone=201557466759&text=${encodedMessage}`;
       }
 
-      // Check if URL is too long (WhatsApp Web has a limit around 2000 chars)
-      if (whatsappUrl.length > 1800) {
-        // Fallback: shorter message
-        const shortMessage = `🍕 طلب جديد\n\n👤 العميل: ${customerName}\n📞 الهاتف: ${customerPhone}\n💰 الإجمالي: ج.م ${total.toFixed(
-          2
-        )}\n📦 عدد الأصناف: ${cart.length}`;
-        // Use same logic for short message
-        const shortUrl = isMobile
-          ? `https://wa.me/201557466759?text=${encodeURIComponent(
-              shortMessage
-            )}`
-          : `https://web.whatsapp.com/send?phone=201557466759&text=${encodeURIComponent(
-              shortMessage
-            )}`;
-        window.open(shortUrl, "_blank");
-      } else {
-        window.open(whatsappUrl, "_blank");
-      }
+      // Always send detailed message regardless of length
+      window.open(whatsappUrl, "_blank");
 
       setShowCustomerDialog(false);
 
