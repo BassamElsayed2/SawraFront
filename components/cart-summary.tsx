@@ -79,9 +79,18 @@ export default function CartSummary({ lang }: CartSummaryProps) {
           }
         }
 
-        return `${title}${details}\n   الكمية: ${item.quantity} × ج.م ${(
-          item.totalPrice / item.quantity
-        ).toFixed(2)} = ج.م ${item.totalPrice.toFixed(2)}`;
+        let orderLine = `${title}${details}\n   الكمية: ${
+          item.quantity
+        } × ج.م ${(item.totalPrice / item.quantity).toFixed(
+          2
+        )} = ج.م ${item.totalPrice.toFixed(2)}`;
+
+        // Add notes if available
+        if (item.notes && item.notes.trim()) {
+          orderLine += `\n   📝 ملاحظات: ${item.notes}`;
+        }
+
+        return orderLine;
       });
 
       const total = getTotalPrice();
@@ -240,6 +249,15 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                       {item.variants && item.variants.length > 0 && (
                         <span> • {item.variants.join(", ")}</span>
                       )}
+                    </div>
+                  )}
+
+                  {item.notes && (
+                    <div className="text-sm text-blue-600 bg-blue-50 p-2 rounded-md mt-2">
+                      <span className="font-medium">
+                        {lang === "ar" ? "ملاحظات:" : "Notes:"}
+                      </span>{" "}
+                      {item.notes}
                     </div>
                   )}
 
@@ -477,6 +495,14 @@ export default function CartSummary({ lang }: CartSummaryProps) {
                           : ""}{" "}
                         x {item.quantity}
                       </div>
+                      {item.notes && (
+                        <div className="text-xs text-blue-600 bg-blue-50 p-1 rounded mt-1">
+                          <span className="font-medium">
+                            {lang === "ar" ? "ملاحظات:" : "Notes:"}
+                          </span>{" "}
+                          {item.notes}
+                        </div>
+                      )}
                     </div>
                     <div className="font-semibold">
                       ج.م {item.totalPrice.toFixed(2)}
