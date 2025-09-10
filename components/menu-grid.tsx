@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -53,6 +54,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
+  const [notes, setNotes] = useState<string>("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [mounted, setMounted] = useState(false);
@@ -115,6 +117,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     }
     setSelectedVariants([]);
     setQuantity(1);
+    setNotes("");
   };
 
   const toggleVariant = (variantId: string) => {
@@ -173,6 +176,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
         variants: selectedVariants,
         quantity,
         totalPrice: calculateTotalPrice(),
+        notes: notes.trim() || undefined,
       };
       addToCart(cartItem);
       setSelectedItem(null);
@@ -588,6 +592,29 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
+                    </div>
+                  </div>
+
+                  {/* Notes Section */}
+                  <div>
+                    <h4 className="font-bold text-xl mb-4">
+                      {lang === "ar"
+                        ? "ملاحظات (اختياري):"
+                        : "Notes (Optional):"}
+                    </h4>
+                    <Textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder={
+                        lang === "ar"
+                          ? "حار  , عادي , بدون فلفل , اضف ملاحظاتك هنا"
+                          : "Hot , Normal , No Pepper , Add your notes here"
+                      }
+                      className="min-h-[80px] resize-none"
+                      maxLength={200}
+                    />
+                    <div className="text-right text-sm text-gray-500 mt-1">
+                      {notes.length}/200
                     </div>
                   </div>
 

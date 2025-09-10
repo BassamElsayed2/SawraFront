@@ -22,6 +22,8 @@ export interface CartItem {
   variants?: string[];
   // For offers
   offer_id?: string;
+  // Notes field
+  notes?: string;
 }
 
 interface CartContextType {
