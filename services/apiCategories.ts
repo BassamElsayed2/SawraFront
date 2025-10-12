@@ -1,4 +1,6 @@
-import supabase from "./supabase";
+import { createClient } from "./supabase";
+
+const supabase = createClient();
 
 export async function getCategories() {
   const { data, error } = await supabase

@@ -44,17 +44,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     fetchOffers();
   }, []);
 
-  const fetchOffers = async () => {
-    try {
-      setLoading(true);
-      const offersData = await getComboOffers();
-      setOffers(offersData);
-    } catch (error) {
-      console.error("Error fetching offers:", error);
-    } finally {
-      setLoading(false);
-    }
-
+  useEffect(() => {
     const updateItemsPerView = () => {
       if (window.innerWidth < 640) {
         setItemsPerView(1);
@@ -68,6 +58,18 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     updateItemsPerView();
     window.addEventListener("resize", updateItemsPerView);
     return () => window.removeEventListener("resize", updateItemsPerView);
+  }, []);
+
+  const fetchOffers = async () => {
+    try {
+      setLoading(true);
+      const offersData = await getComboOffers();
+      setOffers(offersData);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const nextSlide = () => {
@@ -461,7 +463,8 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                   {/* Total Price */}
                   <div className="bg-red-50 p-6 rounded-2xl">
                     <div className="text-2xl font-bold text-red-600 text-center">
-                      {lang === "en" ? "Total" : "الإجمالي"}: {lang === "ar" ? "ج.م" : "EGP"} 
+                      {lang === "en" ? "Total" : "الإجمالي"}:{" "}
+                      {lang === "ar" ? "ج.م" : "EGP"}
                       {(selectedOffer.total_price * quantity).toFixed(2)}
                     </div>
                   </div>
@@ -487,7 +490,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
       </Dialog>
 
       {/* Cart Summary */}
-      <CartSummary lang={lang} />
+      <CartSummary lang={lang} dict={dict} />
 
       <style jsx>{`
         @keyframes fadeInUp {

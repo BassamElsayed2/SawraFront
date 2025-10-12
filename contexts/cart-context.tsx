@@ -7,6 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 export interface CartItem {
   id: string;
@@ -41,6 +42,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     setMounted(true);
@@ -61,6 +63,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("restaurant-cart", JSON.stringify(cart));
     }
   }, [cart, mounted]);
+
+  // When user logs in, we could sync cart with server
+  // For now, we'll keep the local cart
+  useEffect(() => {
+    if (user && mounted) {
+      // Future: Load user's saved cart from server
+      console.log("User logged in, cart sync could happen here");
+    }
+  }, [user, mounted]);
 
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
