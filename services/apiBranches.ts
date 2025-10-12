@@ -1,4 +1,6 @@
-import supabase from "./supabase";
+import { createClient } from "./supabase";
+
+const supabase = createClient();
 
 export interface Branch {
   id: string;

@@ -2,17 +2,26 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: ["class"],
-  content: ["./pages/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}", "./app/**/*.{js,ts,jsx,tsx,mdx}", "*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       fontFamily: {
-        inter: ['var(--font-inter)', 'sans-serif'],
-        arabic: ['var(--font-arabic)', 'sans-serif'],
+        inter: ["var(--font-inter)", "sans-serif"],
+        arabic: ["var(--font-arabic)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      animation: {
+        "bounce-delay-150": "bounce 1s infinite 150ms",
+        "bounce-delay-300": "bounce 1s infinite 300ms",
       },
       colors: {
         background: "hsl(var(--background))",

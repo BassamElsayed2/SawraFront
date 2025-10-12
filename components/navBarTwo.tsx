@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Globe, ChefHat } from "lucide-react";
 import Image from "next/image";
+import { UserMenu } from "@/components/auth/user-menu";
 
 interface NavbarProps {
   lang: "en" | "ar";
@@ -69,7 +70,7 @@ export default function Navbar({ lang, dict }: NavbarProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10 rtl:space-x-reverse">
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-10 rtl:space-x-reverse">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -80,19 +81,23 @@ export default function Navbar({ lang, dict }: NavbarProps) {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
             ))}
+
+            {/* User Menu */}
+            <UserMenu lang={lang} t={dict} variant="light" />
+
             <Button
               onClick={toggleLanguage}
               variant="outline"
               size="sm"
-              className="bg-red-600 border-none text-foreground hover:bg-red-500 text-white hover:border-red-500 transition-all duration-200 font-medium px-4 py-2"
+              className="bg-red-600 border-none text-foreground hover:bg-red-500 text-white hover:border-red-500 transition-all duration-200 font-medium px-3 xl:px-4 py-2"
             >
-              <Globe className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+              <Globe className="h-4 w-4 mr-1.5 xl:mr-2 rtl:mr-0 rtl:ml-1.5 xl:rtl:ml-2" />
               {lang === "en" ? "العربية" : "English"}
             </Button>
           </div>
 
-          {/* Mobile Navigation */}
-          <div className="md:hidden flex items-center space-x-3 rtl:space-x-reverse">
+          {/* Mobile & Tablet Navigation */}
+          <div className="lg:hidden flex items-center space-x-3 rtl:space-x-reverse">
             <Button
               onClick={toggleLanguage}
               variant="outline"
@@ -113,19 +118,29 @@ export default function Navbar({ lang, dict }: NavbarProps) {
               </SheetTrigger>
               <SheetContent
                 side={lang === "ar" ? "left" : "right"}
-                className="w-[300px] bg-background/95 backdrop-blur-md"
+                className="w-[320px] sm:w-[380px] md:w-[420px] bg-background/95 backdrop-blur-md"
               >
-                <div className="flex flex-col space-y-6 mt-8">
+                <div className="flex flex-col space-y-6 mt-8 px-2">
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="text-xl font-medium hover:text-red-500 transition-colors duration-200 py-2 border-b border-border/20 last:border-b-0"
+                      className="text-xl md:text-2xl font-medium hover:text-red-500 transition-colors duration-200 py-3 md:py-4 border-b border-border/20 last:border-b-0"
                       onClick={() => setIsOpen(false)}
                     >
                       {item.label}
                     </Link>
                   ))}
+
+                  {/* Auth Buttons for Mobile */}
+                  <div className="flex flex-col gap-3 md:gap-4 pt-4 border-t border-border/20">
+                    <UserMenu
+                      lang={lang}
+                      t={dict}
+                      isMobile={true}
+                      variant="light"
+                    />
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

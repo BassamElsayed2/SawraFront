@@ -645,7 +645,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
       </Dialog>
 
       {/* Cart Summary */}
-      <CartSummary lang={lang} />
+      <CartSummary lang={lang} dict={dict} />
 
       <style jsx>{`
         @keyframes fadeInUp {

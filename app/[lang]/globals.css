@@ -113,6 +113,44 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Loading animation */
+@keyframes loading-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.loading-bar {
+  animation: loading-slide 1s ease-in-out infinite;
+}
+
+/* Bounce animations with delays */
+@keyframes bounce-delay {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25%);
+  }
+}
+
+.animate-bounce-delay-150 {
+  animation: bounce-delay 1s infinite;
+  animation-delay: 0.15s;
+}
+
+.animate-bounce-delay-300 {
+  animation: bounce-delay 1s infinite;
+  animation-delay: 0.3s;
+}
+
 /* Hotline Button Styles */
 .hotline-container {
   display: flex;
