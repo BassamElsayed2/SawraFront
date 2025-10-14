@@ -1,5 +1,4 @@
 import { getDictionary } from "@/app/[lang]/dictionaries";
-import { createClient } from "@/services/supabase-server";
 import { redirect } from "next/navigation";
 import { OrdersList } from "@/components/profile/orders-list";
 import {
@@ -12,6 +11,7 @@ import {
 import { History } from "lucide-react";
 import Navbar from "@/components/navBarTwo";
 import Footer from "@/components/footer";
+import { cookies } from "next/headers";
 
 interface OrdersPageProps {
   params: { lang: "en" | "ar" };
@@ -21,15 +21,11 @@ export default async function OrdersPage({ params }: OrdersPageProps) {
   const { lang } = await params;
   const t = await getDictionary(lang);
 
-  const supabase = createClient();
+  // Check authentication
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("auth_token");
 
-  // Get current user
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
+  if (!authToken) {
     redirect(`/${lang}/auth/signin`);
   }
 

@@ -52,7 +52,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       try {
         setCart(JSON.parse(savedCart));
       } catch (error) {
-        console.error("Error loading cart from localStorage:", error);
+        // Invalid cart data in localStorage - reset to empty cart
+        localStorage.removeItem("restaurant-cart");
       }
     }
   }, []);
@@ -69,7 +70,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user && mounted) {
       // Future: Load user's saved cart from server
-      console.log("User logged in, cart sync could happen here");
     }
   }, [user, mounted]);
 

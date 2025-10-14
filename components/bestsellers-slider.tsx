@@ -64,9 +64,11 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
     try {
       setLoading(true);
       const offersData = await getComboOffers();
-      setOffers(offersData);
+      // Make sure it's an array
+      setOffers(Array.isArray(offersData) ? offersData : []);
     } catch (error) {
-      console.error("Error fetching offers:", error);
+      // Error is logged internally by the API service
+      setOffers([]);
     } finally {
       setLoading(false);
     }

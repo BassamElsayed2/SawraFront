@@ -1,6 +1,4 @@
-import { createClient } from "@/services/supabase";
-
-const supabase = createClient();
+import apiClient from "./api-client";
 
 export interface Branch {
   id: string;
@@ -13,80 +11,36 @@ export interface Branch {
 
 export const deliveryApi = {
   async getBranches() {
-    const { data, error } = await supabase.from("branches").select("*");
-
-    return { data, error };
+    try {
+      const response: any = await apiClient.get("/branches");
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 
   async getNearestBranch(userLat: number, userLng: number) {
-    const { data: branches, error } = await this.getBranches();
-
-    if (error || !branches) {
-      return { data: null, error };
+    try {
+      const response: any = await apiClient.post("/delivery/nearest-branch", {
+        latitude: userLat,
+        longitude: userLng,
+      });
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
     }
-
-    let nearestBranch = null;
-    let minDistance = Infinity;
-
-    for (const branch of branches) {
-      const distance = this.calculateDistance(
-        userLat,
-        userLng,
-        branch.latitude,
-        branch.longitude
-      );
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearestBranch = branch;
-      }
-    }
-
-    return { data: nearestBranch, error: null };
   },
 
   async calculateDeliveryFee(userLat: number, userLng: number) {
-    const { data: nearestBranch, error } = await this.getNearestBranch(
-      userLat,
-      userLng
-    );
-
-    if (error || !nearestBranch) {
-      return { data: null, error };
+    try {
+      const response: any = await apiClient.post("/delivery/calculate-fee", {
+        latitude: userLat,
+        longitude: userLng,
+      });
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
     }
-
-    const distance = this.calculateDistance(
-      userLat,
-      userLng,
-      nearestBranch.latitude,
-      nearestBranch.longitude
-    );
-
-    // Check if within delivery range
-    if (distance > nearestBranch.max_delivery_distance) {
-      return {
-        data: {
-          fee: 0,
-          distance,
-          available: false,
-          message: "Outside delivery area",
-        },
-        error: null,
-      };
-    }
-
-    const fee =
-      Math.round(distance * nearestBranch.delivery_fee_per_km * 100) / 100;
-
-    return {
-      data: {
-        fee,
-        distance,
-        available: true,
-        branch: nearestBranch,
-      },
-      error: null,
-    };
   },
 
   calculateDistance(
@@ -113,5 +67,3 @@ export const deliveryApi = {
     return deg * (Math.PI / 180);
   },
 };
-
-

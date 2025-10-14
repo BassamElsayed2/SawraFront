@@ -36,12 +36,16 @@
   },
   "common": {
     "close": "Close",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "error": "Error",
+    "user": "User"
   },
   "auth": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "signOut": "Sign Out",
+    "signingOut": "Signing out...",
+    "signOutError": "Failed to sign out, please try again",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -101,7 +105,18 @@
     "addressDeleted": "Address deleted successfully",
     "defaultSet": "Address set as default",
     "noAddresses": "No addresses found",
-    "addFirstAddress": "Add your first address"
+    "addFirstAddress": "Add your first address",
+    "success": "Success",
+    "error": "Error",
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "failedToDelete": "Failed to delete address",
+    "failedToSetDefault": "Failed to set default address",
+    "default": "Default",
+    "edit": "Edit",
+    "delete": "Delete",
+    "floorLabel": "Floor",
+    "aptLabel": "Apt",
+    "notesLabel": "Notes"
   },
   "delivery": {
     "calculateFee": "Calculate Delivery Fee",

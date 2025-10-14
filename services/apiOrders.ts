@@ -1,4 +1,4 @@
-import { createClient } from "@/services/supabase";
+import apiClient from "./api-client";
 
 export interface OrderItem {
   product_id?: string;
@@ -47,66 +47,54 @@ export interface CreateOrderData {
   delivery_fee: number;
   total: number;
   notes?: string;
+  payment_method?: string;
 }
 
 export const ordersApi = {
-  async createOrder(userId: string, orderData: CreateOrderData) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("orders")
-      .insert({
-        user_id: userId,
-        address_id: orderData.address_id,
-        delivery_type: orderData.delivery_type,
-        branch_id: orderData.branch_id,
-        status: "pending",
-        items: orderData.items,
-        subtotal: orderData.subtotal,
-        delivery_fee: orderData.delivery_fee,
-        total: orderData.total,
-        notes: orderData.notes,
-      })
-      .select()
-      .single();
-
-    return { data, error };
+  async createOrder(orderData: CreateOrderData) {
+    try {
+      const response: any = await apiClient.post("/orders", orderData);
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 
-  async getOrders(userId: string) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-
-    return { data, error };
+  async getOrders() {
+    try {
+      const response: any = await apiClient.get("/orders");
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 
   async getOrder(orderId: string) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("id", orderId)
-      .single();
-
-    return { data, error };
+    try {
+      const response: any = await apiClient.get(`/orders/${orderId}`);
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 
   async updateOrderStatus(orderId: string, status: Order["status"]) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("orders")
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq("id", orderId)
-      .select()
-      .single();
-
-    return { data, error };
+    try {
+      const response: any = await apiClient.put(`/orders/${orderId}/status`, {
+        status,
+      });
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 
   async cancelOrder(orderId: string) {
-    return this.updateOrderStatus(orderId, "cancelled");
+    try {
+      const response: any = await apiClient.put(`/orders/${orderId}/cancel`);
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 };

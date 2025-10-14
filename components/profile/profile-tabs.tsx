@@ -47,7 +47,7 @@ export function ProfileTabs({
       }
       const result = await addressesApi.getAddresses(user.id);
       if (result.error) {
-        console.error("Error fetching addresses:", result.error);
+        // Error is logged internally by the API service
         throw new Error(result.error.message || "Failed to fetch addresses");
       }
       return result.data || [];

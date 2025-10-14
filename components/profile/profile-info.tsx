@@ -68,7 +68,7 @@ export function ProfileInfo({ user, profile, lang, t }: ProfileInfoProps) {
       const { exists, error } = await checkPhoneExists(phone);
 
       if (error) {
-        console.error("Error checking phone:", error);
+        // Error is logged internally by the API service
         return;
       }
 
@@ -80,7 +80,7 @@ export function ProfileInfo({ user, profile, lang, t }: ProfileInfoProps) {
         );
       }
     } catch (error) {
-      console.error("Error checking phone:", error);
+      // Error is logged internally by the API service
     } finally {
       setIsCheckingPhone(false);
     }
@@ -120,27 +120,14 @@ export function ProfileInfo({ user, profile, lang, t }: ProfileInfoProps) {
           return;
         }
       } catch (error) {
-        console.error("Error checking phone:", error);
+        // Error is logged internally by the API service
         setIsLoading(false);
         return;
       }
     }
 
     try {
-      const { error } = await updateProfile(data);
-
-      if (error) {
-        toast({
-          title: lang === "ar" ? "خطأ" : "Error",
-          description:
-            error.message ||
-            (lang === "ar"
-              ? "فشل تحديث الملف الشخصي"
-              : "Failed to update profile"),
-          variant: "destructive",
-        });
-        return;
-      }
+      await updateProfile(data);
 
       toast({
         title: lang === "ar" ? "نجح" : "Success",
@@ -151,11 +138,14 @@ export function ProfileInfo({ user, profile, lang, t }: ProfileInfoProps) {
       });
 
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: lang === "ar" ? "خطأ" : "Error",
         description:
-          lang === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred",
+          error?.message ||
+          (lang === "ar"
+            ? "فشل تحديث الملف الشخصي"
+            : "Failed to update profile"),
         variant: "destructive",
       });
     } finally {

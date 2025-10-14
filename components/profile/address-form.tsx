@@ -92,8 +92,7 @@ export function AddressForm({
   });
 
   const addAddressMutation = useMutation({
-    mutationFn: (data: CreateAddressData) =>
-      addressesApi.addAddress(user!.id, data),
+    mutationFn: (data: CreateAddressData) => addressesApi.addAddress(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses", user?.id] });
       toast({
@@ -164,8 +163,8 @@ export function AddressForm({
     try {
       const addressData: CreateAddressData = {
         ...data,
-        latitude: selectedLocation.lat,
-        longitude: selectedLocation.lng,
+        latitude: Number(selectedLocation.lat),
+        longitude: Number(selectedLocation.lng),
       };
 
       if (isEditing && initialData?.id) {

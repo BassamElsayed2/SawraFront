@@ -72,40 +72,31 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     setErrorMessage("");
 
     try {
-      const { error } = await signIn(data.email, data.password);
+      await signIn(data.email, data.password);
 
-      if (error) {
-        // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
-        const isAdminAccount =
-          error.message?.includes("مخصص للإدارة") ||
-          error.message?.includes("admin");
-
-        const errorMsg = isAdminAccount
-          ? lang === "ar"
-            ? "هذا الحساب مخصص للإدارة. يرجى استخدام لوحة التحكم للدخول."
-            : "This account is for admin use. Please use the dashboard to sign in."
-          : lang === "ar"
-          ? "البريد الإلكتروني أو كلمة المرور غير صحيحة"
-          : "Invalid email or password";
-
-        setErrorMessage(errorMsg);
-        toast({
-          title: lang === "ar" ? "خطأ" : "Error",
-          description: errorMsg,
-          variant: "destructive",
-        });
-        return;
-      }
-
+      // If we reach here, sign in was successful
       toast({
         title: lang === "ar" ? "نجح" : "Success",
         description: t.auth.signInSuccess,
       });
 
-      router.push(`/${lang}/profile`);
-    } catch (error) {
-      const errorMsg =
-        lang === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred";
+      // Small delay to ensure auth state updates
+      setTimeout(() => {
+        router.push(`/${lang}/profile`);
+      }, 100);
+    } catch (error: any) {
+      // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
+      const isAdminAccount =
+        error?.message?.includes("مخصص للإدارة") ||
+        error?.message?.includes("admin");
+
+      const errorMsg = isAdminAccount
+        ? lang === "ar"
+          ? "هذا الحساب مخصص للإدارة. يرجى استخدام لوحة التحكم للدخول."
+          : "This account is for admin use. Please use the dashboard to sign in."
+        : lang === "ar"
+        ? "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+        : "Invalid email or password";
 
       setErrorMessage(errorMsg);
       toast({
@@ -187,14 +178,14 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           )}
         </div>
 
-        <div className="flex items-center justify-end">
+        {/* <div className="flex items-center justify-end">
           <Link
             href={`/${lang}/auth/forgot-password`}
             className="text-sm text-primary hover:underline font-medium"
           >
             {t.auth.forgotPassword}
           </Link>
-        </div>
+        </div> */}
 
         <Button
           type="submit"

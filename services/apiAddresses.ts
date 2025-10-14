@@ -1,4 +1,4 @@
-import { createClient } from "@/services/supabase";
+import apiClient from "./api-client";
 
 export interface Address {
   id: string;
@@ -32,102 +32,53 @@ export interface CreateAddressData {
 }
 
 export const addressesApi = {
-  async getAddresses(userId: string) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("addresses")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-
-    return { data, error };
+  async getAddresses() {
+    try {
+      const response: any = await apiClient.get("/addresses");
+      // Backend returns { success: true, data: [...] }
+      // So response.data contains the addresses array
+      return { data: response.data || [], error: null };
+    } catch (error: any) {
+      return { data: [], error: { message: error.message } };
+    }
   },
 
-  async addAddress(userId: string, addressData: CreateAddressData) {
-    const supabase = createClient();
-    // If this is set as default, unset other defaults
-    if (addressData.is_default) {
-      await supabase
-        .from("addresses")
-        .update({ is_default: false })
-        .eq("user_id", userId);
+  async addAddress(addressData: CreateAddressData) {
+    try {
+      const response: any = await apiClient.post("/addresses", addressData);
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
     }
-
-    const { data, error } = await supabase
-      .from("addresses")
-      .insert({
-        user_id: userId,
-        ...addressData,
-      })
-      .select()
-      .single();
-
-    return { data, error };
   },
 
   async updateAddress(addressId: string, data: Partial<CreateAddressData>) {
-    const supabase = createClient();
-    // If this is set as default, unset other defaults
-    if (data.is_default) {
-      const { data: address } = await supabase
-        .from("addresses")
-        .select("user_id")
-        .eq("id", addressId)
-        .single();
-
-      if (address) {
-        await supabase
-          .from("addresses")
-          .update({ is_default: false })
-          .eq("user_id", address.user_id);
-      }
+    try {
+      const response: any = await apiClient.put(
+        `/addresses/${addressId}`,
+        data
+      );
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
     }
-
-    const { data: updatedAddress, error } = await supabase
-      .from("addresses")
-      .update(data)
-      .eq("id", addressId)
-      .select()
-      .single();
-
-    return { data: updatedAddress, error };
   },
 
   async deleteAddress(addressId: string) {
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("addresses")
-      .delete()
-      .eq("id", addressId);
-
-    return { error };
+    try {
+      await apiClient.delete(`/addresses/${addressId}`);
+      return { error: null };
+    } catch (error: any) {
+      return { error: { message: error.message } };
+    }
   },
 
   async setDefaultAddress(addressId: string) {
-    const supabase = createClient();
-    // First get the user_id from the address
-    const { data: address, error: fetchError } = await supabase
-      .from("addresses")
-      .select("user_id")
-      .eq("id", addressId)
-      .single();
-
-    if (fetchError) {
-      return { error: fetchError };
+    try {
+      await apiClient.patch(`/addresses/${addressId}/default`);
+      return { error: null };
+    } catch (error: any) {
+      return { error: { message: error.message } };
     }
-
-    // Unset all other defaults for this user
-    await supabase
-      .from("addresses")
-      .update({ is_default: false })
-      .eq("user_id", address.user_id);
-
-    // Set this address as default
-    const { error } = await supabase
-      .from("addresses")
-      .update({ is_default: true })
-      .eq("id", addressId);
-
-    return { error };
   },
 };

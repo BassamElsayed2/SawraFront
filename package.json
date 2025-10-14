@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "next dev -p 4016",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start -p 4016",
+    "test:auth": "tsx __tests__/auth-manual-test.ts",
+    "test:auth:watch": "tsx watch __tests__/auth-manual-test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -38,9 +40,8 @@
     "@radix-ui/react-toggle-group": "1.1.1",
     "@radix-ui/react-tooltip": "1.1.6",
     "@react-google-maps/api": "^2.20.7",
-    "@supabase/ssr": "^0.7.0",
-    "@supabase/supabase-js": "^2.53.0",
-    "@tanstack/react-query": "^5.84.1",
+    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

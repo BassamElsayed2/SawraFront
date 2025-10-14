@@ -34,7 +34,6 @@ import {
 import { useCart } from "@/contexts/cart-context";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getBranches } from "@/services/apiBranches";
 import { addressesApi } from "@/services/apiAddresses";
 import { ordersApi, OrderItem } from "@/services/apiOrders";
 import { useRouter } from "next/navigation";
@@ -49,24 +48,15 @@ interface CartSummaryProps {
 export default function CartSummary({ lang, dict }: CartSummaryProps) {
   const { cart, updateQuantity, removeFromCart, getTotalPrice, clearCart } =
     useCart();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
   const [showCartDetails, setShowCartDetails] = useState(false);
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
-  const [deliveryType, setDeliveryType] = useState<"delivery" | "pickup">(
-    "delivery"
-  );
   const [selectedAddress, setSelectedAddress] = useState<string>("");
-  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string>("cash");
   const [orderNotes, setOrderNotes] = useState("");
-
-  // Fetch branches
-  const { data: branches = [] } = useQuery({
-    queryKey: ["branches"],
-    queryFn: getBranches,
-  });
 
   // Fetch user addresses
   const {
@@ -104,37 +94,55 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
       if (!user) throw new Error("User not logged in");
 
       // Prepare order items
-      const orderItems: OrderItem[] = cart.map((item) => ({
-        product_id: item.type === "product" ? item.id.split("-")[0] : undefined,
-        offer_id: item.type === "offer" ? item.offer_id : undefined,
-        type: item.type,
-        title_ar: item.title_ar,
-        title_en: item.title_en,
-        quantity: item.quantity,
-        price_per_unit: item.totalPrice / item.quantity,
-        total_price: item.totalPrice,
-        size: item.size,
-        size_data: item.sizeData,
-        variants: item.variants,
-        notes: item.notes,
-      }));
+      const orderItems: OrderItem[] = cart.map((item) => {
+        // Extract original UUID from cart item ID
+        // Cart IDs are in format: "uuid-timestamp", so we need to extract the UUID part
+        // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (5 segments separated by hyphens)
+        // We need to extract the first 5 segments (first 36 characters)
+        const extractOriginalId = (cartId: string): string => {
+          // Try to extract UUID pattern (36 characters with hyphens)
+          const uuidMatch = cartId.match(
+            /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i
+          );
+          return uuidMatch ? uuidMatch[1] : cartId;
+        };
+
+        const originalId = extractOriginalId(item.id);
+        const productId = item.type === "product" ? originalId : undefined;
+        const offerId = item.type === "offer" ? originalId : undefined;
+
+        return {
+          product_id: productId,
+          offer_id: offerId,
+          type: item.type,
+          title_ar: item.title_ar,
+          title_en: item.title_en,
+          quantity: item.quantity,
+          price_per_unit: item.totalPrice / item.quantity,
+          total_price: item.totalPrice,
+          size: item.size,
+          size_data: item.sizeData,
+          variants: item.variants,
+          notes: item.notes,
+        };
+      });
 
       const subtotal = getTotalPrice();
-      const deliveryFee = deliveryType === "delivery" ? 0 : 0; // TODO: Calculate delivery fee
+      const deliveryFee = 0; // TODO: Calculate delivery fee based on address
       const total = subtotal + deliveryFee;
 
       const orderData = {
-        address_id: deliveryType === "delivery" ? selectedAddress : "",
-        delivery_type: deliveryType,
-        branch_id: deliveryType === "pickup" ? selectedBranch : undefined,
+        address_id: selectedAddress,
+        delivery_type: "delivery" as const,
         items: orderItems,
         subtotal,
         delivery_fee: deliveryFee,
         total,
         notes: orderNotes,
+        payment_method: paymentMethod,
       };
 
-      const { data, error } = await ordersApi.createOrder(user.id, orderData);
+      const { data, error } = await ordersApi.createOrder(orderData);
       if (error) throw error;
       return data;
     },
@@ -184,17 +192,9 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
       return;
     }
 
-    if (deliveryType === "delivery" && !selectedAddress) {
+    if (!selectedAddress) {
       toast({
         title: dict?.cart?.pleaseSelectAddress || "Please select an address",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (deliveryType === "pickup" && !selectedBranch) {
-      toast({
-        title: dict?.cart?.pleaseSelectBranch || "Please select a branch",
         variant: "destructive",
       });
       return;
@@ -384,174 +384,140 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
 
           <div className="space-y-6">
             {/* User Info Display */}
-            {user && profile && (
+            {user && (
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <User className="h-4 w-4 text-gray-500" />
-                  <span className="font-semibold">{profile.full_name}</span>
+                  <span className="font-semibold">{user.full_name}</span>
                 </div>
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <Phone className="h-4 w-4 text-gray-500" />
-                  <span className="text-gray-600">{profile.phone}</span>
+                  <span className="text-gray-600">{user.phone}</span>
                 </div>
               </div>
             )}
 
-            {/* Delivery Type */}
-            <div className="space-y-4">
+            {/* Address Selection */}
+            <div className="space-y-2">
               <Label className="text-lg font-semibold">
-                {t.cart?.deliveryType ||
-                  (lang === "ar" ? "نوع التوصيل" : "Delivery Type")}
+                {t.cart?.selectDeliveryAddress ||
+                  (lang === "ar"
+                    ? "اختر عنوان التوصيل"
+                    : "Select Delivery Address")}
               </Label>
-              <RadioGroup
-                value={deliveryType}
-                onValueChange={(value) =>
-                  setDeliveryType(value as "delivery" | "pickup")
-                }
-                className="grid grid-cols-2 gap-4"
-              >
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <RadioGroupItem value="delivery" id="delivery" />
-                  <Label
-                    htmlFor="delivery"
-                    className="text-base cursor-pointer"
-                  >
-                    {t.cart?.homeDelivery ||
-                      (lang === "ar" ? "توصيل للمنزل" : "Home Delivery")}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup" className="text-base cursor-pointer">
-                    {t.cart?.pickupFromBranch ||
-                      (lang === "ar"
-                        ? "استلام من الفرع"
-                        : "Pickup from Branch")}
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
 
-            {/* Address Selection (for delivery) */}
-            {deliveryType === "delivery" && (
-              <div className="space-y-2">
-                <Label className="text-lg font-semibold">
-                  {t.cart?.selectDeliveryAddress ||
-                    (lang === "ar"
-                      ? "اختر عنوان التوصيل"
-                      : "Select Delivery Address")}
-                </Label>
-
-                {loadingAddresses ? (
-                  <div className="text-center py-4">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                      <p className="text-gray-500">
-                        {t.common?.loading ||
-                          (lang === "ar" ? "جاري التحميل..." : "Loading...")}
-                      </p>
-                    </div>
+              {loadingAddresses ? (
+                <div className="text-center py-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                    <p className="text-gray-500">
+                      {t.common?.loading ||
+                        (lang === "ar" ? "جاري التحميل..." : "Loading...")}
+                    </p>
                   </div>
-                ) : addressesError ? (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>{lang === "ar" ? "خطأ" : "Error"}</AlertTitle>
-                    <AlertDescription>
-                      {lang === "ar"
-                        ? "حدث خطأ أثناء تحميل العناوين. يرجى المحاولة مرة أخرى."
-                        : "Failed to load addresses. Please try again."}
-                    </AlertDescription>
-                  </Alert>
-                ) : addresses && addresses.length > 0 ? (
-                  <Select
-                    value={selectedAddress}
-                    onValueChange={setSelectedAddress}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={
-                          t.cart?.selectDeliveryAddress ||
-                          (lang === "ar"
-                            ? "اختر عنوان التوصيل"
-                            : "Select Delivery Address")
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {addresses.map((address) => (
-                        <SelectItem key={address.id} value={address.id}>
-                          <div className="flex items-start space-x-2">
-                            <MapPin className="h-4 w-4 text-gray-400 mt-1" />
-                            <div>
-                              <div className="font-semibold">
-                                {address.title}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {address.street}, {address.area}, {address.city}
-                              </div>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>
-                      {t.cart?.noAddressesFound ||
-                        (lang === "ar"
-                          ? "لا توجد عناوين محفوظة"
-                          : "No saved addresses found")}
-                    </AlertTitle>
-                    <AlertDescription>
-                      {t.cart?.addAddressFirst ||
-                        (lang === "ar"
-                          ? "يرجى إضافة عنوان أولاً"
-                          : "Please add an address first")}
-                      <Link href={`/${lang}/profile/addresses/add`}>
-                        <Button variant="link" className="px-0 ml-2">
-                          {t.cart?.goToAddresses ||
-                            (lang === "ar"
-                              ? "إدارة العناوين"
-                              : "Manage Addresses")}
-                        </Button>
-                      </Link>
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </div>
-            )}
-
-            {/* Branch Selection (for pickup) */}
-            {deliveryType === "pickup" && (
-              <div className="space-y-2">
-                <Label className="text-lg font-semibold">
-                  {t.cart?.selectBranch ||
-                    (lang === "ar" ? "اختر الفرع" : "Select Branch")}
-                </Label>
+                </div>
+              ) : addressesError ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>{lang === "ar" ? "خطأ" : "Error"}</AlertTitle>
+                  <AlertDescription>
+                    {lang === "ar"
+                      ? "حدث خطأ أثناء تحميل العناوين. يرجى المحاولة مرة أخرى."
+                      : "Failed to load addresses. Please try again."}
+                  </AlertDescription>
+                </Alert>
+              ) : addresses && addresses.length > 0 ? (
                 <Select
-                  value={selectedBranch}
-                  onValueChange={setSelectedBranch}
+                  value={selectedAddress}
+                  onValueChange={setSelectedAddress}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue
                       placeholder={
-                        t.cart?.selectBranch ||
-                        (lang === "ar" ? "اختر الفرع" : "Select a branch")
+                        t.cart?.selectDeliveryAddress ||
+                        (lang === "ar"
+                          ? "اختر عنوان التوصيل"
+                          : "Select Delivery Address")
                       }
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {branches.map((branch) => (
-                      <SelectItem key={branch.id} value={branch.id.toString()}>
-                        {lang === "ar" ? branch.name_ar : branch.name_en}
+                    {addresses.map((address) => (
+                      <SelectItem key={address.id} value={address.id}>
+                        <div className="flex items-start space-x-2">
+                          <MapPin className="h-4 w-4 text-gray-400 mt-1" />
+                          <div>
+                            <div className="font-semibold">{address.title}</div>
+                            <div className="text-sm text-gray-500">
+                              {address.street}, {address.area}, {address.city}
+                            </div>
+                          </div>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            )}
+              ) : (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>
+                    {t.cart?.noAddressesFound ||
+                      (lang === "ar"
+                        ? "لا توجد عناوين محفوظة"
+                        : "No saved addresses found")}
+                  </AlertTitle>
+                  <AlertDescription>
+                    {t.cart?.addAddressFirst ||
+                      (lang === "ar"
+                        ? "يرجى إضافة عنوان أولاً"
+                        : "Please add an address first")}
+                    <Link href={`/${lang}/profile/addresses/add`}>
+                      <Button variant="link" className="px-0 ml-2">
+                        {t.cart?.goToAddresses ||
+                          (lang === "ar"
+                            ? "إدارة العناوين"
+                            : "Manage Addresses")}
+                      </Button>
+                    </Link>
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+
+            {/* Payment Method */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">
+                {t.cart?.paymentMethod ||
+                  (lang === "ar" ? "طريقة الدفع" : "Payment Method")}
+              </Label>
+              <RadioGroup
+                value={paymentMethod}
+                onValueChange={setPaymentMethod}
+                className="grid grid-cols-1 gap-4"
+              >
+                <div className="flex items-center space-x-3 rtl:space-x-reverse p-4 border rounded-lg bg-gray-50">
+                  <RadioGroupItem value="cash" id="cash" />
+                  <Label
+                    htmlFor="cash"
+                    className="text-base cursor-pointer flex-1"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>
+                        {lang === "ar"
+                          ? "الدفع نقداً عند الاستلام"
+                          : "Cash on Delivery"}
+                      </span>
+                    </div>
+                  </Label>
+                </div>
+                {/* More payment methods will be added here soon */}
+                <div className="text-sm text-gray-500 text-center">
+                  {lang === "ar"
+                    ? "المزيد من طرق الدفع قريباً..."
+                    : "More payment methods coming soon..."}
+                </div>
+              </RadioGroup>
+            </div>
 
             {/* Order Notes */}
             <div className="space-y-2">
@@ -627,9 +593,9 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
               onClick={handlePlaceOrder}
               disabled={
                 createOrderMutation.isPending ||
-                (deliveryType === "delivery" &&
-                  (!addresses || addresses.length === 0 || !selectedAddress)) ||
-                (deliveryType === "pickup" && !selectedBranch)
+                !addresses ||
+                addresses.length === 0 ||
+                !selectedAddress
               }
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >

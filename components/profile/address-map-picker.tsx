@@ -155,12 +155,9 @@ export function AddressMapPicker({
           city: city || "",
           area: area || "",
         });
-
-        // Show success message
-        console.log("Address auto-filled successfully");
       }
     } catch (error: any) {
-      console.error("Error geocoding address:", error);
+      // Error is logged internally by the geocoding service
       const errorMessage =
         lang === "ar"
           ? "⚠️ فشل في تحديد العنوان تلقائياً. يرجى التأكد من تفعيل Geocoding API في Google Cloud Console."
@@ -187,7 +184,7 @@ export function AddressMapPicker({
           }
         },
         (error) => {
-          console.error("Error getting current location:", error);
+          // Geolocation error handled silently - user can manually select location
         }
       );
     }
