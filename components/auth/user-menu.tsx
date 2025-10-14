@@ -17,9 +17,28 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { LogOut, User, MapPin, History, Loader2 } from "lucide-react";
 
+interface Translations {
+  auth: {
+    signIn: string;
+    signUp: string;
+    signOut: string;
+    signOutError?: string;
+    signingOut?: string;
+  };
+  profile: {
+    title: string;
+    addresses: string;
+    orderHistory: string;
+  };
+  common?: {
+    error?: string;
+    user?: string;
+  };
+}
+
 interface UserMenuProps {
   lang: string;
-  t: any;
+  t: Translations;
   isMobile?: boolean;
   variant?: "light" | "dark"; // light for navBarTwo (white bg), dark for navbarOne (dark bg)
 }
@@ -30,7 +49,7 @@ export function UserMenu({
   isMobile = false,
   variant = "dark",
 }: UserMenuProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,13 +59,12 @@ export function UserMenu({
     try {
       await signOut();
       // Use window.location for hard navigation to ensure clean state
-      // No need for success toast as we're redirecting immediately
       window.location.href = `/${lang}`;
     } catch (error) {
-      console.error("Sign out error:", error);
+      // Error is logged internally by the auth service
       toast({
-        title: "خطأ",
-        description: "فشل تسجيل الخروج، حاول مرة أخرى",
+        title: t.common?.error || "خطأ",
+        description: t.auth?.signOutError || "فشل تسجيل الخروج، حاول مرة أخرى",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -124,19 +142,15 @@ export function UserMenu({
         {/* User Info Card */}
         <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl">
           <Avatar className="h-12 w-12 ring-2 ring-red-600">
-            <AvatarImage
-              src={user.user_metadata?.avatar_url}
-              alt={profile?.full_name || user.email}
-            />
             <AvatarFallback className="bg-red-600 text-white">
-              {profile?.full_name
-                ? getInitials(profile.full_name)
+              {user?.full_name
+                ? getInitials(user.full_name)
                 : user.email?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <p className="text-sm font-semibold text-foreground">
-              {profile?.full_name || "User"}
+              {user?.full_name || t.common?.user || "User"}
             </p>
             <p className="text-xs text-muted-foreground">{user.email}</p>
           </div>
@@ -183,7 +197,11 @@ export function UserMenu({
             ) : (
               <LogOut className="h-5 w-5" />
             )}
-            <span>{isLoading ? "جاري تسجيل الخروج..." : t.auth.signOut}</span>
+            <span>
+              {isLoading
+                ? t.auth.signingOut || "جاري تسجيل الخروج..."
+                : t.auth.signOut}
+            </span>
           </Button>
         </div>
       </div>
@@ -196,13 +214,9 @@ export function UserMenu({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={user.user_metadata?.avatar_url}
-              alt={profile?.full_name || user.email}
-            />
             <AvatarFallback>
-              {profile?.full_name
-                ? getInitials(profile.full_name)
+              {user?.full_name
+                ? getInitials(user.full_name)
                 : user.email?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -212,7 +226,7 @@ export function UserMenu({
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {profile?.full_name || "User"}
+              {user?.full_name || t.common?.user || "User"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
@@ -249,7 +263,9 @@ export function UserMenu({
           ) : (
             <LogOut className="mr-2 h-4 w-4" />
           )}
-          <span>{isLoading ? "جاري الخروج..." : t.auth.signOut}</span>
+          <span>
+            {isLoading ? t.auth.signingOut || "جاري الخروج..." : t.auth.signOut}
+          </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

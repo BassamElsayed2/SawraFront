@@ -36,12 +36,16 @@
   },
   "common": {
     "close": "إغلاق",
-    "loading": "جاري التحميل..."
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "user": "مستخدم"
   },
   "auth": {
     "signIn": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
     "signOut": "تسجيل الخروج",
+    "signingOut": "جاري تسجيل الخروج...",
+    "signOutError": "فشل تسجيل الخروج، حاول مرة أخرى",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
@@ -101,7 +105,18 @@
     "addressDeleted": "تم حذف العنوان بنجاح",
     "defaultSet": "تم تعيين العنوان كافتراضي",
     "noAddresses": "لا توجد عناوين",
-    "addFirstAddress": "أضف عنوانك الأول"
+    "addFirstAddress": "أضف عنوانك الأول",
+    "success": "نجح",
+    "error": "خطأ",
+    "confirmDelete": "هل أنت متأكد من حذف هذا العنوان؟",
+    "failedToDelete": "فشل حذف العنوان",
+    "failedToSetDefault": "فشل تعيين العنوان كافتراضي",
+    "default": "افتراضي",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "floorLabel": "طابق",
+    "aptLabel": "شقة",
+    "notesLabel": "ملاحظات"
   },
   "delivery": {
     "calculateFee": "حساب تكلفة التوصيل",

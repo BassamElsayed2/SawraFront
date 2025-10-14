@@ -66,11 +66,11 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       phone: z
         .string()
         .min(1, lang === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required")
-        .min(
-          10,
+        .regex(
+          /^(\+?20)?[0-9]{10,11}$/,
           lang === "ar"
-            ? "رقم الهاتف يجب أن يكون 10 أرقام على الأقل"
-            : "Phone must be at least 10 digits"
+            ? "رقم الهاتف المصري غير صحيح (مثال: 01234567890 أو +201234567890)"
+            : "Invalid Egyptian phone number (e.g., 01234567890 or +201234567890)"
         ),
       email: z
         .string()
@@ -144,7 +144,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       const { exists, error } = await checkPhoneExists(phone);
 
       if (error) {
-        console.error("Error checking phone:", error);
+        // Error is logged internally by the API service
         return;
       }
 
@@ -156,7 +156,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
         );
       }
     } catch (error) {
-      console.error("Error checking phone:", error);
+      // Error is logged internally by the API service
     } finally {
       setIsCheckingPhone(false);
     }
@@ -194,36 +194,18 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
         return;
       }
     } catch (error) {
-      console.error("Error checking phone:", error);
+      // Error is logged internally by the API service
       setIsLoading(false);
       return;
     }
 
     try {
-      const { error } = await signUp(data.email, data.password, {
+      await signUp({
+        email: data.email,
+        password: data.password,
         full_name: data.fullName,
         phone: data.phone,
       });
-
-      if (error) {
-        let errorMsg =
-          lang === "ar" ? "فشل إنشاء الحساب" : "Failed to create account";
-
-        if (error.message.includes("already registered")) {
-          errorMsg =
-            lang === "ar"
-              ? "البريد الإلكتروني مستخدم بالفعل"
-              : "Email is already registered";
-        }
-
-        setErrorMessage(errorMsg);
-        toast({
-          title: lang === "ar" ? "خطأ" : "Error",
-          description: errorMsg,
-          variant: "destructive",
-        });
-        return;
-      }
 
       toast({
         title: lang === "ar" ? "نجح" : "Success",
@@ -231,9 +213,25 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       });
 
       router.push(`/${lang}/profile`);
-    } catch (error) {
-      const errorMsg =
-        lang === "ar" ? "حدث خطأ غير متوقع" : "An unexpected error occurred";
+    } catch (error: any) {
+      let errorMsg =
+        lang === "ar" ? "فشل إنشاء الحساب" : "Failed to create account";
+
+      if (error?.message) {
+        if (error.message.includes("already registered")) {
+          errorMsg =
+            lang === "ar"
+              ? "البريد الإلكتروني مستخدم بالفعل"
+              : "Email is already registered";
+        } else if (error.message.includes("Phone number already registered")) {
+          errorMsg =
+            lang === "ar"
+              ? "رقم الهاتف مسجل بالفعل"
+              : "Phone number is already registered";
+        } else {
+          errorMsg = lang === "ar" ? "حدث خطأ غير متوقع" : error.message;
+        }
+      }
 
       setErrorMessage(errorMsg);
       toast({

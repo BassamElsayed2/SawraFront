@@ -1,6 +1,4 @@
-import { createClient } from "./supabase";
-
-const supabase = createClient();
+import apiClient from "./api-client";
 
 export interface ComboOffer {
   id: string;
@@ -16,29 +14,20 @@ export interface ComboOffer {
 }
 
 export const getComboOffers = async (): Promise<ComboOffer[]> => {
-  const { data, error } = await supabase
-    .from("combo_offers")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
+  try {
+    const response: any = await apiClient.get("/combo-offers");
+    return response.data || [];
+  } catch (error: any) {
     throw new Error(`Error fetching combo offers: ${error.message}`);
   }
-
-  return data || [];
 };
 
 // Get single combo offer by ID
 export const getComboOfferById = async (id: string): Promise<ComboOffer> => {
-  const { data, error } = await supabase
-    .from("combo_offers")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
+  try {
+    const response: any = await apiClient.get(`/combo-offers/${id}`);
+    return response.data;
+  } catch (error: any) {
     throw new Error(`Error fetching combo offer: ${error.message}`);
   }
-
-  return data;
 };

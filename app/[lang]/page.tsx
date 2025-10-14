@@ -21,8 +21,7 @@ export default async function HomePage({
   try {
     dict = await getDictionary(lang);
   } catch (error) {
-    console.error("Failed to load dictionary:", error);
-    // Fallback to English if dictionary loading fails
+    // Dictionary loading failed - fallback to English
     dict = await getDictionary("en");
   }
 

@@ -1,6 +1,4 @@
-import { createClient } from "./supabase";
-
-const supabase = createClient();
+import apiClient from "./api-client";
 
 export interface Product {
   id?: string;
@@ -49,83 +47,67 @@ export async function getProducts(
     date?: string;
   }
 ): Promise<{ products: ProductWithTypes[]; total: number }> {
-  const from = (page - 1) * limit;
-  const to = from + limit - 1;
+  try {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-  let query = supabase.from("products").select(
-    `
-      *,
-      types:product_types(
-        *,
-        sizes:product_sizes(*)
-      )
-    `,
-    { count: "exact" }
-  );
-
-  if (filters?.categoryId) {
-    query = query.eq("category_id", filters.categoryId);
-  }
-
-  if (filters?.search) {
-    query = query.or(
-      `title_ar.ilike.%${filters.search}%,title_en.ilike.%${filters.search}%`
-    );
-  }
-
-  if (filters?.date) {
-    const now = new Date();
-    const startDate = new Date();
-
-    switch (filters.date) {
-      case "today":
-        startDate.setHours(0, 0, 0, 0);
-        break;
-      case "week":
-        startDate.setDate(now.getDate() - 7);
-        break;
-      case "month":
-        startDate.setMonth(now.getMonth() - 1);
-        break;
-      case "year":
-        startDate.setFullYear(now.getFullYear() - 1);
-        break;
+    if (filters?.categoryId) {
+      params.append("category_id", filters.categoryId);
     }
 
-    query = query.gte("created_at", startDate.toISOString());
+    if (filters?.search) {
+      params.append("search", filters.search);
+    }
+
+    if (filters?.date) {
+      params.append("date", filters.date);
+    }
+
+    const response: any = await apiClient.get(`/products?${params.toString()}`);
+
+    // Handle different possible response structures
+    let products: ProductWithTypes[] = [];
+    let total = 0;
+
+    if (Array.isArray(response)) {
+      // If response is directly an array
+      products = response;
+      total = response.length;
+    } else if (response && typeof response === "object") {
+      // If response is an object, try different possible structures
+      if (Array.isArray(response.data)) {
+        products = response.data;
+        total = response.total || response.data.length;
+      } else if (Array.isArray(response.products)) {
+        products = response.products;
+        total = response.total || response.products.length;
+      } else if (response.data && Array.isArray(response.data.products)) {
+        products = response.data.products;
+        total = response.data.total || response.data.products.length;
+      }
+    }
+
+    return {
+      products,
+      total,
+    };
+  } catch (error: any) {
+    // Return empty array instead of throwing to prevent breaking the UI
+    return {
+      products: [],
+      total: 0,
+    };
   }
-
-  query = query.order("created_at", { ascending: false });
-
-  const { data: products, error, count } = await query.range(from, to);
-
-  if (error) {
-    console.error("خطأ في جلب المنتجات:", error.message);
-    throw new Error("تعذر تحميل المنتجات");
-  }
-
-  return {
-    products: products || [],
-    total: count ?? 0,
-  };
 }
 
 export async function getProductById(id: string): Promise<ProductWithTypes> {
-  const { data, error } = await supabase
-    .from("products")
-    .select(
-      `
-      *,
-      types:product_types(
-        *,
-        sizes:product_sizes(*)
-      )
-    `
-    )
-    .eq("id", id)
-    .single();
-
-  if (error) throw error;
-
-  return data;
+  try {
+    const response: any = await apiClient.get(`/products/${id}`);
+    return response.data;
+  } catch (error: any) {
+    // Re-throw error to be handled by the caller
+    throw error;
+  }
 }

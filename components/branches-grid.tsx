@@ -81,7 +81,7 @@ export default function BranchesGrid({ lang, dict }: BranchesGridProps) {
   }
 
   if (branchesError) {
-    console.error("Branches error:", branchesError);
+    // Error is logged internally by the API service
     return (
       <div className="text-center py-20">
         <div className="text-red-500 text-lg font-semibold mb-4">

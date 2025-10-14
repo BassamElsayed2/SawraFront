@@ -1,12 +1,14 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
-import { CartProvider } from "@/contexts/cart-context";
-import { AuthProvider } from "@/contexts/auth-context-rq";
-import { Toaster } from "@/components/ui/toaster";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function ReactQueryProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -14,6 +16,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
           queries: {
             staleTime: 60 * 1000, // 1 minute
             refetchOnWindowFocus: false,
+            retry: 1,
+          },
+          mutations: {
+            retry: 0,
           },
         },
       })
@@ -21,12 +27,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
-      </AuthProvider>
+      {children}
+      {/* Show React Query DevTools in development only */}
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 }

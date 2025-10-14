@@ -19,7 +19,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { createClient } from "@/services/supabase";
+import { newAuthApi } from "@/services/newApiAuth";
 
 const resetPasswordSchema = (lang: string) =>
   z
@@ -81,7 +81,6 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
   const [passwordValue, setPasswordValue] = useState("");
   const router = useRouter();
   const { toast } = useToast();
-  const supabase = createClient();
 
   // تحليل قوة كلمة المرور
   const passwordStrength = useMemo(() => {
@@ -111,27 +110,11 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Check if there's a valid session
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        // Check if there's a valid reset token in URL params
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
 
-        if (sessionError) {
-          console.error("Session error:", sessionError);
-          toast({
-            title: lang === "ar" ? "خطأ" : "Error",
-            description:
-              lang === "ar"
-                ? "حدث خطأ أثناء التحقق من الجلسة"
-                : "An error occurred while verifying the session",
-            variant: "destructive",
-          });
-          router.push(`/${lang}/auth/forgot-password`);
-          return;
-        }
-
-        if (!session) {
+        if (!token) {
           toast({
             title: lang === "ar" ? "خطأ" : "Error",
             description:
@@ -144,10 +127,10 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
           return;
         }
 
-        // Valid session found - user can now reset password
+        // Valid token found - user can now reset password
         setIsValidToken(true);
       } catch (error) {
-        console.error("Error checking session:", error);
+        // Error is logged internally by the auth service
         toast({
           title: lang === "ar" ? "خطأ" : "Error",
           description:
@@ -161,19 +144,45 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
     };
 
     checkSession();
-  }, [router, lang, toast, supabase.auth]);
+  }, [router, lang, toast]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: data.password,
-      });
+      // Get reset token from URL
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
 
-      if (error) {
+      if (!token) {
         toast({
           title: "Error",
-          description: error.message || "Failed to update password",
+          description: lang === "ar" ? "رابط غير صالح" : "Invalid link",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Call backend API to reset password
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token,
+            new_password: data.password,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to update password",
           variant: "destructive",
         });
         return;

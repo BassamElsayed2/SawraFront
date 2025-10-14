@@ -100,7 +100,9 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     enabled: mounted,
   });
 
-  const products = productsData?.products || [];
+  const products = Array.isArray(productsData?.products)
+    ? productsData.products
+    : [];
   const totalProducts = productsData?.total || 0;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
 

@@ -38,7 +38,7 @@ export function OrdersList({ lang, t }: OrdersListProps) {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["orders", user?.id],
     queryFn: () =>
-      user ? ordersApi.getOrders(user.id).then((res) => res.data || []) : [],
+      user ? ordersApi.getOrders().then((res) => res.data?.orders || []) : [],
     enabled: !!user,
   });
 

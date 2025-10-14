@@ -1,23 +1,21 @@
-import { createClient } from "./supabase";
-
-const supabase = createClient();
+import apiClient from "./api-client";
 
 export async function getCategories() {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("id, name_ar, name_en, image_url");
-
-  if (error) throw error;
-  return data;
+  try {
+    const response: any = await apiClient.get("/categories");
+    return response.data.categories;
+  } catch (error) {
+    // Re-throw error to be handled by the caller
+    throw error;
+  }
 }
 
 export async function getCategoryById(id: number) {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("id, name_ar, name_en, image_url")
-    .eq("id", id)
-    .single();
-
-  if (error) throw error;
-  return data;
+  try {
+    const response: any = await apiClient.get(`/categories/${id}`);
+    return response.data.category;
+  } catch (error) {
+    // Re-throw error to be handled by the caller
+    throw error;
+  }
 }
