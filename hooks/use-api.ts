@@ -30,9 +30,9 @@ export function useSignIn() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       api.auth.signIn(email, password),
-    onSuccess: () => {
-      // Invalidate auth query to refetch user data
-      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    onSuccess: async () => {
+      // Refetch auth query immediately and wait for it to complete
+      await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
     },
   });
 }
