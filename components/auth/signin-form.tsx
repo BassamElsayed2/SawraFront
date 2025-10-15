@@ -80,10 +80,8 @@ export function SignInForm({ lang, t }: SignInFormProps) {
         description: t.auth.signInSuccess,
       });
 
-      // Small delay to ensure auth state updates
-      setTimeout(() => {
-        router.push(`/${lang}/profile`);
-      }, 100);
+      // Redirect immediately since mutation now waits for auth refetch
+      router.push(`/${lang}/profile`);
     } catch (error: any) {
       // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
       const isAdminAccount =
