@@ -34,8 +34,12 @@ import {
 import { useCart } from "@/contexts/cart-context";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { addressesApi } from "@/services/apiAddresses";
+import { addressesApi, Address } from "@/services/apiAddresses";
 import { ordersApi, OrderItem } from "@/services/apiOrders";
+import {
+  calculateDeliveryFee,
+  CalculateDeliveryFeeResult,
+} from "@/services/apiDelivery";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -57,17 +61,21 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<string>("cash");
   const [orderNotes, setOrderNotes] = useState("");
+  const [deliveryFeeData, setDeliveryFeeData] =
+    useState<CalculateDeliveryFeeResult | null>(null);
+  const [loadingDeliveryFee, setLoadingDeliveryFee] = useState(false);
+  const [deliveryFeeError, setDeliveryFeeError] = useState<string | null>(null);
 
   // Fetch user addresses
   const {
     data: addresses = [],
     isLoading: loadingAddresses,
     isError: addressesError,
-  } = useQuery({
+  } = useQuery<Address[]>({
     queryKey: ["addresses", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data, error } = await addressesApi.getAddresses(user.id);
+      const { data, error } = await addressesApi.getAddresses();
       if (error) throw error;
       return data || [];
     },
@@ -87,6 +95,60 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
       }
     }
   }, [addresses]);
+
+  // Calculate delivery fee when address changes
+  useEffect(() => {
+    const calculateFee = async () => {
+      if (!selectedAddress || !addresses || addresses.length === 0) {
+        setDeliveryFeeData(null);
+        return;
+      }
+
+      const address = addresses.find((addr) => addr.id === selectedAddress);
+      if (!address) {
+        setDeliveryFeeData(null);
+        return;
+      }
+
+      // Check if address has coordinates
+      if (!address.latitude || !address.longitude) {
+        setDeliveryFeeError(
+          lang === "ar"
+            ? "هذا العنوان لا يحتوي على إحداثيات. يرجى تحديث العنوان."
+            : "This address doesn't have coordinates. Please update the address."
+        );
+        setDeliveryFeeData(null);
+        return;
+      }
+
+      setLoadingDeliveryFee(true);
+      setDeliveryFeeError(null);
+
+      try {
+        const result = await calculateDeliveryFee({
+          user_latitude: address.latitude,
+          user_longitude: address.longitude,
+        });
+        setDeliveryFeeData(result);
+        setDeliveryFeeError(null);
+      } catch (error: any) {
+        console.error("Error calculating delivery fee:", error);
+        setDeliveryFeeError(
+          error.message ||
+            (lang === "ar"
+              ? "عذراً، التوصيل غير متاح لهذا العنوان"
+              : "Sorry, delivery is not available for this address")
+        );
+        setDeliveryFeeData(null);
+      } finally {
+        setLoadingDeliveryFee(false);
+      }
+    };
+
+    if (showCheckoutDialog) {
+      calculateFee();
+    }
+  }, [selectedAddress, addresses, showCheckoutDialog, lang]);
 
   // Create order mutation
   const createOrderMutation = useMutation({
@@ -128,7 +190,7 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
       });
 
       const subtotal = getTotalPrice();
-      const deliveryFee = 0; // TODO: Calculate delivery fee based on address
+      const deliveryFee = deliveryFeeData?.fee || 0;
       const total = subtotal + deliveryFee;
 
       const orderData = {
@@ -195,6 +257,27 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
     if (!selectedAddress) {
       toast({
         title: dict?.cart?.pleaseSelectAddress || "Please select an address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (deliveryFeeError) {
+      toast({
+        title: dict?.cart?.deliveryNotAvailable || "Delivery not available",
+        description: deliveryFeeError,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!deliveryFeeData) {
+      toast({
+        title:
+          dict?.cart?.calculatingDeliveryFee || "Calculating delivery fee...",
+        description:
+          dict?.cart?.pleaseWait ||
+          "Please wait while we calculate the delivery fee",
         variant: "destructive",
       });
       return;
@@ -519,6 +602,65 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
               </RadioGroup>
             </div>
 
+            {/* Delivery Fee Info */}
+            {selectedAddress && (
+              <div className="space-y-3">
+                {loadingDeliveryFee ? (
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <AlertTitle className="mb-0">
+                        {lang === "ar"
+                          ? "جاري حساب رسوم التوصيل..."
+                          : "Calculating delivery fee..."}
+                      </AlertTitle>
+                    </div>
+                  </Alert>
+                ) : deliveryFeeError ? (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>
+                      {lang === "ar"
+                        ? "التوصيل غير متاح"
+                        : "Delivery not available"}
+                    </AlertTitle>
+                    <AlertDescription>{deliveryFeeError}</AlertDescription>
+                  </Alert>
+                ) : deliveryFeeData ? (
+                  <Alert className="bg-green-50 border-green-200">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <AlertTitle className="text-green-800">
+                      {lang === "ar" ? "التوصيل متاح" : "Delivery available"}
+                    </AlertTitle>
+                    <AlertDescription className="text-green-700 space-y-1">
+                      <div>
+                        <strong>
+                          {lang === "ar" ? "الفرع الأقرب:" : "Nearest branch:"}
+                        </strong>{" "}
+                        {lang === "ar"
+                          ? deliveryFeeData.nearest_branch.name_ar
+                          : deliveryFeeData.nearest_branch.name_en}
+                      </div>
+                      <div>
+                        <strong>
+                          {lang === "ar" ? "المسافة:" : "Distance:"}
+                        </strong>{" "}
+                        {deliveryFeeData.distance_km.toFixed(2)}{" "}
+                        {lang === "ar" ? "كم" : "km"}
+                      </div>
+                      <div>
+                        <strong>
+                          {lang === "ar" ? "رسوم التوصيل:" : "Delivery fee:"}
+                        </strong>{" "}
+                        {deliveryFeeData.fee.toFixed(2)}{" "}
+                        {lang === "ar" ? "ج.م" : "EGP"}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
+              </div>
+            )}
+
             {/* Order Notes */}
             <div className="space-y-2">
               <Label htmlFor="orderNotes" className="text-lg font-semibold">
@@ -577,12 +719,43 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
                     </div>
                   </div>
                 ))}
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between items-center font-bold text-lg">
+                <div className="border-t pt-2 mt-2 space-y-2">
+                  <div className="flex justify-between items-center text-base">
+                    <span className="text-gray-600">
+                      {t.cart?.subtotal ||
+                        (lang === "ar" ? "المجموع الفرعي" : "Subtotal")}
+                    </span>
+                    <span className="font-semibold">
+                      ج.م {getTotalPrice().toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-base">
+                    <span className="text-gray-600">
+                      {t.cart?.deliveryFee ||
+                        (lang === "ar" ? "رسوم التوصيل" : "Delivery Fee")}
+                    </span>
+                    <span className="font-semibold">
+                      {loadingDeliveryFee ? (
+                        <span className="text-gray-400">
+                          {lang === "ar" ? "جاري الحساب..." : "Calculating..."}
+                        </span>
+                      ) : deliveryFeeData ? (
+                        `ج.م ${deliveryFeeData.fee.toFixed(2)}`
+                      ) : (
+                        <span className="text-gray-400">--</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center font-bold text-lg border-t pt-2">
                     <span>
                       {t.cart?.total || (lang === "ar" ? "الإجمالي" : "Total")}
                     </span>
-                    <span>ج.م {getTotalPrice().toFixed(2)}</span>
+                    <span className="text-red-600">
+                      ج.م{" "}
+                      {(getTotalPrice() + (deliveryFeeData?.fee || 0)).toFixed(
+                        2
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -595,7 +768,10 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
                 createOrderMutation.isPending ||
                 !addresses ||
                 addresses.length === 0 ||
-                !selectedAddress
+                !selectedAddress ||
+                loadingDeliveryFee ||
+                !!deliveryFeeError ||
+                !deliveryFeeData
               }
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -603,6 +779,10 @@ export default function CartSummary({ lang, dict }: CartSummaryProps) {
                 ? lang === "ar"
                   ? "جاري التأكيد..."
                   : "Placing Order..."
+                : loadingDeliveryFee
+                ? lang === "ar"
+                  ? "جاري حساب التوصيل..."
+                  : "Calculating delivery..."
                 : t.cart?.placeOrder ||
                   (lang === "ar" ? "تأكيد الطلب" : "Place Order")}
             </Button>

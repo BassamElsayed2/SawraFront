@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ordersApi, Order } from "@/services/apiOrders";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -10,20 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useToast } from "@/hooks/use-toast";
 import {
   ShoppingBag,
   Package,
   Clock,
   CheckCircle2,
   XCircle,
-  MapPin,
   Calendar,
 } from "lucide-react";
 import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 
 interface OrdersListProps {
   lang: string;
@@ -32,8 +29,6 @@ interface OrdersListProps {
 
 export function OrdersList({ lang, t }: OrdersListProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["orders", user?.id],
@@ -41,39 +36,6 @@ export function OrdersList({ lang, t }: OrdersListProps) {
       user ? ordersApi.getOrders().then((res) => res.data?.orders || []) : [],
     enabled: !!user,
   });
-
-  const cancelOrderMutation = useMutation({
-    mutationFn: (orderId: string) => ordersApi.cancelOrder(orderId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders", user?.id] });
-      toast({
-        title: lang === "ar" ? "تم إلغاء الطلب" : "Order Cancelled",
-        description:
-          lang === "ar"
-            ? "تم إلغاء الطلب بنجاح"
-            : "Order has been cancelled successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: lang === "ar" ? "خطأ" : "Error",
-        description: error.message || "Failed to cancel order",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleCancelOrder = (orderId: string) => {
-    if (
-      window.confirm(
-        lang === "ar"
-          ? "هل أنت متأكد من إلغاء هذا الطلب؟"
-          : "Are you sure you want to cancel this order?"
-      )
-    ) {
-      cancelOrderMutation.mutate(orderId);
-    }
-  };
 
   const getStatusIcon = (status: Order["status"]) => {
     switch (status) {
@@ -137,17 +99,22 @@ export function OrdersList({ lang, t }: OrdersListProps) {
 
   return (
     <div className="space-y-4">
-      {orders.map((order) => (
+      {orders.map((order: Order) => (
         <Card key={order.id}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <CardTitle className="text-lg">
-                  {t.orders?.orderNumber || "Order"} #{order.id.slice(0, 8)}
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span>{t.orders?.orderNumber || "Order"}</span>#
+                  {order.id.slice(0, 8)}
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(order.created_at), "PPP")}</span>
+                  <span dir={lang === "ar" ? "rtl" : "ltr"}>
+                    {format(new Date(order.created_at), "d MMMM yyyy", {
+                      locale: lang === "ar" ? ar : undefined,
+                    })}
+                  </span>
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2">
@@ -171,7 +138,7 @@ export function OrdersList({ lang, t }: OrdersListProps) {
               <h4 className="font-semibold text-sm text-gray-600">
                 {lang === "ar" ? "المنتجات:" : "Items:"}
               </h4>
-              {order.items.map((item, index) => (
+              {order.items.map((item: any, index: number) => (
                 <div
                   key={index}
                   className="flex justify-between items-center text-sm"
@@ -180,9 +147,9 @@ export function OrdersList({ lang, t }: OrdersListProps) {
                     <span className="font-medium">
                       {lang === "ar" ? item.title_ar : item.title_en}
                     </span>
-                    {item.size && (
+                    {/* {item.size && (
                       <span className="text-gray-500 ms-2">({item.size})</span>
-                    )}
+                    )} */}
                     <span className="text-gray-500 ms-2">
                       x {item.quantity}
                     </span>
@@ -192,27 +159,6 @@ export function OrdersList({ lang, t }: OrdersListProps) {
                   </span>
                 </div>
               ))}
-            </div>
-
-            {/* Delivery Info */}
-            <div className="border-t pt-3">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                {order.delivery_type === "delivery" ? (
-                  <>
-                    <MapPin className="h-4 w-4" />
-                    <span>
-                      {lang === "ar" ? "توصيل للمنزل" : "Home Delivery"}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag className="h-4 w-4" />
-                    <span>
-                      {lang === "ar" ? "استلام من الفرع" : "Pickup from Branch"}
-                    </span>
-                  </>
-                )}
-              </div>
             </div>
 
             {/* Order Notes */}
@@ -237,22 +183,6 @@ export function OrdersList({ lang, t }: OrdersListProps) {
                 </span>
               </div>
             </div>
-
-            {/* Actions */}
-            {order.status === "pending" && (
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleCancelOrder(order.id)}
-                  disabled={cancelOrderMutation.isPending}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  {t.orders?.cancelOrder ||
-                    (lang === "ar" ? "إلغاء الطلب" : "Cancel Order")}
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
       ))}

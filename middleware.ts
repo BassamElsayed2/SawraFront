@@ -15,7 +15,12 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/auth/callback") ||
-    pathname.includes(".")
+    pathname.includes(".") ||
+    pathname.endsWith("/sitemap.xml") ||
+    pathname.endsWith("/sitemaps.xml") ||
+    pathname.includes("/sitemap") ||
+    pathname.endsWith("/robots.txt") ||
+    pathname.endsWith("/favicon.ico")
   ) {
     return;
   }
@@ -90,7 +95,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next)
-    "/((?!_next|api|favicon.ico).*)",
+    // Skip all internal paths (_next), static files, and special files
+    "/((?!_next|api|favicon.ico|.*\\..*|sitemap|robots).*)",
   ],
 };
