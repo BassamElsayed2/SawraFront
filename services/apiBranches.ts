@@ -13,13 +13,21 @@ export interface Branch {
   works_hours?: string;
   google_map?: string;
   image?: string;
+  lat?: number;
+  lng?: number;
   created_at?: string;
 }
 
 export async function getBranches() {
   try {
     const response: any = await apiClient.get("/branches");
-    return response.data || [];
+    const branches = response.branches || [];
+
+    // Map image_url to image for compatibility with frontend
+    return branches.map((branch: any) => ({
+      ...branch,
+      image: branch.image_url, // Map database field to frontend field
+    }));
   } catch (error) {
     // Return fallback data if API fails
     return [
@@ -35,6 +43,8 @@ export async function getBranches() {
         works_hours: "8:00 ص - 12:00 م",
         image: "/modern-downtown-restaurant.png",
         google_map: "https://maps.google.com",
+        lat: 24.7136,
+        lng: 46.6753,
       },
       {
         id: "2",
@@ -48,6 +58,8 @@ export async function getBranches() {
         works_hours: "10:00 ص - 11:00 م",
         image: "/modern-mall-restaurant.png",
         google_map: "https://maps.google.com",
+        lat: 24.7543,
+        lng: 46.6387,
       },
     ];
   }

@@ -37,11 +37,31 @@ export default function BranchesGrid({ lang, dict }: BranchesGridProps) {
     }
   };
 
-  const openInMaps = (googleMap: string, name: string) => {
-    if (mounted && googleMap) {
-      // Ensure window is available
-      window.open(googleMap, "_blank");
+  const openInMaps = (branch: Branch) => {
+    if (!mounted) return;
+
+    // If google_map URL exists, use it
+    if (branch.google_map) {
+      window.open(branch.google_map, "_blank");
+      return;
     }
+
+    // Otherwise, use lat/lng to create Google Maps URL
+    if (branch.lat && branch.lng) {
+      const branchName = lang === "ar" ? branch.name_ar : branch.name_en;
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${
+        branch.lat
+      },${branch.lng}&query_place_id=${encodeURIComponent(branchName)}`;
+      window.open(mapsUrl, "_blank");
+      return;
+    }
+
+    // If no coordinates available, show alert
+    alert(
+      lang === "ar"
+        ? "لا توجد معلومات موقع متاحة لهذا الفرع"
+        : "No location information available for this branch"
+    );
   };
 
   if (!mounted) {
@@ -120,7 +140,7 @@ export default function BranchesGrid({ lang, dict }: BranchesGridProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-      {branches.map((branch) => (
+      {branches.map((branch: Branch) => (
         <Card
           key={branch.id}
           className="overflow-hidden hover:shadow-lg transition-shadow"
@@ -187,15 +207,10 @@ export default function BranchesGrid({ lang, dict }: BranchesGridProps) {
                   {dict.branches.call}
                 </Button>
                 <Button
-                  onClick={() =>
-                    openInMaps(
-                      branch.google_map,
-                      lang === "ar" ? branch.name_ar : branch.name_en
-                    )
-                  }
+                  onClick={() => openInMaps(branch)}
                   variant="outline"
                   className="flex-1"
-                  disabled={!branch.google_map}
+                  disabled={!branch.google_map && !branch.lat && !branch.lng}
                 >
                   <MapPin className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
                   {dict.branches.maps}
