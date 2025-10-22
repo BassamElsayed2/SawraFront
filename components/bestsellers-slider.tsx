@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { getComboOffers, ComboOffer } from "@/services/apiOffers";
 import { useCart } from "@/contexts/cart-context";
-import CartSummary from "./cart-summary";
 
 interface OffersSliderProps {
   lang: "en" | "ar";
@@ -100,7 +99,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
         title_en: selectedOffer.title_en,
         image_url: selectedOffer.image_url || undefined,
         quantity,
-        totalPrice: selectedOffer.total_price * quantity,
+        totalPrice: selectedOffer.price * quantity,
         offer_id: selectedOffer.id.toString(),
       };
       addToCart(cartItem);
@@ -291,9 +290,18 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
 
                         {/* Price */}
                         <div className="flex items-center justify-between">
-                          <div className="text-xl font-bold text-red-600">
-                            {lang === "ar" ? "ج.م" : "EGP"}{" "}
-                            {offer.total_price.toFixed(2)}
+                          <div className="flex flex-col gap-1">
+                            <div className="text-xl font-bold text-red-600">
+                              {lang === "ar" ? "ج.م" : "EGP"}{" "}
+                              {offer.price.toFixed(2)}
+                            </div>
+                            {offer.original_price &&
+                              offer.original_price > offer.price && (
+                                <div className="text-sm text-gray-400 line-through">
+                                  {lang === "ar" ? "ج.م" : "EGP"}{" "}
+                                  {offer.original_price.toFixed(2)}
+                                </div>
+                              )}
                           </div>
                         </div>
 
@@ -467,8 +475,28 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                     <div className="text-2xl font-bold text-red-600 text-center">
                       {lang === "en" ? "Total" : "الإجمالي"}:{" "}
                       {lang === "ar" ? "ج.م" : "EGP"}
-                      {(selectedOffer.total_price * quantity).toFixed(2)}
+                      {(selectedOffer.price * quantity).toFixed(2)}
                     </div>
+                    {selectedOffer.original_price &&
+                      selectedOffer.original_price > selectedOffer.price && (
+                        <div className="text-center mt-2 text-gray-500">
+                          <span className="line-through text-sm">
+                            {lang === "ar" ? "ج.م" : "EGP"}
+                            {(selectedOffer.original_price * quantity).toFixed(
+                              2
+                            )}
+                          </span>
+                          <span className="ml-2 text-green-600 font-semibold">
+                            {lang === "en" ? "Save" : "وفر"}{" "}
+                            {(
+                              (selectedOffer.original_price -
+                                selectedOffer.price) *
+                              quantity
+                            ).toFixed(2)}{" "}
+                            {lang === "ar" ? "ج.م" : "EGP"}
+                          </span>
+                        </div>
+                      )}
                   </div>
 
                   <Button
@@ -490,9 +518,6 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Cart Summary */}
-      <CartSummary lang={lang} dict={dict} />
 
       <style jsx>{`
         @keyframes fadeInUp {

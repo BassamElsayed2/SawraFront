@@ -96,12 +96,20 @@ class ApiClient {
   async uploadFile(
     endpoint: string,
     file: File,
-    folder?: string
+    additionalData?: Record<string, unknown>
   ): Promise<any> {
     const formData = new FormData();
     formData.append("image", file);
-    if (folder) {
-      formData.append("folder", folder);
+
+    if (additionalData) {
+      Object.keys(additionalData).forEach((key) => {
+        const value = additionalData[key];
+        if (typeof value === "string" || value instanceof Blob) {
+          formData.append(key, value);
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      });
     }
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -133,6 +141,8 @@ export const api = {
       full_name: string;
       phone: string;
     }) => apiClient.post("/auth/signup", data),
+    googleSignIn: (idToken: string) =>
+      apiClient.post("/auth/google", { idToken }),
     signOut: () => apiClient.post("/auth/signout"),
     getMe: () => apiClient.get("/auth/me"),
     updateProfile: (data: { full_name?: string; phone?: string }) =>
@@ -180,16 +190,33 @@ export const api = {
 
   // Upload
   upload: {
-    image: (file: File, folder?: string) =>
-      apiClient.uploadFile("/upload/image", file, folder),
-    images: (files: File[], folder?: string) =>
+    image: (file: File, bucket?: string, folder?: string) =>
+      apiClient.uploadFile("/upload/image", file, { bucket, folder }),
+    branchImage: (file: File, folder?: string) =>
+      apiClient.uploadFile("/upload/branch-image", file, { folder }),
+    avatarImage: (file: File, folder?: string) =>
+      apiClient.uploadFile("/upload/image", file, {
+        bucket: "AVATARS",
+        folder,
+      }),
+    productImage: (file: File, folder?: string) =>
+      apiClient.uploadFile("/upload/image", file, {
+        bucket: "PRODUCT_IMAGES",
+        folder,
+      }),
+    comboOfferImage: (file: File, folder?: string) =>
+      apiClient.uploadFile("/upload/image", file, {
+        bucket: "COMBO_OFFERS_MEDIA",
+        folder,
+      }),
+    images: (files: File[], bucket?: string, folder?: string) =>
       Promise.all(
         files.map((file) =>
-          apiClient.uploadFile("/upload/images", file, folder)
+          apiClient.uploadFile("/upload/image", file, { bucket, folder })
         )
       ),
-    deleteImage: (url: string) =>
-      apiClient.delete("/upload/image", { data: { url } }),
+    deleteImage: (bucket: string, path: string) =>
+      apiClient.delete("/upload/image", { data: { bucket, path } }),
   },
 };
 

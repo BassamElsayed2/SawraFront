@@ -83,4 +83,15 @@ export const newAuthApi = {
       return { exists: false, error: { message: error.message } };
     }
   },
+
+  async googleSignIn(idToken: string) {
+    try {
+      const response = await apiClient.post("/auth/google", {
+        idToken,
+      });
+      return { data: response, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
+  },
 };

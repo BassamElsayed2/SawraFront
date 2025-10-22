@@ -14,8 +14,11 @@ export function ReactQueryProvider({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
-            refetchOnWindowFocus: false,
+            staleTime: 5 * 60 * 1000, // 5 minutes - البيانات تعتبر fresh لمدة 5 دقائق
+            gcTime: 30 * 60 * 1000, // 30 minutes - البيانات تبقى في الذاكرة لمدة 30 دقيقة
+            refetchOnWindowFocus: false, // عدم إعادة الجلب عند الرجوع للنافذة
+            refetchOnMount: false, // عدم إعادة الجلب عند mount إذا كانت البيانات fresh
+            refetchOnReconnect: true, // إعادة الجلب عند الاتصال بالإنترنت
             retry: 1,
           },
           mutations: {

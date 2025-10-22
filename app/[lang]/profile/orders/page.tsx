@@ -23,9 +23,9 @@ export default async function OrdersPage({ params }: OrdersPageProps) {
 
   // Check authentication
   const cookieStore = await cookies();
-  const authToken = cookieStore.get("auth_token");
+  const sessionCookie = cookieStore.get("food_cms_session");
 
-  if (!authToken) {
+  if (!sessionCookie) {
     redirect(`/${lang}/auth/signin`);
   }
 

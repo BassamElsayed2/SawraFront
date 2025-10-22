@@ -46,11 +46,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // Load cart from localStorage
+    // Load cart from localStorage with cache validation
     const savedCart = localStorage.getItem("restaurant-cart");
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        const cartData = JSON.parse(savedCart);
+        // Check if cart has timestamp and is less than 7 days old
+        if (cartData.timestamp) {
+          const sevenDays = 7 * 24 * 60 * 60 * 1000;
+          if (Date.now() - cartData.timestamp < sevenDays) {
+            setCart(cartData.cart || []);
+          } else {
+            // Cart is too old, clear it
+            localStorage.removeItem("restaurant-cart");
+          }
+        } else {
+          // Old format without timestamp, still load it
+          setCart(Array.isArray(cartData) ? cartData : []);
+        }
       } catch (error) {
         // Invalid cart data in localStorage - reset to empty cart
         localStorage.removeItem("restaurant-cart");
@@ -59,9 +72,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Save cart to localStorage
+    // Save cart to localStorage with timestamp
     if (mounted) {
-      localStorage.setItem("restaurant-cart", JSON.stringify(cart));
+      localStorage.setItem(
+        "restaurant-cart",
+        JSON.stringify({
+          cart,
+          timestamp: Date.now(),
+        })
+      );
     }
   }, [cart, mounted]);
 
