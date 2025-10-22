@@ -94,6 +94,19 @@ export function useGoogleSignIn() {
   });
 }
 
+export function useFacebookSignIn() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ accessToken }: { accessToken: string }) =>
+      api.auth.facebookSignIn(accessToken),
+    onSuccess: async () => {
+      // Refetch auth query immediately and wait for it to complete
+      await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
+    },
+  });
+}
+
 export function useSignUp() {
   return useMutation({
     mutationFn: (data: {

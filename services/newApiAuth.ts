@@ -94,4 +94,15 @@ export const newAuthApi = {
       return { data: null, error: { message: error.message } };
     }
   },
+
+  async facebookSignIn(accessToken: string) {
+    try {
+      const response = await apiClient.post("/auth/facebook", {
+        accessToken,
+      });
+      return { data: response, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
+  },
 };

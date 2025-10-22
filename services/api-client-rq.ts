@@ -143,6 +143,8 @@ export const api = {
     }) => apiClient.post("/auth/signup", data),
     googleSignIn: (idToken: string) =>
       apiClient.post("/auth/google", { idToken }),
+    facebookSignIn: (accessToken: string) =>
+      apiClient.post("/auth/facebook", { accessToken }),
     signOut: () => apiClient.post("/auth/signout"),
     getMe: () => apiClient.get("/auth/me"),
     updateProfile: (data: { full_name?: string; phone?: string }) =>
