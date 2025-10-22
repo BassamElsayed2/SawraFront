@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { useGoogleSignIn } from "@/hooks/use-api";
+import { useGoogleSignIn, useFacebookSignIn } from "@/hooks/use-api";
 import { GoogleSignInButton } from "./google-signin-button";
+import { FacebookSignInButton } from "./facebook-signin-button";
 
 type SignInFormData = {
   email: string;
@@ -27,12 +28,14 @@ interface SignInFormProps {
 export function SignInForm({ lang, t }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { signIn } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const googleSignInMutation = useGoogleSignIn();
+  const facebookSignInMutation = useFacebookSignIn();
 
   // التحقق من معامل الخطأ في URL
   useEffect(() => {
@@ -158,6 +161,53 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     });
   };
 
+  const handleFacebookSuccess = async (accessToken: string) => {
+    setIsFacebookLoading(true);
+    setErrorMessage("");
+
+    try {
+      await facebookSignInMutation.mutateAsync({
+        accessToken: accessToken,
+      });
+
+      toast({
+        title: lang === "ar" ? "تم بنجاح" : "Success",
+        description:
+          lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
+      });
+
+      router.push(`/${lang}/profile`);
+    } catch (error: any) {
+      const errorMsg =
+        lang === "ar"
+          ? "فشل تسجيل الدخول بحساب فيسبوك"
+          : "Failed to sign in with Facebook";
+
+      setErrorMessage(errorMsg);
+      toast({
+        title: lang === "ar" ? "خطأ" : "Error",
+        description: error?.message || errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsFacebookLoading(false);
+    }
+  };
+
+  const handleFacebookError = () => {
+    const errorMsg =
+      lang === "ar"
+        ? "فشل تسجيل الدخول بحساب فيسبوك"
+        : "Failed to sign in with Facebook";
+
+    setErrorMessage(errorMsg);
+    toast({
+      title: lang === "ar" ? "خطأ" : "Error",
+      description: errorMsg,
+      variant: "destructive",
+    });
+  };
+
   return (
     <div className="w-full">
       <div className="mb-8">
@@ -239,7 +289,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
         <Button
           type="submit"
           className="w-full h-11 text-base font-semibold"
-          disabled={isLoading || isGoogleLoading}
+          disabled={isLoading || isGoogleLoading || isFacebookLoading}
         >
           {isLoading ? t.common.loading : t.auth.signIn}
         </Button>
@@ -255,13 +305,23 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           </div>
         </div>
 
-        <GoogleSignInButton
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          lang={lang}
-          isLoading={isLoading || isGoogleLoading}
-          mode="signin"
-        />
+        <div className="space-y-3">
+          <GoogleSignInButton
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            lang={lang}
+            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            mode="signin"
+          />
+
+          <FacebookSignInButton
+            onSuccess={handleFacebookSuccess}
+            onError={handleFacebookError}
+            lang={lang}
+            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            mode="signin"
+          />
+        </div>
 
         <div className="text-center text-sm pt-4 border-t">
           <span className="text-gray-600">

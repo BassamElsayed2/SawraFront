@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { useGoogleSignIn } from "@/hooks/use-api";
+import { useGoogleSignIn, useFacebookSignIn } from "@/hooks/use-api";
 import { GoogleSignInButton } from "./google-signin-button";
+import { FacebookSignInButton } from "./facebook-signin-button";
 
 type SignUpFormData = {
   email: string;
@@ -30,6 +31,7 @@ interface SignUpFormProps {
 export function SignUpForm({ lang, t }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [passwordValue, setPasswordValue] = useState("");
   const [phoneError, setPhoneError] = useState<string>("");
@@ -38,6 +40,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const googleSignInMutation = useGoogleSignIn();
+  const facebookSignInMutation = useFacebookSignIn();
 
   // تحليل قوة كلمة المرور
   const passwordStrength = useMemo(() => {
@@ -294,6 +297,61 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       lang === "ar"
         ? "فشل إنشاء الحساب بواسطة جوجل"
         : "Failed to sign up with Google";
+
+    setErrorMessage(errorMsg);
+    toast({
+      title: lang === "ar" ? "خطأ" : "Error",
+      description: errorMsg,
+      variant: "destructive",
+    });
+  };
+
+  const handleFacebookSuccess = async (accessToken: string) => {
+    setIsFacebookLoading(true);
+    setErrorMessage("");
+
+    try {
+      const result = await facebookSignInMutation.mutateAsync({
+        accessToken: accessToken,
+      });
+
+      // Check if it's a new user from the response
+      const isNewUser = result?.data?.isNewUser;
+
+      toast({
+        title: lang === "ar" ? "تم بنجاح" : "Success",
+        description: isNewUser
+          ? lang === "ar"
+            ? "تم إنشاء حسابك بنجاح"
+            : "Account created successfully"
+          : lang === "ar"
+          ? "تم تسجيل الدخول بنجاح"
+          : "Successfully signed in",
+      });
+
+      router.push(`/${lang}/profile`);
+    } catch (error: any) {
+      const errorMsg =
+        lang === "ar"
+          ? "فشل إنشاء الحساب بواسطة فيسبوك"
+          : "Failed to sign up with Facebook";
+
+      setErrorMessage(errorMsg);
+      toast({
+        title: lang === "ar" ? "خطأ" : "Error",
+        description: error?.message || errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsFacebookLoading(false);
+    }
+  };
+
+  const handleFacebookError = () => {
+    const errorMsg =
+      lang === "ar"
+        ? "فشل إنشاء الحساب بواسطة فيسبوك"
+        : "Failed to sign up with Facebook";
 
     setErrorMessage(errorMsg);
     toast({
@@ -585,13 +643,23 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
           </div>
         </div>
 
-        <GoogleSignInButton
-          onSuccess={handleGoogleSuccess}
-          onError={handleGoogleError}
-          lang={lang}
-          isLoading={isLoading || isGoogleLoading}
-          mode="signup"
-        />
+        <div className="space-y-3">
+          <GoogleSignInButton
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            lang={lang}
+            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            mode="signup"
+          />
+
+          <FacebookSignInButton
+            onSuccess={handleFacebookSuccess}
+            onError={handleFacebookError}
+            lang={lang}
+            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            mode="signup"
+          />
+        </div>
 
         <div className="text-center text-sm pt-4 border-t">
           <span className="text-gray-600">
