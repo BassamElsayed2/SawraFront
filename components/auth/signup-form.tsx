@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { useGoogleSignIn } from "@/hooks/use-api";
+import { GoogleSignInButton } from "./google-signin-button";
 
 type SignUpFormData = {
   email: string;
@@ -27,6 +29,7 @@ interface SignUpFormProps {
 
 export function SignUpForm({ lang, t }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [passwordValue, setPasswordValue] = useState("");
   const [phoneError, setPhoneError] = useState<string>("");
@@ -34,6 +37,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
   const { signUp, checkPhoneExists } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const googleSignInMutation = useGoogleSignIn();
 
   // تحليل قوة كلمة المرور
   const passwordStrength = useMemo(() => {
@@ -242,6 +246,61 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (idToken: string) => {
+    setIsGoogleLoading(true);
+    setErrorMessage("");
+
+    try {
+      const result = await googleSignInMutation.mutateAsync({
+        idToken: idToken,
+      });
+
+      // Check if it's a new user from the response
+      const isNewUser = result?.data?.isNewUser;
+
+      toast({
+        title: lang === "ar" ? "تم بنجاح" : "Success",
+        description: isNewUser
+          ? lang === "ar"
+            ? "تم إنشاء حسابك بنجاح"
+            : "Account created successfully"
+          : lang === "ar"
+          ? "تم تسجيل الدخول بنجاح"
+          : "Successfully signed in",
+      });
+
+      router.push(`/${lang}/profile`);
+    } catch (error: any) {
+      const errorMsg =
+        lang === "ar"
+          ? "فشل إنشاء الحساب بواسطة جوجل"
+          : "Failed to sign up with Google";
+
+      setErrorMessage(errorMsg);
+      toast({
+        title: lang === "ar" ? "خطأ" : "Error",
+        description: error?.message || errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    const errorMsg =
+      lang === "ar"
+        ? "فشل إنشاء الحساب بواسطة جوجل"
+        : "Failed to sign up with Google";
+
+    setErrorMessage(errorMsg);
+    toast({
+      title: lang === "ar" ? "خطأ" : "Error",
+      description: errorMsg,
+      variant: "destructive",
+    });
   };
 
   return (
@@ -510,10 +569,29 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
         <Button
           type="submit"
           className="w-full h-11 text-base font-semibold mt-6"
-          disabled={isLoading}
+          disabled={isLoading || isGoogleLoading}
         >
           {isLoading ? t.common.loading : t.auth.signUp}
         </Button>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-gray-500">
+              {lang === "ar" ? "أو" : "Or"}
+            </span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          lang={lang}
+          isLoading={isLoading || isGoogleLoading}
+          mode="signup"
+        />
 
         <div className="text-center text-sm pt-4 border-t">
           <span className="text-gray-600">

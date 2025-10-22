@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Globe, ChefHat } from "lucide-react";
 import Image from "next/image";
 import { UserMenu } from "@/components/auth/user-menu";
+import CartIcon from "@/components/cart-icon";
 
 interface NavbarProps {
   lang: "en" | "ar";
@@ -116,6 +117,9 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
               </Link>
             ))}
 
+            {/* Cart Icon */}
+            <CartIcon lang={lang} dict={dict} variant="dark" />
+
             {/* User Menu */}
             <UserMenu lang={lang} t={dict} />
 
@@ -133,6 +137,8 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
 
           {/* Mobile & Tablet Navigation */}
           <div className="lg:hidden flex items-center space-x-3 rtl:space-x-reverse">
+            <CartIcon lang={lang} dict={dict} variant="dark" />
+
             <Link href={`/${lang}/menu`}>
               <Button
                 variant="outline"

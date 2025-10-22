@@ -97,4 +97,13 @@ export const ordersApi = {
       return { data: null, error: { message: error.message } };
     }
   },
+
+  async markOrderAsPaid(orderId: string) {
+    try {
+      const response: any = await apiClient.put(`/orders/${orderId}/mark-paid`);
+      return { data: response.data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
+  },
 };

@@ -26,6 +26,7 @@ interface AddressMapPickerProps {
   initialLng?: number;
   lang: string;
   t: any;
+  isNewAddress?: boolean; // Add this prop to detect if it's a new address
 }
 
 export function AddressMapPicker({
@@ -35,6 +36,7 @@ export function AddressMapPicker({
   initialLng,
   lang,
   t,
+  isNewAddress = false,
 }: AddressMapPickerProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -170,6 +172,7 @@ export function AddressMapPicker({
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
+      setIsLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
@@ -182,13 +185,36 @@ export function AddressMapPicker({
             map.setCenter({ lat, lng });
             map.setZoom(15);
           }
+
+          // Auto-fill address when getting current location
+          setTimeout(() => {
+            handleAutoFill();
+          }, 1000);
         },
         (error) => {
-          // Geolocation error handled silently - user can manually select location
+          setIsLoading(false);
+          const errorMessage =
+            lang === "ar"
+              ? "فشل في الحصول على الموقع الحالي. يرجى التأكد من تفعيل خدمات الموقع."
+              : "Failed to get current location. Please ensure location services are enabled.";
+          setError(errorMessage);
         }
       );
+    } else {
+      const errorMessage =
+        lang === "ar"
+          ? "المتصفح لا يدعم خدمات الموقع."
+          : "Browser doesn't support geolocation.";
+      setError(errorMessage);
     }
   };
+
+  // Auto-get current location when it's a new address
+  useEffect(() => {
+    if (isNewAddress && !initialLat && !initialLng && navigator.geolocation) {
+      getCurrentLocation();
+    }
+  }, [isNewAddress, initialLat, initialLng]);
 
   if (!isLoaded) {
     return (
@@ -211,8 +237,9 @@ export function AddressMapPicker({
           <span>{t.addresses.selectLocation}</span>
         </CardTitle>
         <CardDescription>
-          Click on the map to select your location, then use the auto-fill
-          button to populate address fields
+          {lang === "ar"
+            ? "انقر على الخريطة لاختيار موقعك، ثم استخدم زر الملء التلقائي لملء حقول العنوان"
+            : "Click on the map to select your location, then use the auto-fill button to populate address fields"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -237,7 +264,11 @@ export function AddressMapPicker({
           >
             <MapPin className="h-4 w-4" />
             <span>
-              {isLoading ? "Loading..." : t.addresses.autoFillFromMap}
+              {isLoading
+                ? lang === "ar"
+                  ? "جاري التحميل..."
+                  : "Loading..."
+                : t.addresses.autoFillFromMap}
             </span>
           </Button>
         </div>
@@ -284,10 +315,18 @@ export function AddressMapPicker({
         {selectedLocation && (
           <div className="text-sm text-gray-600">
             <p>
-              <strong>Selected Location:</strong>
+              <strong>
+                {lang === "ar" ? "الموقع المحدد:" : "Selected Location:"}
+              </strong>
             </p>
-            <p>Latitude: {selectedLocation.lat.toFixed(6)}</p>
-            <p>Longitude: {selectedLocation.lng.toFixed(6)}</p>
+            <p>
+              {lang === "ar" ? "خط العرض:" : "Latitude:"}{" "}
+              {selectedLocation.lat.toFixed(6)}
+            </p>
+            <p>
+              {lang === "ar" ? "خط الطول:" : "Longitude:"}{" "}
+              {selectedLocation.lng.toFixed(6)}
+            </p>
           </div>
         )}
       </CardContent>

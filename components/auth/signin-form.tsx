@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { useGoogleSignIn } from "@/hooks/use-api";
+import { GoogleSignInButton } from "./google-signin-button";
 
 type SignInFormData = {
   email: string;
@@ -24,11 +26,13 @@ interface SignInFormProps {
 
 export function SignInForm({ lang, t }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { signIn } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const googleSignInMutation = useGoogleSignIn();
 
   // التحقق من معامل الخطأ في URL
   useEffect(() => {
@@ -105,6 +109,53 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (idToken: string) => {
+    setIsGoogleLoading(true);
+    setErrorMessage("");
+
+    try {
+      await googleSignInMutation.mutateAsync({
+        idToken: idToken,
+      });
+
+      toast({
+        title: lang === "ar" ? "تم بنجاح" : "Success",
+        description:
+          lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
+      });
+
+      router.push(`/${lang}/profile`);
+    } catch (error: any) {
+      const errorMsg =
+        lang === "ar"
+          ? "فشل تسجيل الدخول بحساب جوجل"
+          : "Failed to sign in with Google";
+
+      setErrorMessage(errorMsg);
+      toast({
+        title: lang === "ar" ? "خطأ" : "Error",
+        description: error?.message || errorMsg,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    const errorMsg =
+      lang === "ar"
+        ? "فشل تسجيل الدخول بحساب جوجل"
+        : "Failed to sign in with Google";
+
+    setErrorMessage(errorMsg);
+    toast({
+      title: lang === "ar" ? "خطأ" : "Error",
+      description: errorMsg,
+      variant: "destructive",
+    });
   };
 
   return (
@@ -188,10 +239,29 @@ export function SignInForm({ lang, t }: SignInFormProps) {
         <Button
           type="submit"
           className="w-full h-11 text-base font-semibold"
-          disabled={isLoading}
+          disabled={isLoading || isGoogleLoading}
         >
           {isLoading ? t.common.loading : t.auth.signIn}
         </Button>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-gray-500">
+              {lang === "ar" ? "أو" : "Or"}
+            </span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          onSuccess={handleGoogleSuccess}
+          onError={handleGoogleError}
+          lang={lang}
+          isLoading={isLoading || isGoogleLoading}
+          mode="signin"
+        />
 
         <div className="text-center text-sm pt-4 border-t">
           <span className="text-gray-600">

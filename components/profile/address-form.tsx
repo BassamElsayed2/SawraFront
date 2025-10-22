@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AddressMapPicker } from "./address-map-picker";
 import { Save, X } from "lucide-react";
@@ -211,6 +211,7 @@ export function AddressForm({
         initialLng={initialData?.longitude}
         lang={lang}
         t={t}
+        isNewAddress={!isEditing}
       />
 
       <Card>
@@ -218,7 +219,11 @@ export function AddressForm({
           <CardTitle>
             {isEditing ? t.addresses.editAddress : t.addresses.addAddress}
           </CardTitle>
-          <CardDescription>Fill in the address details below</CardDescription>
+          <CardDescription>
+            {lang === "ar"
+              ? "املأ تفاصيل العنوان أدناه"
+              : "Fill in the address details below"}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -227,7 +232,9 @@ export function AddressForm({
                 <Label htmlFor="title">{t.addresses.addressTitle}</Label>
                 <Input
                   id="title"
-                  placeholder="e.g., Home, Work"
+                  placeholder={
+                    lang === "ar" ? "مثل: المنزل، العمل" : "e.g., Home, Work"
+                  }
                   {...register("title")}
                   disabled={isLoading}
                 />
@@ -242,7 +249,11 @@ export function AddressForm({
                 <Label htmlFor="street">{t.addresses.street}</Label>
                 <Input
                   id="street"
-                  placeholder="Street name and number"
+                  placeholder={
+                    lang === "ar"
+                      ? "اسم الشارع ورقمه"
+                      : "Street name and number"
+                  }
                   {...register("street")}
                   disabled={isLoading}
                 />
@@ -259,7 +270,7 @@ export function AddressForm({
                 <Label htmlFor="building">{t.addresses.building}</Label>
                 <Input
                   id="building"
-                  placeholder="Building number"
+                  placeholder={lang === "ar" ? "رقم المبنى" : "Building number"}
                   {...register("building")}
                   disabled={isLoading}
                 />
@@ -269,7 +280,7 @@ export function AddressForm({
                 <Label htmlFor="floor">{t.addresses.floor}</Label>
                 <Input
                   id="floor"
-                  placeholder="Floor number"
+                  placeholder={lang === "ar" ? "رقم الطابق" : "Floor number"}
                   {...register("floor")}
                   disabled={isLoading}
                 />
@@ -279,7 +290,7 @@ export function AddressForm({
                 <Label htmlFor="apartment">{t.addresses.apartment}</Label>
                 <Input
                   id="apartment"
-                  placeholder="Apartment number"
+                  placeholder={lang === "ar" ? "رقم الشقة" : "Apartment number"}
                   {...register("apartment")}
                   disabled={isLoading}
                 />
@@ -291,7 +302,7 @@ export function AddressForm({
                 <Label htmlFor="city">{t.addresses.city}</Label>
                 <Input
                   id="city"
-                  placeholder="City name"
+                  placeholder={lang === "ar" ? "اسم المدينة" : "City name"}
                   {...register("city")}
                   disabled={isLoading}
                 />
@@ -306,7 +317,9 @@ export function AddressForm({
                 <Label htmlFor="area">{t.addresses.area}</Label>
                 <Input
                   id="area"
-                  placeholder="Area or district"
+                  placeholder={
+                    lang === "ar" ? "المنطقة أو الحي" : "Area or district"
+                  }
                   {...register("area")}
                   disabled={isLoading}
                 />
@@ -322,23 +335,29 @@ export function AddressForm({
               <Label htmlFor="notes">{t.addresses.notes}</Label>
               <Textarea
                 id="notes"
-                placeholder="Additional delivery instructions"
+                placeholder={
+                  lang === "ar"
+                    ? "تعليمات إضافية للتوصيل"
+                    : "Additional delivery instructions"
+                }
                 {...register("notes")}
                 disabled={isLoading}
                 rows={3}
               />
             </div>
 
-            <div className="flex items-center gap-3">
-              <Switch
+            <div className="flex items-center space-x-2">
+              <Checkbox
                 id="is_default"
                 checked={isDefault}
-                onCheckedChange={(checked) => setValue("is_default", checked)}
+                onCheckedChange={(checked) =>
+                  setValue("is_default", checked === true)
+                }
                 disabled={isLoading}
               />
               <label
                 htmlFor="is_default"
-                className="text-sm font-medium leading-none cursor-pointer select-none"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer mr-2 ml-2"
               >
                 {lang === "ar"
                   ? "تعيين كعنوان افتراضي"
@@ -362,7 +381,11 @@ export function AddressForm({
                 {isLoading
                   ? t.common.loading
                   : isEditing
-                  ? "Update Address"
+                  ? lang === "ar"
+                    ? "تحديث العنوان"
+                    : "Update Address"
+                  : lang === "ar"
+                  ? "إضافة العنوان"
                   : "Add Address"}
               </Button>
               {onCancel && (

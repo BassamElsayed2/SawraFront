@@ -40,7 +40,6 @@ import { getProducts, ProductWithTypes } from "@/services/apiProduct";
 import { getCategories as getCategoriesData } from "@/services/apiCategories";
 
 import { useCart } from "@/contexts/cart-context";
-import CartSummary from "./cart-summary";
 
 interface MenuGridProps {
   lang: "en" | "ar";
@@ -360,30 +359,6 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
       {/* Pagination Controls */}
       {totalProducts > 0 && (
         <div className="mt-12 space-y-6">
-          {/* Items per page selector */}
-          <div className="flex justify-center items-center gap-4">
-            <Label className="text-sm font-medium">
-              {lang === "ar" ? "العناصر في الصفحة:" : "Items per page:"}
-            </Label>
-            <Select
-              value={itemsPerPage.toString()}
-              onValueChange={(value) => {
-                setItemsPerPage(parseInt(value));
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-20">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="6">6</SelectItem>
-                <SelectItem value="9">9</SelectItem>
-                <SelectItem value="12">12</SelectItem>
-                <SelectItem value="18">18</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Pagination info */}
           <div className="text-center text-sm text-gray-600">
             {lang === "ar" ? (
@@ -645,9 +620,6 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Cart Summary */}
-      <CartSummary lang={lang} dict={dict} />
 
       <style jsx>{`
         @keyframes fadeInUp {
