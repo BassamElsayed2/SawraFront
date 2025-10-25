@@ -48,7 +48,7 @@ export const addressesApi = {
       const response: any = await apiClient.post("/addresses", addressData);
       return { data: response.data, error: null };
     } catch (error: any) {
-      return { data: null, error: { message: error.message } };
+      throw new Error(error.message || "Failed to add address");
     }
   },
 
@@ -60,25 +60,25 @@ export const addressesApi = {
       );
       return { data: response.data, error: null };
     } catch (error: any) {
-      return { data: null, error: { message: error.message } };
+      throw new Error(error.message || "Failed to update address");
     }
   },
 
   async deleteAddress(addressId: string) {
     try {
       await apiClient.delete(`/addresses/${addressId}`);
-      return { error: null };
+      return { success: true };
     } catch (error: any) {
-      return { error: { message: error.message } };
+      throw new Error(error.message || "Failed to delete address");
     }
   },
 
   async setDefaultAddress(addressId: string) {
     try {
       await apiClient.patch(`/addresses/${addressId}/default`);
-      return { error: null };
+      return { success: true };
     } catch (error: any) {
-      return { error: { message: error.message } };
+      throw new Error(error.message || "Failed to set default address");
     }
   },
 };

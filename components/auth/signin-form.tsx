@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useGoogleSignIn, useFacebookSignIn } from "@/hooks/use-api";
 import { GoogleSignInButton } from "./google-signin-button";
 import { FacebookSignInButton } from "./facebook-signin-button";
+import { useCart } from "@/contexts/cart-context";
+import { addressesApi } from "@/services/apiAddresses";
 
 type SignInFormData = {
   email: string;
@@ -36,6 +38,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   const searchParams = useSearchParams();
   const googleSignInMutation = useGoogleSignIn();
   const facebookSignInMutation = useFacebookSignIn();
+  const { getTotalItems } = useCart();
 
   // التحقق من معامل الخطأ في URL
   useEffect(() => {
@@ -74,6 +77,33 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     resolver: zodResolver(signInSchema),
   });
 
+  // Helper function to determine redirect path after sign in
+  const getRedirectPath = async () => {
+    try {
+      // Check if user has addresses
+      const { data: addresses, error } = await addressesApi.getAddresses();
+
+      if (error || !addresses || addresses.length === 0) {
+        // No addresses - redirect to add address page
+        return `/${lang}/profile/addresses/add`;
+      }
+
+      // User has addresses - check cart
+      const cartItemsCount = getTotalItems();
+
+      if (cartItemsCount === 0) {
+        // Cart is empty - redirect to menu
+        return `/${lang}/menu`;
+      }
+
+      // Has address and cart items - redirect to checkout
+      return `/${lang}/checkout`;
+    } catch (error) {
+      // On error, redirect to profile as fallback
+      return `/${lang}/profile`;
+    }
+  };
+
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     setErrorMessage("");
@@ -87,8 +117,9 @@ export function SignInForm({ lang, t }: SignInFormProps) {
         description: t.auth.signInSuccess,
       });
 
-      // Redirect immediately since mutation now waits for auth refetch
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
       const isAdminAccount =
@@ -129,7 +160,9 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
         lang === "ar"
@@ -176,7 +209,9 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
         lang === "ar"

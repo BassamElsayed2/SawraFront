@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useGoogleSignIn, useFacebookSignIn } from "@/hooks/use-api";
 import { GoogleSignInButton } from "./google-signin-button";
 import { FacebookSignInButton } from "./facebook-signin-button";
+import { useCart } from "@/contexts/cart-context";
+import { addressesApi } from "@/services/apiAddresses";
 
 type SignUpFormData = {
   email: string;
@@ -41,6 +43,34 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
   const { toast } = useToast();
   const googleSignInMutation = useGoogleSignIn();
   const facebookSignInMutation = useFacebookSignIn();
+  const { getTotalItems } = useCart();
+
+  // Helper function to determine redirect path after sign up
+  const getRedirectPath = async () => {
+    try {
+      // Check if user has addresses
+      const { data: addresses, error } = await addressesApi.getAddresses();
+
+      if (error || !addresses || addresses.length === 0) {
+        // No addresses - redirect to add address page
+        return `/${lang}/profile/addresses/add`;
+      }
+
+      // User has addresses - check cart
+      const cartItemsCount = getTotalItems();
+
+      if (cartItemsCount === 0) {
+        // Cart is empty - redirect to menu
+        return `/${lang}/menu`;
+      }
+
+      // Has address and cart items - redirect to checkout
+      return `/${lang}/checkout`;
+    } catch (error) {
+      // On error, redirect to profile as fallback
+      return `/${lang}/profile`;
+    }
+  };
 
   // تحليل قوة كلمة المرور
   const passwordStrength = useMemo(() => {
@@ -219,7 +249,9 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
         description: t.auth.signUpSuccess,
       });
 
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       let errorMsg =
         lang === "ar" ? "فشل إنشاء الحساب" : "Failed to create account";
@@ -274,7 +306,9 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
           : "Successfully signed in",
       });
 
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
         lang === "ar"
@@ -329,7 +363,9 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
           : "Successfully signed in",
       });
 
-      router.push(`/${lang}/profile`);
+      // Determine redirect path based on user state
+      const redirectPath = await getRedirectPath();
+      router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
         lang === "ar"

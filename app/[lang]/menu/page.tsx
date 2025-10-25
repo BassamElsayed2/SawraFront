@@ -3,6 +3,7 @@ import { getDictionary } from "../dictionaries";
 import MenuGrid from "@/components/menu-grid";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navBarTwo";
+import CartFooterButton from "@/components/cart-footer-button";
 
 export default async function MenuPage({
   params,
@@ -25,6 +26,7 @@ export default async function MenuPage({
         </div>
       </div>
       <Footer lang={lang} dict={dict} />
+      <CartFooterButton lang={lang} />
     </main>
   );
 }
