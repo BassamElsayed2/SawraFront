@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,8 +45,22 @@ import {
 import { getBranches, Branch } from "@/services/apiBranches";
 
 import { useCart } from "@/contexts/cart-context";
-import BranchMapSelector from "./branch-map-selector";
 import { toast } from "@/hooks/use-toast";
+
+// Load BranchMapSelector dynamically to avoid SSR issues with Google Maps
+const BranchMapSelector = dynamic(() => import("./branch-map-selector"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full mb-8">
+      <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading map...</p>
+        </div>
+      </div>
+    </div>
+  ),
+});
 import {
   AlertDialog,
   AlertDialogAction,

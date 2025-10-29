@@ -38,6 +38,7 @@ export function AddressMapPicker({
   t,
   isNewAddress = false,
 }: AddressMapPickerProps) {
+  const [mounted, setMounted] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
@@ -50,10 +51,16 @@ export function AddressMapPicker({
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+  // Ensure component only renders on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: apiKey || "",
     libraries,
+    language: lang,
   });
 
   const defaultCenter = {
@@ -216,7 +223,8 @@ export function AddressMapPicker({
     }
   }, [isNewAddress, initialLat, initialLng]);
 
-  if (!isLoaded) {
+  // Don't render until mounted on client
+  if (!mounted || !isLoaded) {
     return (
       <Card>
         <CardContent className="p-6">
