@@ -25,22 +25,27 @@ export interface CartItem {
   offer_id?: string;
   // Notes field
   notes?: string;
+  // Branch info
+  branch_id?: string;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: CartItem) => void;
+  selectedBranchId: string | null;
+  addToCart: (item: CartItem, branchId: string) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
+  setSelectedBranch: (branchId: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const { user } = useAuth();
 
@@ -56,6 +61,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           const sevenDays = 7 * 24 * 60 * 60 * 1000;
           if (Date.now() - cartData.timestamp < sevenDays) {
             setCart(cartData.cart || []);
+            setSelectedBranchId(cartData.selectedBranchId || null);
           } else {
             // Cart is too old, clear it
             localStorage.removeItem("restaurant-cart");
@@ -78,11 +84,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         "restaurant-cart",
         JSON.stringify({
           cart,
+          selectedBranchId,
           timestamp: Date.now(),
         })
       );
     }
-  }, [cart, mounted]);
+  }, [cart, selectedBranchId, mounted]);
 
   // When user logs in, we could sync cart with server
   // For now, we'll keep the local cart
@@ -92,7 +99,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [user, mounted]);
 
-  const addToCart = (item: CartItem) => {
+  const addToCart = (item: CartItem, branchId: string) => {
+    // Add branch_id to item
+    const itemWithBranch = { ...item, branch_id: branchId };
+
     setCart((prev) => {
       // Check if item already exists (same id, size, variants)
       const existingIndex = prev.findIndex((cartItem) => {
@@ -120,9 +130,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return newCart;
       } else {
         // Add new item
-        return [...prev, { ...item, id: `${item.id}-${Date.now()}` }];
+        return [...prev, { ...itemWithBranch, id: `${item.id}-${Date.now()}` }];
       }
     });
+
+    // Set selected branch if not set
+    if (!selectedBranchId) {
+      setSelectedBranchId(branchId);
+    }
+  };
+
+  const setSelectedBranch = (branchId: string) => {
+    setSelectedBranchId(branchId);
   };
 
   const removeFromCart = (id: string) => {
@@ -152,6 +171,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setCart([]);
+    setSelectedBranchId(null);
   };
 
   const getTotalPrice = () => {
@@ -166,12 +186,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     <CartContext.Provider
       value={{
         cart,
+        selectedBranchId,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
         getTotalPrice,
         getTotalItems,
+        setSelectedBranch,
       }}
     >
       {children}

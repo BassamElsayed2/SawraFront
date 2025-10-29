@@ -140,6 +140,19 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
         return;
       }
 
+      // Get selected branch from cart (all items should have same branch_id)
+      const selectedBranchId = cart.length > 0 ? cart[0].branch_id : undefined;
+
+      if (!selectedBranchId) {
+        setDeliveryFeeError(
+          lang === "ar"
+            ? "لم يتم تحديد الفرع. يرجى اختيار فرع من المنيو."
+            : "No branch selected. Please select a branch from menu."
+        );
+        setDeliveryFeeData(null);
+        return;
+      }
+
       setLoadingDeliveryFee(true);
       setDeliveryFeeError(null);
 
@@ -147,6 +160,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
         const result = await calculateDeliveryFee({
           user_latitude: address.latitude,
           user_longitude: address.longitude,
+          branch_id: selectedBranchId,
         });
         setDeliveryFeeData(result);
         setDeliveryFeeError(null);
@@ -164,7 +178,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
     };
 
     calculateFee();
-  }, [selectedAddress, addresses, lang]);
+  }, [selectedAddress, addresses, lang, cart]);
 
   // Create order mutation
   const createOrderMutation = useMutation({

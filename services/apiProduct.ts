@@ -43,6 +43,7 @@ export async function getProducts(
   limit = 10,
   filters?: {
     categoryId?: string;
+    branchId?: string;
     search?: string;
     date?: string;
   }
@@ -55,6 +56,10 @@ export async function getProducts(
 
     if (filters?.categoryId) {
       params.append("category_id", filters.categoryId);
+    }
+
+    if (filters?.branchId) {
+      params.append("branch_id", filters.branchId);
     }
 
     if (filters?.search) {

@@ -37,9 +37,25 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getProducts, ProductWithTypes } from "@/services/apiProduct";
-import { getCategories as getCategoriesData } from "@/services/apiCategories";
+import {
+  getCategories as getCategoriesData,
+  Category,
+} from "@/services/apiCategories";
+import { getBranches, Branch } from "@/services/apiBranches";
 
 import { useCart } from "@/contexts/cart-context";
+import BranchMapSelector from "./branch-map-selector";
+import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface MenuGridProps {
   lang: "en" | "ar";
@@ -59,7 +75,9 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(9);
-  const { addToCart } = useCart();
+  const [showChangeBranchDialog, setShowChangeBranchDialog] = useState(false);
+  const { addToCart, selectedBranchId, setSelectedBranch, clearCart, cart } =
+    useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -85,17 +103,37 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     queryFn: getCategoriesData,
   });
 
+  // Fetch branches
+  const {
+    data: branches = [],
+    isLoading: branchesLoading,
+    error: branchesError,
+  } = useQuery({
+    queryKey: ["branches"],
+    queryFn: getBranches,
+    enabled: mounted,
+  });
+
   // Fetch products with category filter and pagination
   const {
     data: productsData,
     isLoading: productsLoading,
     error: productsError,
   } = useQuery({
-    queryKey: ["products", selectedCategory, currentPage, itemsPerPage],
-    queryFn: () =>
-      getProducts(currentPage, itemsPerPage, {
+    queryKey: [
+      "products",
+      selectedCategory,
+      currentPage,
+      itemsPerPage,
+      selectedBranchId,
+    ],
+    queryFn: () => {
+      const filters = {
         categoryId: selectedCategory === "all" ? undefined : selectedCategory,
-      }),
+        branchId: selectedBranchId || undefined,
+      };
+      return getProducts(currentPage, itemsPerPage, filters);
+    },
     enabled: mounted,
   });
 
@@ -161,6 +199,19 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
   };
 
   const handleAddToCart = () => {
+    // Check if branch is selected
+    if (!selectedBranchId) {
+      toast({
+        title: lang === "ar" ? "يرجى اختيار الفرع" : "Please select a branch",
+        description:
+          lang === "ar"
+            ? "يجب اختيار فرع قبل إضافة المنتجات للسلة"
+            : "You must select a branch before adding products to cart",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (selectedItem && selectedSize) {
       const selectedSizeData = selectedItem.types
         ?.find((type) => type.sizes?.some((size) => size.id === selectedSize))
@@ -179,8 +230,17 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
         totalPrice: calculateTotalPrice(),
         notes: notes.trim() || undefined,
       };
-      addToCart(cartItem);
+      addToCart(cartItem, selectedBranchId);
       setSelectedItem(null);
+
+      toast({
+        title: lang === "ar" ? "تمت الإضافة للسلة" : "Added to cart",
+        description:
+          lang === "ar"
+            ? `تم إضافة ${selectedItem.title_ar} إلى السلة`
+            : `${selectedItem.title_en} added to cart`,
+        duration: 1200, // 1.2 seconds - short duration
+      });
     }
   };
 
@@ -244,8 +304,101 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     );
   }
 
+  // If no branch selected, show only the map
+  if (!selectedBranchId) {
+    return (
+      <div className="w-full">
+        <BranchMapSelector lang={lang} />
+      </div>
+    );
+  }
+
+  // Function to handle changing branch
+  const handleChangeBranch = () => {
+    if (cart.length > 0) {
+      setShowChangeBranchDialog(true);
+    } else {
+      // No items in cart, just clear selection to show map
+      setSelectedBranch("");
+    }
+  };
+
+  const confirmChangeBranch = () => {
+    clearCart();
+    setSelectedBranch("");
+    setShowChangeBranchDialog(false);
+  };
+
+  // Get selected branch info
+  const selectedBranch = branches.find(
+    (branch: Branch) => branch.id === selectedBranchId
+  );
+
+  // Branch is selected, show products with option to change branch
   return (
     <>
+      {/* Selected Branch Header with Change Branch Button */}
+      <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gradient-to-r from-orange-50 to-orange-100 p-4 sm:p-6 rounded-xl border-2 border-orange-300 shadow-sm gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+            <MapPin className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <p className="text-xs sm:text-sm text-gray-600 mb-1">
+              {lang === "ar" ? "🎯 الفرع المختار" : "🎯 Selected Branch"}
+            </p>
+            <p className="font-bold text-gray-800 text-base sm:text-lg">
+              {selectedBranch
+                ? lang === "ar"
+                  ? selectedBranch.name_ar
+                  : selectedBranch.name_en
+                : lang === "ar"
+                ? "فرعك المختار"
+                : "Your Selected Branch"}
+            </p>
+          </div>
+        </div>
+        <Button
+          onClick={handleChangeBranch}
+          variant="outline"
+          size="lg"
+          className="flex items-center gap-2 bg-white hover:bg-orange-50 border-orange-300 hover:border-orange-400 shadow-sm hover:shadow-md transition-all duration-200"
+        >
+          <MapPin className="w-4 h-4" />
+          {lang === "ar" ? "🗺️ غيّر الفرع" : "🗺️ Change Branch"}
+        </Button>
+      </div>
+
+      {/* Change Branch Confirmation Dialog */}
+      <AlertDialog
+        open={showChangeBranchDialog}
+        onOpenChange={setShowChangeBranchDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {lang === "ar" ? "⚠️ تغيير الفرع؟" : "⚠️ Change Branch?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang === "ar"
+                ? "إذا غيرت الفرع، سيتم مسح كل المنتجات من سلتك. هل أنت متأكد من رغبتك في الاستمرار؟"
+                : "Changing the branch will remove all items from your cart. Are you sure you want to continue?"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {lang === "ar" ? "إلغاء" : "Cancel"}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmChangeBranch}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              {lang === "ar" ? "نعم، غيّر الفرع" : "Yes, Change Branch"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Category Filter */}
       <div className="flex flex-wrap justify-center gap-4 mb-12">
         <Button
@@ -261,7 +414,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
           {lang === "ar" ? "الكل" : "All"}
         </Button>
 
-        {categories.map((category) => (
+        {categories.map((category: Category) => (
           <Button
             key={category.id}
             onClick={() => setSelectedCategory(category.id.toString())}
@@ -281,6 +434,22 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
           </Button>
         ))}
       </div>
+
+      {/* No products message */}
+      {products.length === 0 && !productsLoading && (
+        <div className="text-center py-20">
+          <div className="text-gray-500 text-lg mb-4">
+            {lang === "ar"
+              ? "لا توجد منتجات متاحة في هذا الفرع حالياً"
+              : "No products available in this branch currently"}
+          </div>
+          <p className="text-gray-400 text-sm">
+            {lang === "ar"
+              ? "جرب اختيار فرع آخر أو تصنيف مختلف"
+              : "Try selecting another branch or a different category"}
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((item, index) => (
@@ -309,7 +478,7 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                     className="bg-white/90 text-gray-700 border-0"
                   >
                     {categories.find(
-                      (cat) => cat.id.toString() === item.category_id
+                      (cat: Category) => cat.id.toString() === item.category_id
                     )?.name_ar || "فئة"}
                   </Badge>
                 </div>
@@ -475,7 +644,8 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
                   <div className="flex items-center justify-between">
                     <Badge className="bg-red-100 text-red-700">
                       {categories.find(
-                        (cat) => cat.id.toString() === selectedItem.category_id
+                        (cat: Category) =>
+                          cat.id.toString() === selectedItem.category_id
                       )?.name_ar || "فئة"}
                     </Badge>
                   </div>

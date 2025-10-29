@@ -38,7 +38,7 @@ export default function CartFooterButton({ lang }: CartFooterButtonProps) {
     if (user) {
       router.push(`/${lang}/checkout`);
     } else {
-      router.push(`/${lang}/cart`);
+      router.push(`/${lang}/checkout`);
     }
   };
 

@@ -3,7 +3,7 @@ import apiClient from "./api-client-rq";
 export interface CalculateDeliveryFeeParams {
   user_latitude: number;
   user_longitude: number;
-  branch_id?: string;
+  branch_id?: string; // Branch ID selected by user
 }
 
 export interface CalculateDeliveryFeeResult {
@@ -34,7 +34,7 @@ export interface DeliveryFeeConfig {
 export async function calculateDeliveryFee(
   params: CalculateDeliveryFeeParams
 ): Promise<CalculateDeliveryFeeResult> {
-  const response = await apiClient.post<CalculateDeliveryFeeResult>(
+  const response = await apiClient.post<{ data: CalculateDeliveryFeeResult }>(
     "/delivery/calculate-fee",
     params
   );
@@ -45,9 +45,9 @@ export async function calculateDeliveryFee(
  * Get all delivery fee configurations (Admin only)
  */
 export async function getDeliveryFeeConfigs(): Promise<DeliveryFeeConfig[]> {
-  const response = await apiClient.get<{ configs: DeliveryFeeConfig[] }>(
-    "/delivery/fee-configs"
-  );
+  const response = await apiClient.get<{
+    data: { configs: DeliveryFeeConfig[] };
+  }>("/delivery/fee-configs");
   return response.data.configs;
 }
 
@@ -59,10 +59,9 @@ export async function createDeliveryFeeConfig(config: {
   max_distance_km: number;
   fee: number;
 }): Promise<DeliveryFeeConfig> {
-  const response = await apiClient.post<{ config: DeliveryFeeConfig }>(
-    "/delivery/fee-configs",
-    config
-  );
+  const response = await apiClient.post<{
+    data: { config: DeliveryFeeConfig };
+  }>("/delivery/fee-configs", config);
   return response.data.config;
 }
 
@@ -78,7 +77,7 @@ export async function updateDeliveryFeeConfig(
     is_active?: boolean;
   }
 ): Promise<DeliveryFeeConfig> {
-  const response = await apiClient.put<{ config: DeliveryFeeConfig }>(
+  const response = await apiClient.put<{ data: { config: DeliveryFeeConfig } }>(
     `/delivery/fee-configs/${id}`,
     config
   );
