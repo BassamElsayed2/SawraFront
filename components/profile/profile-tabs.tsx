@@ -45,7 +45,7 @@ export function ProfileTabs({
       if (!user?.id) {
         return [];
       }
-      const result = await addressesApi.getAddresses(user.id);
+      const result = await addressesApi.getAddresses();
       if (result.error) {
         // Error is logged internally by the API service
         throw new Error(result.error.message || "Failed to fetch addresses");
@@ -113,7 +113,7 @@ export function ProfileTabs({
                 </p>
               </div>
             ) : (
-              <AddressesList addresses={addresses} lang={lang} t={t} />
+              <AddressesList lang={lang} t={t} />
             )}
           </CardContent>
         </Card>

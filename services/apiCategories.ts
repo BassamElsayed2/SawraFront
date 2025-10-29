@@ -1,5 +1,15 @@
 import apiClient from "./api-client";
 
+export interface Category {
+  id: number;
+  name_ar: string;
+  name_en: string;
+  description_ar?: string;
+  description_en?: string;
+  image_url?: string;
+  created_at?: string;
+}
+
 export async function getCategories() {
   try {
     const response: any = await apiClient.get("/categories");

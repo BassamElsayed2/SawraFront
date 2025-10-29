@@ -23,7 +23,7 @@ export default function EditAddressClient({
   addressId,
 }: EditAddressClientProps) {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [address, setAddress] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
