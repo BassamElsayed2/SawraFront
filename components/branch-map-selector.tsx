@@ -42,7 +42,10 @@ const defaultCenter = {
   lng: 46.6753,
 };
 
+const libraries: ("places" | "geometry")[] = ["places", "geometry"];
+
 export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
+  const [mounted, setMounted] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,8 +60,15 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
 
   const { selectedBranchId, setSelectedBranch, cart, clearCart } = useCart();
 
+  // Ensure component only renders on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
     language: lang,
   });
 
@@ -195,7 +205,8 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
     [branches, userLocation]
   );
 
-  if (loading) {
+  // Don't render until mounted on client
+  if (!mounted || loading) {
     return (
       <div className="w-full mb-8">
         <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg">

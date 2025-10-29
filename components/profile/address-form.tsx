@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import dynamic from "next/dynamic";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addressesApi, CreateAddressData } from "@/services/apiAddresses";
 import { useAuth } from "@/hooks/use-auth";
@@ -22,8 +23,28 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { AddressMapPicker } from "./address-map-picker";
-import { Save, X } from "lucide-react";
+import { Save, X, Loader2 } from "lucide-react";
+
+// Load AddressMapPicker dynamically to avoid SSR issues with Google Maps
+const AddressMapPicker = dynamic(
+  () =>
+    import("./address-map-picker").then((mod) => ({
+      default: mod.AddressMapPicker,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ms-2">Loading map...</span>
+          </div>
+        </CardContent>
+      </Card>
+    ),
+  }
+);
 
 const addressSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),

@@ -36,9 +36,13 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
+    <html
+      lang={lang}
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      suppressHydrationWarning
+    >
       <head>
-        <style>{`
+        <style suppressHydrationWarning>{`
             html {
               font-family: ${GeistSans.style.fontFamily};
               --font-sans: ${GeistSans.variable};
@@ -50,6 +54,7 @@ export default async function RootLayout({
         className={`${inter.variable} ${notoKufiArabic.variable} ${
           lang === "ar" ? "font-arabic" : "font-inter"
         }`}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>
