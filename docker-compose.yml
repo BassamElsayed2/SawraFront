@@ -14,7 +14,7 @@ services:
       # HTTP entry point for routing and redirection
       - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.entryPoints=http"
       - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.middlewares=redirect-to-https"
-      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.rule=Host(elsawra.net) && (PathPrefix(/ar) || PathPrefix(/))"
+      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.rule=Host(`elsawra.net`) && (PathPrefix(`/ar`) || PathPrefix(`/`))"
       - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.service=http-0-xkcs408wk48s4gsgccgoog4w"
 
       # Middleware for redirection to HTTPS
@@ -23,7 +23,7 @@ services:
       # HTTPS entry point with gzip compression middleware
       - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.entryPoints=https"
       - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.middlewares=gzip"
-      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.rule=Host(elsawra.net) && (PathPrefix(/ar) || PathPrefix(/))"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.rule=Host(`elsawra.net`) && (PathPrefix(`/ar`) || PathPrefix(`/`))"
       - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.service=https-0-xkcs408wk48s4gsgccgoog4w"
       - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.tls=true"
       - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.tls.certresolver=letsencrypt"
