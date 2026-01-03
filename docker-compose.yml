@@ -1,7 +1,8 @@
 version: "3.8"
+
 services:
   nextjs-app:
-    image: your-nextjs-image # Replace with your actual Next.js Docker image
+    image: xkcs408wk48s4gsgccgoog4w:4ad5cf602443b2803ea20c0751443639a1ea446c # Replace with your actual Next.js Docker image
     ports:
       - "4016:4016" # Expose port 4016 from container to the host machine
     environment:
@@ -10,29 +11,31 @@ services:
       # Enable Traefik for this service
       - "traefik.enable=true"
 
-      # Define the HTTP routing rule based on the Host (elsawra.net)
-      - "traefik.http.routers.nextjs-http.rule=Host(`elsawra.net`)"
+      # HTTP entry point for routing and redirection
+      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.entryPoints=http"
+      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.middlewares=redirect-to-https"
+      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.rule=Host(elsawra.net) && (PathPrefix(/ar) || PathPrefix(/))"
+      - "traefik.http.routers.http-0-xkcs408wk48s4gsgccgoog4w.service=http-0-xkcs408wk48s4gsgccgoog4w"
 
-      # Redirect HTTP traffic to HTTPS
-      - "traefik.http.routers.nextjs-http.entryPoints=http"
-      - "traefik.http.routers.nextjs-http.middlewares=redirect-to-https"
+      # Middleware for redirection to HTTPS
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
-      # Configure the HTTPS entry point
-      - "traefik.http.routers.nextjs-https.rule=Host(`elsawra.net`)"
-      - "traefik.http.routers.nextjs-https.entryPoints=https"
+      # HTTPS entry point with gzip compression middleware
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.entryPoints=https"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.middlewares=gzip"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.rule=Host(elsawra.net) && (PathPrefix(/ar) || PathPrefix(/))"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.service=https-0-xkcs408wk48s4gsgccgoog4w"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.tls=true"
+      - "traefik.http.routers.https-0-xkcs408wk48s4gsgccgoog4w.tls.certresolver=letsencrypt"
 
-      # Set the correct port for both HTTP and HTTPS services
-      - "traefik.http.services.nextjs.loadbalancer.server.port=4016"
+      # Load balancer server port for both HTTP and HTTPS
+      - "traefik.http.services.http-0-xkcs408wk48s4gsgccgoog4w.loadbalancer.server.port=4016"
+      - "traefik.http.services.https-0-xkcs408wk48s4gsgccgoog4w.loadbalancer.server.port=4016"
 
-      # Enable TLS with Let's Encrypt (optional if using SSL)
-      - "traefik.http.routers.nextjs-https.tls=true"
-      - "traefik.http.routers.nextjs-https.tls.certresolver=letsencrypt"
+      # Enable gzip compression for the HTTPS router
+      - "traefik.http.middlewares.gzip.compress=true"
 
-    # Optional: You might want to define a volume for persistent data
-    volumes:
-      - ./your-app-data:/usr/src/app/data
-
-  # Traefik Service Configuration (This is typically included if you want Traefik to be part of the same docker-compose)
+  # Traefik Service Configuration (Reverse Proxy)
   traefik:
     image: traefik:v2.5
     command:
@@ -48,3 +51,25 @@ services:
       - "8080:8080" # Expose Traefik dashboard (optional)
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # For Traefik to interact with Docker
+
+  # Optional: Redis for session storage, caching, etc.
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+
+  # Optional: PostgreSQL database for persistent storage
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: your_user
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: your_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  redis_data:
+  postgres_data:
