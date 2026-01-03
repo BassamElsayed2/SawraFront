@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  nextjs-app:
+    image: your-nextjs-image # Replace with your actual Next.js Docker image
+    ports:
+      - "4016:4016" # Expose port 4016 from container to the host machine
+    environment:
+      - NODE_ENV=production
+    labels:
+      # Enable Traefik for this service
+      - "traefik.enable=true"
+
+      # Define the HTTP routing rule based on the Host (elsawra.net)
+      - "traefik.http.routers.nextjs-http.rule=Host(`elsawra.net`)"
+
+      # Redirect HTTP traffic to HTTPS
+      - "traefik.http.routers.nextjs-http.entryPoints=http"
+      - "traefik.http.routers.nextjs-http.middlewares=redirect-to-https"
+
+      # Configure the HTTPS entry point
+      - "traefik.http.routers.nextjs-https.rule=Host(`elsawra.net`)"
+      - "traefik.http.routers.nextjs-https.entryPoints=https"
+
+      # Set the correct port for both HTTP and HTTPS services
+      - "traefik.http.services.nextjs.loadbalancer.server.port=4016"
+
+      # Enable TLS with Let's Encrypt (optional if using SSL)
+      - "traefik.http.routers.nextjs-https.tls=true"
+      - "traefik.http.routers.nextjs-https.tls.certresolver=letsencrypt"
+
+    # Optional: You might want to define a volume for persistent data
+    volumes:
+      - ./your-app-data:/usr/src/app/data
+
+  # Traefik Service Configuration (This is typically included if you want Traefik to be part of the same docker-compose)
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true" # Expose Traefik dashboard (disable in production)
+      - "--entrypoints.web.address=:80" # HTTP entry point
+      - "--entrypoints.websecure.address=:443" # HTTPS entry point
+      - "--providers.docker=true" # Enable Docker provider
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true" # Enable Let's Encrypt HTTP challenge
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web" # HTTP challenge for SSL
+    ports:
+      - "80:80" # Expose HTTP port
+      - "443:443" # Expose HTTPS port
+      - "8080:8080" # Expose Traefik dashboard (optional)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # For Traefik to interact with Docker
