@@ -9,7 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Skip middleware for static files, API routes, and special files
+  // Skip middleware for static files, API routes, auth callbacks, and special files
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
     pathname.endsWith("/robots.txt") ||
     pathname.endsWith("/favicon.ico")
   ) {
-    return;
+    return NextResponse.next();
   }
 
   // Redirect to default locale if missing
@@ -29,8 +29,9 @@ export async function middleware(request: NextRequest) {
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
   if (pathnameIsMissingLocale) {
-    const locale = defaultLocale;
-    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+    return NextResponse.redirect(
+      new URL(`/${defaultLocale}${pathname}`, request.url)
+    );
   }
 
   // Only handle /profile routes
@@ -38,13 +39,14 @@ export async function middleware(request: NextRequest) {
     const locale = pathname.split("/")[1] || defaultLocale;
     const sessionCookie = request.cookies.get("food_cms_session");
 
+    // No session → redirect to signin
     if (!sessionCookie) {
       return NextResponse.redirect(
         new URL(`/${locale}/auth/signin`, request.url)
       );
     }
 
-    // Try fetching user from backend, but fail gracefully
+    // Try fetching user from backend, fail gracefully if API_URL missing or fetch fails
     if (API_URL) {
       try {
         const response = await fetch(`${API_URL}/auth/me`, {
@@ -58,6 +60,7 @@ export async function middleware(request: NextRequest) {
           const data = await response.json();
           const user = data.data?.user;
 
+          // Block admin accounts from profile
           if (
             user &&
             ["admin", "super_admin", "manager"].includes(user.role || "")
@@ -66,22 +69,28 @@ export async function middleware(request: NextRequest) {
               new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
             );
           }
-        } else {
-          console.warn("/auth/me returned", response.status);
-          // Don't crash: just continue or redirect
+
+          // Valid session & non-admin → allow
+          return NextResponse.next();
         }
+
+        console.warn("Middleware /auth/me returned", response.status);
       } catch (err) {
         console.warn("Middleware fetch failed:", err);
-        // Don't crash: just continue or redirect
       }
+    } else {
+      console.warn("NEXT_PUBLIC_API_URL is not set");
     }
 
-    // Default fallback: redirect to signin if session exists but API fails
-    return NextResponse.redirect(
+    // If API fails or session invalid → redirect to signin
+    const redirectResponse = NextResponse.redirect(
       new URL(`/${locale}/auth/signin`, request.url)
     );
+    redirectResponse.cookies.delete("food_cms_session");
+    return redirectResponse;
   }
 
+  // All other requests → continue
   return NextResponse.next();
 }
 
