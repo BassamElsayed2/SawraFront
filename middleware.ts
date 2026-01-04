@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 
 const locales = ["ar", "en"];
 const defaultLocale = "ar";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function middleware(request: NextRequest) {
@@ -34,7 +33,7 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // ONLY handle /profile routes
+  // Handle /profile routes only
   const isProfileRoute = locales.some((locale) =>
     pathname.startsWith(`/${locale}/profile`)
   );
@@ -42,23 +41,27 @@ export async function middleware(request: NextRequest) {
     const locale = pathname.split("/")[1] || defaultLocale;
     const sessionCookie = request.cookies.get("food_cms_session");
 
+    // No session → redirect to signin
     if (!sessionCookie) {
       return NextResponse.redirect(
         new URL(`/${locale}/auth/signin`, request.url)
       );
     }
 
+    // Fetch user from backend if API_URL is set
     if (API_URL) {
       try {
         const response = await fetch(`${API_URL}/auth/me`, {
           method: "GET",
-          headers: {
-            Cookie: `food_cms_session=${sessionCookie.value}`,
-          },
+          headers: { Cookie: `food_cms_session=${sessionCookie.value}` },
         });
 
+        // If API fails or returns 404 → redirect to signin
         if (!response.ok) {
-          console.warn("/auth/me returned", response.status);
+          console.warn(
+            "[Middleware] /auth/me returned status",
+            response.status
+          );
           const redirectResponse = NextResponse.redirect(
             new URL(`/${locale}/auth/signin`, request.url)
           );
@@ -79,24 +82,24 @@ export async function middleware(request: NextRequest) {
           );
         }
 
-        // Non-admin → allow
+        // Valid non-admin session → continue
         return NextResponse.next();
       } catch (err) {
-        console.warn("Middleware fetch /auth/me failed:", err);
-        // Fail gracefully → redirect to signin
+        console.warn("[Middleware] fetch /auth/me failed:", err);
         const redirectResponse = NextResponse.redirect(
           new URL(`/${locale}/auth/signin`, request.url)
         );
         redirectResponse.cookies.delete("food_cms_session");
         return redirectResponse;
       }
-    } else {
-      console.warn("NEXT_PUBLIC_API_URL not set");
-      return NextResponse.next(); // don't crash
     }
+
+    // If API_URL not set → log and continue (no crash)
+    console.warn("[Middleware] NEXT_PUBLIC_API_URL not set");
+    return NextResponse.next();
   }
 
-  // All other routes → just continue
+  // All other routes → continue
   return NextResponse.next();
 }
 
