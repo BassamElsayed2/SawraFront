@@ -34,19 +34,20 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // Only handle /profile routes
-  if (pathname.includes("/profile")) {
+  // ONLY handle /profile routes
+  const isProfileRoute = locales.some((locale) =>
+    pathname.startsWith(`/${locale}/profile`)
+  );
+  if (isProfileRoute) {
     const locale = pathname.split("/")[1] || defaultLocale;
     const sessionCookie = request.cookies.get("food_cms_session");
 
-    // No session → redirect to signin
     if (!sessionCookie) {
       return NextResponse.redirect(
         new URL(`/${locale}/auth/signin`, request.url)
       );
     }
 
-    // Try fetching user from backend, fail gracefully if API_URL missing or fetch fails
     if (API_URL) {
       try {
         const response = await fetch(`${API_URL}/auth/me`, {
@@ -56,41 +57,46 @@ export async function middleware(request: NextRequest) {
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const user = data.data?.user;
-
-          // Block admin accounts from profile
-          if (
-            user &&
-            ["admin", "super_admin", "manager"].includes(user.role || "")
-          ) {
-            return NextResponse.redirect(
-              new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
-            );
-          }
-
-          // Valid session & non-admin → allow
-          return NextResponse.next();
+        if (!response.ok) {
+          console.warn("/auth/me returned", response.status);
+          const redirectResponse = NextResponse.redirect(
+            new URL(`/${locale}/auth/signin`, request.url)
+          );
+          redirectResponse.cookies.delete("food_cms_session");
+          return redirectResponse;
         }
 
-        console.warn("Middleware /auth/me returned", response.status);
+        const data = await response.json();
+        const user = data.data?.user;
+
+        // Block admin accounts
+        if (
+          user &&
+          ["admin", "super_admin", "manager"].includes(user.role || "")
+        ) {
+          return NextResponse.redirect(
+            new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
+          );
+        }
+
+        // Non-admin → allow
+        return NextResponse.next();
       } catch (err) {
-        console.warn("Middleware fetch failed:", err);
+        console.warn("Middleware fetch /auth/me failed:", err);
+        // Fail gracefully → redirect to signin
+        const redirectResponse = NextResponse.redirect(
+          new URL(`/${locale}/auth/signin`, request.url)
+        );
+        redirectResponse.cookies.delete("food_cms_session");
+        return redirectResponse;
       }
     } else {
-      console.warn("NEXT_PUBLIC_API_URL is not set");
+      console.warn("NEXT_PUBLIC_API_URL not set");
+      return NextResponse.next(); // don't crash
     }
-
-    // If API fails or session invalid → redirect to signin
-    const redirectResponse = NextResponse.redirect(
-      new URL(`/${locale}/auth/signin`, request.url)
-    );
-    redirectResponse.cookies.delete("food_cms_session");
-    return redirectResponse;
   }
 
-  // All other requests → continue
+  // All other routes → just continue
   return NextResponse.next();
 }
 
