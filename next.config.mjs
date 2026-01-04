@@ -13,14 +13,15 @@ const nextConfig = {
     NEXT_PUBLIC_SITE_URL:
       process.env.NEXT_PUBLIC_SITE_URL || "https://elsawra.net",
   },
-  async rewrites() {
-    return [
-      {
-        source: "/:path*",
-        destination: `http://localhost:${process.env.PORT || 4016}/:path*`, // Use your app's internal port
-      },
-    ];
-  },
+  // Removed problematic rewrites that caused infinite loop
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/:path*",
+  //       destination: `http://localhost:${process.env.PORT || 4016}/:path*`,
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
