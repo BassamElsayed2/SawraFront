@@ -1,10 +1,9 @@
-version: "3.8"
-
+version: "3"
 services:
   nextjs-app:
     image: xkcs408wk48s4gsgccgoog4w:4ad5cf602443b2803ea20c0751443639a1ea446c # Replace with your actual Next.js Docker image
     ports:
-      - "4016:4016" # Expose port 4016 from container to the host machine
+      - "0.0.0.0:4016:4016" # Expose port 4016 from container to the host machine
     environment:
       - NODE_ENV=production
     labels:
