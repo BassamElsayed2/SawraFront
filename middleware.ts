@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server";
 const locales = ["ar", "en"];
 const defaultLocale = "ar";
 
+// Server-only env
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function middleware(request: NextRequest) {
-  // Check if there is any supported locale in the pathname
   const pathname = request.nextUrl.pathname;
 
   // Skip middleware for static files, API routes, and auth callback
@@ -47,6 +47,8 @@ export async function middleware(request: NextRequest) {
       );
     }
 
+    let user = null;
+
     try {
       // Verify session with backend
       const response = await fetch(`${API_URL}/auth/me`, {
@@ -56,34 +58,26 @@ export async function middleware(request: NextRequest) {
         },
       });
 
-      if (!response.ok) {
-        // Invalid session, redirect to signin
-        const locale = pathname.split("/")[1] || defaultLocale;
-        const redirectResponse = NextResponse.redirect(
-          new URL(`/${locale}/auth/signin`, request.url)
-        );
-        redirectResponse.cookies.delete("food_cms_session");
-        return redirectResponse;
-      }
-
-      const data = await response.json();
-      const user = data.data?.user;
-
-      // If user is admin, redirect them away
-      if (
-        user &&
-        ["admin", "super_admin", "manager"].includes(user.role || "")
-      ) {
-        const locale = pathname.split("/")[1] || defaultLocale;
-        return NextResponse.redirect(
-          new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
-        );
+      if (response.ok) {
+        const data = await response.json();
+        user = data.data?.user;
       }
     } catch (error) {
-      // Auth verification failed - redirect to signin for safety
+      console.error("Middleware fetch failed:", error);
+      // leave user null, redirect below
+    }
+
+    // If no user or user is admin, redirect to signin
+    if (
+      !user ||
+      ["admin", "super_admin", "manager"].includes(user.role || "")
+    ) {
       const locale = pathname.split("/")[1] || defaultLocale;
       const redirectResponse = NextResponse.redirect(
-        new URL(`/${locale}/auth/signin`, request.url)
+        new URL(
+          `/${locale}/auth/signin${user ? "?error=admin-account" : ""}`,
+          request.url
+        )
       );
       redirectResponse.cookies.delete("food_cms_session");
       return redirectResponse;
@@ -94,8 +88,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Skip all internal paths (_next), static files, and special files
-    "/((?!_next|api|favicon.ico|.*\\..*|sitemap|robots).*)",
-  ],
+  matcher: ["/((?!_next|api|favicon.ico|.*\\..*|sitemap|robots).*)"],
 };
