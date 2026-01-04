@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
     return;
   }
 
-  // Handle locale redirect
+  // Redirect to default locale if missing
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
@@ -33,62 +33,53 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
   }
 
-  // Handle auth for /profile routes
+  // Only handle /profile routes
   if (pathname.includes("/profile")) {
-    try {
-      const sessionCookie = request.cookies.get("food_cms_session");
+    const locale = pathname.split("/")[1] || defaultLocale;
+    const sessionCookie = request.cookies.get("food_cms_session");
 
-      // No session cookie → redirect to signin
-      if (!sessionCookie) {
-        const locale = pathname.split("/")[1] || defaultLocale;
-        return NextResponse.redirect(
-          new URL(`/${locale}/auth/signin`, request.url)
-        );
-      }
-
-      // Only attempt fetch if API_URL exists
-      if (!API_URL) throw new Error("NEXT_PUBLIC_API_URL not set");
-
-      const response = await fetch(`${API_URL}/auth/me`, {
-        method: "GET",
-        headers: {
-          Cookie: `food_cms_session=${sessionCookie.value}`,
-        },
-      });
-
-      if (!response.ok) {
-        const locale = pathname.split("/")[1] || defaultLocale;
-        const redirectResponse = NextResponse.redirect(
-          new URL(`/${locale}/auth/signin`, request.url)
-        );
-        redirectResponse.cookies.delete("food_cms_session");
-        return redirectResponse;
-      }
-
-      const data = await response.json();
-      const user = data.data?.user;
-
-      if (
-        user &&
-        ["admin", "super_admin", "manager"].includes(user.role || "")
-      ) {
-        const locale = pathname.split("/")[1] || defaultLocale;
-        return NextResponse.redirect(
-          new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
-        );
-      }
-    } catch (err) {
-      // Log the error for debugging
-      console.error("Middleware /profile error:", err);
-
-      // Fail gracefully: just redirect to signin or continue
-      const locale = pathname.split("/")[1] || defaultLocale;
-      const redirectResponse = NextResponse.redirect(
+    if (!sessionCookie) {
+      return NextResponse.redirect(
         new URL(`/${locale}/auth/signin`, request.url)
       );
-      redirectResponse.cookies.delete("food_cms_session");
-      return redirectResponse;
     }
+
+    // Try fetching user from backend, but fail gracefully
+    if (API_URL) {
+      try {
+        const response = await fetch(`${API_URL}/auth/me`, {
+          method: "GET",
+          headers: {
+            Cookie: `food_cms_session=${sessionCookie.value}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const user = data.data?.user;
+
+          if (
+            user &&
+            ["admin", "super_admin", "manager"].includes(user.role || "")
+          ) {
+            return NextResponse.redirect(
+              new URL(`/${locale}/auth/signin?error=admin-account`, request.url)
+            );
+          }
+        } else {
+          console.warn("/auth/me returned", response.status);
+          // Don't crash: just continue or redirect
+        }
+      } catch (err) {
+        console.warn("Middleware fetch failed:", err);
+        // Don't crash: just continue or redirect
+      }
+    }
+
+    // Default fallback: redirect to signin if session exists but API fails
+    return NextResponse.redirect(
+      new URL(`/${locale}/auth/signin`, request.url)
+    );
   }
 
   return NextResponse.next();
