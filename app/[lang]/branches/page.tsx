@@ -3,6 +3,7 @@ import { getDictionary } from "../dictionaries";
 import BranchesGrid from "@/components/branches-grid";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navBarTwo";
+import { getBranches } from "@/lib/api-actions";
 
 export default async function BranchesPage({
   params,
@@ -11,6 +12,9 @@ export default async function BranchesPage({
 }) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
+
+  // Fetch branches from server
+  const branchesData = await getBranches();
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -21,7 +25,7 @@ export default async function BranchesPage({
             <h1 className="text-4xl font-bold mb-4">{dict.branches.title}</h1>
             <p className="text-xl text-gray-600">{dict.branches.subtitle}</p>
           </div>
-          <BranchesGrid lang={lang} dict={dict} />
+          <BranchesGrid lang={lang} dict={dict} initialBranches={branchesData || []} />
         </div>
       </div>
       <Footer lang={lang} dict={dict} />

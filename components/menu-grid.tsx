@@ -37,12 +37,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { getProducts, ProductWithTypes } from "@/services/apiProduct";
-import {
-  getCategories as getCategoriesData,
-  Category,
-} from "@/services/apiCategories";
-import { getBranches, Branch } from "@/services/apiBranches";
+import { ProductWithTypes } from "@/services/apiProduct";
+import { Category } from "@/services/apiCategories";
+import { Branch } from "@/services/apiBranches";
+import { getProducts as fetchProducts, getCategories as fetchCategories, getBranches as fetchBranches } from "@/lib/api-actions";
 
 import { useCart } from "@/contexts/cart-context";
 import { toast } from "@/hooks/use-toast";
@@ -75,9 +73,18 @@ import {
 interface MenuGridProps {
   lang: "en" | "ar";
   dict: any;
+  initialCategories?: Category[];
+  initialBranches?: Branch[];
+  initialProducts?: any;
 }
 
-export default function MenuGrid({ lang, dict }: MenuGridProps) {
+export default function MenuGrid({ 
+  lang, 
+  dict,
+  initialCategories = [],
+  initialBranches = [],
+  initialProducts,
+}: MenuGridProps) {
   const [selectedItem, setSelectedItem] = useState<ProductWithTypes | null>(
     null
   );
@@ -108,24 +115,28 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  // Fetch categories
+  // Fetch categories with initial data from server
   const {
     data: categories = [],
     isLoading: categoriesLoading,
     error: categoriesError,
   } = useQuery({
     queryKey: ["categories"],
-    queryFn: getCategoriesData,
+    queryFn: fetchCategories,
+    initialData: initialCategories,
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 
-  // Fetch branches
+  // Fetch branches with initial data from server
   const {
     data: branches = [],
     isLoading: branchesLoading,
     error: branchesError,
   } = useQuery({
     queryKey: ["branches"],
-    queryFn: getBranches,
+    queryFn: fetchBranches,
+    initialData: initialBranches,
+    staleTime: 30 * 60 * 1000,
     enabled: mounted,
   });
 
@@ -142,13 +153,18 @@ export default function MenuGrid({ lang, dict }: MenuGridProps) {
       itemsPerPage,
       selectedBranchId,
     ],
-    queryFn: () => {
-      const filters = {
-        categoryId: selectedCategory === "all" ? undefined : selectedCategory,
-        branchId: selectedBranchId || undefined,
+    queryFn: async () => {
+      const params: any = {
+        page: currentPage,
+        limit: itemsPerPage,
       };
-      return getProducts(currentPage, itemsPerPage, filters);
+      if (selectedCategory !== "all") {
+        params.category_id = selectedCategory;
+      }
+      // Note: branch filtering might need to be handled differently based on API
+      return fetchProducts(params);
     },
+    initialData: initialProducts,
     enabled: mounted,
   });
 

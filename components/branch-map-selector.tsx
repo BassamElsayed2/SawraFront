@@ -88,7 +88,7 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
       }
 
       const data = await response.json();
-      console.log("Branches API Response:", data);
+      
 
       if (data.success && data.branches && Array.isArray(data.branches)) {
         // Normalize lat/lng fields

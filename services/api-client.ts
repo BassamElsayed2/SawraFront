@@ -1,4 +1,5 @@
 // API Client for Express Backend
+import { getClientApiKeyHeaders } from "@/lib/api-helpers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -19,11 +20,15 @@ class ApiClient {
   ): Promise<T> {
     const { data, headers, ...customConfig } = options;
 
+    // Get API key headers
+    const apiKeyHeaders = await getClientApiKeyHeaders();
+
     const config: RequestInit = {
       method: data ? "POST" : "GET",
       ...customConfig,
       headers: {
         "Content-Type": "application/json",
+        ...apiKeyHeaders,
         ...headers,
       },
       credentials: "include", // Include cookies
@@ -122,10 +127,16 @@ class ApiClient {
       formData.append("folder", folder);
     }
 
+    // Get API key headers
+    const apiKeyHeaders = await getClientApiKeyHeaders();
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
       body: formData,
       credentials: "include",
+      headers: {
+        ...apiKeyHeaders,
+      },
     });
 
     if (!response.ok) {
