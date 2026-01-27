@@ -5,28 +5,32 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Phone, MapPin, Loader2 } from "lucide-react";
-import { getBranches, Branch } from "@/services/apiBranches";
+import { Branch } from "@/services/apiBranches";
+import { getBranches as fetchBranches } from "@/lib/api-actions";
 
 interface BranchesGridProps {
   lang: "en" | "ar";
   dict: any;
+  initialBranches?: Branch[];
 }
 
-export default function BranchesGrid({ lang, dict }: BranchesGridProps) {
+export default function BranchesGrid({ lang, dict, initialBranches = [] }: BranchesGridProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Fetch branches from Supabase
+  // Fetch branches with initial data from server
   const {
     data: branches = [],
     isLoading: branchesLoading,
     error: branchesError,
   } = useQuery({
     queryKey: ["branches"],
-    queryFn: getBranches,
+    queryFn: fetchBranches,
+    initialData: initialBranches,
+    staleTime: 30 * 60 * 1000, // 30 minutes
     enabled: mounted,
   });
 
