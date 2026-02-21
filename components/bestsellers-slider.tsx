@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { getComboOffers, ComboOffer } from "@/services/apiOffers";
 import { useCart } from "@/contexts/cart-context";
+import { getImageUrl } from "@/lib/image-url";
 
 interface OffersSliderProps {
   lang: "en" | "ar";
@@ -208,7 +209,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                       {/* Image Container */}
                       <div className="relative aspect-[4/3] overflow-hidden">
                         <img
-                          src={offer.image_url || "/placeholder.svg"}
+                          src={getImageUrl(offer.image_url)}
                           alt={lang === "en" ? offer.title_en : offer.title_ar}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
@@ -389,7 +390,7 @@ export default function OffersSlider({ lang, dict }: OffersSliderProps) {
                 <div className="space-y-4">
                   <div className="aspect-square overflow-hidden rounded-2xl">
                     <img
-                      src={selectedOffer.image_url || "/placeholder.svg"}
+                      src={getImageUrl(selectedOffer.image_url)}
                       alt={
                         lang === "en"
                           ? selectedOffer.title_en

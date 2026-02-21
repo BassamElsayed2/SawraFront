@@ -12,6 +12,7 @@ import {
 import { useCart } from "@/contexts/cart-context";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/image-url";
 
 interface CartIconProps {
   lang: "en" | "ar";
@@ -97,7 +98,7 @@ export default function CartIcon({
                   className="flex gap-3 p-2 rounded-lg border bg-white hover:bg-gray-50 transition-colors"
                 >
                   <Image
-                    src={item.image_url || "/placeholder.svg"}
+                    src={getImageUrl(item.image_url)}
                     alt={lang === "ar" ? item.title_ar : item.title_en}
                     width={60}
                     height={60}
