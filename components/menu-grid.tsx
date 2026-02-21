@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getImageUrl } from "@/lib/image-url";
 import {
   Minus,
   Plus,
@@ -494,7 +495,7 @@ export default function MenuGrid({
             <CardContent className="p-0 relative">
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                  src={item.image_url || "/placeholder.svg"}
+                  src={getImageUrl(item.image_url)}
                   alt={lang === "ar" ? item.title_ar : item.title_en}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -663,7 +664,7 @@ export default function MenuGrid({
                 <div className="space-y-6">
                   <div className="aspect-square overflow-hidden rounded-2xl">
                     <img
-                      src={selectedItem.image_url || "/placeholder.svg"}
+                      src={getImageUrl(selectedItem.image_url)}
                       alt={
                         lang === "ar"
                           ? selectedItem.title_ar

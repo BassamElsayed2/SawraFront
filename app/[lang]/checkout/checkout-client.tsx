@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import { useAuth } from "@/hooks/use-auth";
+import { getImageUrl } from "@/lib/image-url";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { addressesApi, Address } from "@/services/apiAddresses";
 import { ordersApi, OrderItem } from "@/services/apiOrders";
@@ -398,7 +399,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                           {index + 1}
                         </div>
                         <Image
-                          src={item.image_url || "/placeholder.svg"}
+                          src={getImageUrl(item.image_url)}
                           alt={lang === "ar" ? item.title_ar : item.title_en}
                           width={110}
                           height={110}
