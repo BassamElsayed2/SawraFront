@@ -106,10 +106,10 @@ export default function MenuGrid({
     setMounted(true);
   }, []);
 
-  // Reset to first page when category changes
+  // Reset to first page when filter (category or branch) changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedBranchId]);
 
   // Scroll to top when page changes
   useEffect(() => {
@@ -155,18 +155,28 @@ export default function MenuGrid({
       selectedBranchId,
     ],
     queryFn: async () => {
-      const params: any = {
+      const params: { page: number; limit: number; category_id?: string; branch_id?: string } = {
         page: currentPage,
         limit: itemsPerPage,
       };
       if (selectedCategory !== "all") {
         params.category_id = selectedCategory;
       }
-      // Note: branch filtering might need to be handled differently based on API
+      if (selectedBranchId) {
+        params.branch_id = selectedBranchId;
+      }
       return fetchProducts(params);
     },
-    initialData: initialProducts,
+    // Use server initial data only for page 1 with no filters (all categories, no branch)
+    initialData:
+      currentPage === 1 &&
+      selectedCategory === "all" &&
+      !selectedBranchId &&
+      initialProducts
+        ? initialProducts
+        : undefined,
     enabled: mounted,
+    staleTime: 0,
   });
 
   const products = Array.isArray(productsData?.products)
