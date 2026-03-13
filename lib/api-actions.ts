@@ -13,6 +13,7 @@ interface PaginationParams {
 
 interface ProductParams extends PaginationParams {
   category_id?: string;
+  branch_id?: string;
   search?: string;
 }
 
@@ -88,9 +89,10 @@ export async function facebookSignIn(accessToken: string) {
 export async function getProducts(params?: ProductParams) {
   try {
     const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.set("page", params.page.toString());
-    if (params?.limit) queryParams.set("limit", params.limit.toString());
+    if (params?.page != null) queryParams.set("page", String(params.page));
+    if (params?.limit != null) queryParams.set("limit", String(params.limit));
     if (params?.category_id) queryParams.set("category_id", params.category_id);
+    if (params?.branch_id) queryParams.set("branch_id", params.branch_id);
     if (params?.search) queryParams.set("search", params.search);
     
     const query = queryParams.toString();
