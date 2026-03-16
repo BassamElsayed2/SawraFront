@@ -27,7 +27,7 @@ import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { getImageUrl } from "@/lib/image-url";
 import { useQuery, useMutation } from "@tanstack/react-query";

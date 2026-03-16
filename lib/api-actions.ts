@@ -120,6 +120,42 @@ export async function getProductById(id: string) {
   return serverRequestWithApiKey<any>(`/products/${id}`);
 }
 
+/** Latest products (by created_at DESC). Use limit=10 for home. */
+export async function getLatestProducts(
+  limit: number = 10,
+  branch_id?: string
+) {
+  const { products, total } = await getProducts({ limit, page: 1, branch_id });
+  return { products, total };
+}
+
+/** Top products by order count. Only show when result has at least 10. */
+export async function getBestsellers(limit: number = 10, branch_id?: string) {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.set("limit", String(limit));
+    if (branch_id) queryParams.set("branch_id", branch_id);
+    const data = await serverRequestWithApiKey<{ products: any[]; total: number }>(
+      `/products/bestsellers?${queryParams.toString()}`
+    );
+    const products = data?.products ?? [];
+    const total = data?.total ?? products.length;
+    return { products, total };
+  } catch {
+    return { products: [], total: 0 };
+  }
+}
+
+/** Combo offers for home (server-side). */
+export async function getComboOffers() {
+  try {
+    const data = await serverRequestWithApiKey<{ offers?: any[] }>("/combo-offers");
+    return Array.isArray(data?.offers) ? data.offers : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function createProduct(data: any) {
   return serverRequestWithApiKey<any>("/products", {
     method: "POST",

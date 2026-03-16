@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/image-url";

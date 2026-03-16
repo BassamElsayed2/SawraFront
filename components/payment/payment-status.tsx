@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/contexts/cart-context";
-import { useAuth } from "@/contexts/auth-context-rq";
+import { useCart } from "@/hooks/use-cart";
+import { useAuth } from "@/hooks/use-auth";
 
 interface PaymentStatusProps {
   paymentId?: string;
