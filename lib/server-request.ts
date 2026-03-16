@@ -56,7 +56,8 @@ export async function serverRequestWithApiKey<T>(
   const response = await fetch(url, {
     ...options,
     headers,
-    cache: "no-store",
+    // Allow callers to opt into caching/revalidation for non-critical endpoints
+    cache: options.cache ?? "no-store",
   });
 
   if (!response.ok) {

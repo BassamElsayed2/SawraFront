@@ -16,6 +16,8 @@ import { GoogleSignInButton } from "./google-signin-button";
 import { FacebookSignInButton } from "./facebook-signin-button";
 import { useCart } from "@/hooks/use-cart";
 import { addressesApi } from "@/services/apiAddresses";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchMe } from "@/store/slices/auth-slice";
 
 type SignInFormData = {
   email: string;
@@ -35,6 +37,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   const { signIn } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const googleSignInMutation = useGoogleSignIn();
   const facebookSignInMutation = useFacebookSignIn();
@@ -153,6 +156,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
       await googleSignInMutation.mutateAsync({
         idToken: idToken,
       });
+      await dispatch(fetchMe()).unwrap();
 
       toast({
         title: lang === "ar" ? "تم بنجاح" : "Success",
@@ -202,6 +206,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
       await facebookSignInMutation.mutateAsync({
         accessToken: accessToken,
       });
+      await dispatch(fetchMe()).unwrap();
 
       toast({
         title: lang === "ar" ? "تم بنجاح" : "Success",

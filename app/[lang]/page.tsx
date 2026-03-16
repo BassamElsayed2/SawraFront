@@ -1,5 +1,6 @@
 import { getDictionary } from "./dictionaries";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import {
   getLatestProducts,
   getComboOffers,
@@ -18,6 +19,13 @@ export default async function HomePage({
   params: Promise<{ lang: "en" | "ar" }>;
 }) {
   const { lang } = await params;
+  const cookieStore = await cookies();
+  const selectedBranchId = cookieStore.get("selected_branch_id")?.value;
+
+  // Redirect early before any expensive data fetching
+  if (!selectedBranchId) {
+    redirect(`/${lang}/menu`);
+  }
 
   // Validate language parameter
   if (!["en", "ar"].includes(lang)) {
@@ -31,9 +39,6 @@ export default async function HomePage({
     // Dictionary loading failed - fallback to English
     dict = await getDictionary("en");
   }
-
-  const cookieStore = await cookies();
-  const selectedBranchId = cookieStore.get("selected_branch_id")?.value;
 
   const [latestRes, offers, bestsellersRes] = await Promise.all([
     getLatestProducts(10, selectedBranchId),

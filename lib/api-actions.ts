@@ -125,7 +125,28 @@ export async function getLatestProducts(
   limit: number = 10,
   branch_id?: string
 ) {
-  const { products, total } = await getProducts({ limit, page: 1, branch_id });
+  const queryParams = new URLSearchParams();
+  queryParams.set("page", "1");
+  queryParams.set("limit", String(limit));
+  if (branch_id) queryParams.set("branch_id", branch_id);
+
+  const cacheOptions = {
+    cache: "force-cache" as RequestCache,
+    next: { revalidate: 60 },
+  } as RequestInit & { next?: { revalidate: number } };
+
+  const response = await serverRequestWithApiKey<any>(
+    `/products?${queryParams.toString()}`,
+    cacheOptions
+  );
+
+  const products = Array.isArray(response)
+    ? response
+    : response?.products || response?.data?.products || response?.data || [];
+  const total = Array.isArray(response)
+    ? response.length
+    : response?.total || response?.data?.total || products.length;
+
   return { products, total };
 }
 
@@ -135,8 +156,15 @@ export async function getBestsellers(limit: number = 10, branch_id?: string) {
     const queryParams = new URLSearchParams();
     queryParams.set("limit", String(limit));
     if (branch_id) queryParams.set("branch_id", branch_id);
+
+    const cacheOptions = {
+      cache: "force-cache" as RequestCache,
+      next: { revalidate: 120 },
+    } as RequestInit & { next?: { revalidate: number } };
+
     const data = await serverRequestWithApiKey<{ products: any[]; total: number }>(
-      `/products/bestsellers?${queryParams.toString()}`
+      `/products/bestsellers?${queryParams.toString()}`,
+      cacheOptions
     );
     const products = data?.products ?? [];
     const total = data?.total ?? products.length;
@@ -149,7 +177,14 @@ export async function getBestsellers(limit: number = 10, branch_id?: string) {
 /** Combo offers for home (server-side). */
 export async function getComboOffers() {
   try {
-    const data = await serverRequestWithApiKey<{ offers?: any[] }>("/combo-offers");
+    const cacheOptions = {
+      cache: "force-cache" as RequestCache,
+      next: { revalidate: 60 },
+    } as RequestInit & { next?: { revalidate: number } };
+    const data = await serverRequestWithApiKey<{ offers?: any[] }>(
+      "/combo-offers",
+      cacheOptions
+    );
     return Array.isArray(data?.offers) ? data.offers : [];
   } catch {
     return [];

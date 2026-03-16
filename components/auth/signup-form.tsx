@@ -16,6 +16,8 @@ import { GoogleSignInButton } from "./google-signin-button";
 import { FacebookSignInButton } from "./facebook-signin-button";
 import { useCart } from "@/hooks/use-cart";
 import { addressesApi } from "@/services/apiAddresses";
+import { useAppDispatch } from "@/store/hooks";
+import { fetchMe } from "@/store/slices/auth-slice";
 
 type SignUpFormData = {
   email: string;
@@ -41,6 +43,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
   const { signUp, checkPhoneExists } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
   const googleSignInMutation = useGoogleSignIn();
   const facebookSignInMutation = useFacebookSignIn();
   const { getTotalItems } = useCart();
@@ -291,6 +294,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       const result = await googleSignInMutation.mutateAsync({
         idToken: idToken,
       });
+      await dispatch(fetchMe()).unwrap();
 
       // Check if it's a new user from the response
       const isNewUser = result?.data?.isNewUser;
@@ -348,6 +352,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       const result = await facebookSignInMutation.mutateAsync({
         accessToken: accessToken,
       });
+      await dispatch(fetchMe()).unwrap();
 
       // Check if it's a new user from the response
       const isNewUser = result?.data?.isNewUser;
