@@ -2,10 +2,11 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-import { CartProvider } from "@/contexts/cart-context";
-import { AuthProvider } from "@/contexts/auth-context-rq";
+import { Provider as ReduxProvider } from "react-redux";
 import { GoogleAuthProvider } from "@/providers/google-oauth-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { store } from "@/store";
+import { AuthBootstrap, CartBootstrap } from "@/store/bootstrap";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -23,12 +24,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <GoogleAuthProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-            <Toaster />
-          </CartProvider>
-        </AuthProvider>
+        <ReduxProvider store={store}>
+          <AuthBootstrap />
+          <CartBootstrap />
+          {children}
+          <Toaster />
+        </ReduxProvider>
       </QueryClientProvider>
     </GoogleAuthProvider>
   );

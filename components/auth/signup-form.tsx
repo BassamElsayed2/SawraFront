@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useGoogleSignIn, useFacebookSignIn } from "@/hooks/use-api";
 import { GoogleSignInButton } from "./google-signin-button";
 import { FacebookSignInButton } from "./facebook-signin-button";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { addressesApi } from "@/services/apiAddresses";
 
 type SignUpFormData = {

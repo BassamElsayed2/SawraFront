@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Check, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";

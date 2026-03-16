@@ -21,26 +21,33 @@ import {
   Calendar,
 } from "lucide-react";
 import { getComboOffers, ComboOffer } from "@/services/apiOffers";
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { getImageUrl } from "@/lib/image-url";
 
 interface OffersSliderProps {
   lang: "en" | "ar";
   dict: any;
+  /** Pre-fetched offers from server (avoids loading state) */
+  initialOffers?: ComboOffer[] | null;
 }
 
-export default function OffersSlider({ lang, dict }: OffersSliderProps) {
+export default function BestsellersSlider({ lang, dict, initialOffers }: OffersSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOffer, setSelectedOffer] = useState<ComboOffer | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [mounted, setMounted] = useState(false);
-  const [offers, setOffers] = useState<ComboOffer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [offers, setOffers] = useState<ComboOffer[]>(initialOffers ?? []);
+  const [loading, setLoading] = useState(!initialOffers);
   const [itemsPerView, setItemsPerView] = useState(3);
   const { addToCart } = useCart();
 
   useEffect(() => {
     setMounted(true);
+    if (initialOffers?.length) {
+      setOffers(initialOffers);
+      setLoading(false);
+      return;
+    }
     fetchOffers();
   }, []);
 

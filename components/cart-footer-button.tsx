@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";

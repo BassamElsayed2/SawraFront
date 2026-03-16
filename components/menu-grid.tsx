@@ -38,12 +38,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { ProductWithTypes } from "@/services/apiProduct";
+import { ProductWithTypes, ProductTypeWithSizes } from "@/services/apiProduct";
 import { Category } from "@/services/apiCategories";
 import { Branch } from "@/services/apiBranches";
 import { getProducts as fetchProducts, getCategories as fetchCategories, getBranches as fetchBranches } from "@/lib/api-actions";
 
-import { useCart } from "@/contexts/cart-context";
+import { useCart } from "@/hooks/use-cart";
 import { toast } from "@/hooks/use-toast";
 
 // Load BranchMapSelector dynamically to avoid SSR issues with Google Maps
@@ -494,7 +494,7 @@ export default function MenuGrid({
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {products.map((item, index) => (
+        {products.map((item: ProductWithTypes, index: number) => (
           <Card
             key={item.id}
             className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white/90 backdrop-blur-sm hover:-translate-y-3"
@@ -548,7 +548,8 @@ export default function MenuGrid({
                   </div>
                   <div className="text-sm text-gray-500">
                     {item.types?.reduce(
-                      (total, type) => total + (type.sizes?.length || 0),
+                      (total: number, type: ProductTypeWithSizes) =>
+                        total + (type.sizes?.length || 0),
                       0
                     ) || 0}{" "}
                     {lang === "ar" ? "أحجام متاحة" : "sizes available"}
