@@ -139,7 +139,7 @@ export default function HomeProductsSection({
   const stepPercent = (100 * itemsPerView) / products.length;
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-br from-white via-gray-50/50 to-red-50/20">
+    <section className="py-8 md:py-12 bg-gradient-to-br from-white via-gray-50/50 to-red-50/20">
       <div className="container mx-auto px-4">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
@@ -167,40 +167,90 @@ export default function HomeProductsSection({
                 })`,
               }}
             >
-              {products.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex-shrink-0 px-2"
-                  style={{ width: `${itemWidthPercent}%` }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => openItemDialog(item)}
-                    className="block h-full w-full text-start"
+              {products.map((item) => {
+                const firstSize = item.types?.[0]?.sizes?.[0];
+                const price = firstSize?.offer_price ?? firstSize?.price;
+                const originalPrice =
+                  firstSize?.offer_price ? firstSize.price : undefined;
+                const description =
+                  lang === "ar" ? item.description_ar : item.description_en;
+                const plainDescription = description
+                  ?.replace(/<[^>]*>/g, "")
+                  .trim();
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex-shrink-0 px-2"
+                    style={{ width: `${itemWidthPercent}%` }}
                   >
-                    <Card className="group overflow-hidden h-full border border-gray-100/80 bg-white shadow-sm hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-2 hover:border-red-100 rounded-2xl cursor-pointer">
-                      <CardContent className="p-0">
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
-                          <img
-                            src={getImageUrl(item.image_url)}
-                            alt={lang === "ar" ? item.title_ar : item.title_en}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
-                          <span className="absolute bottom-3 left-3 right-3 text-center text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 backdrop-blur-sm py-2 rounded-lg">
-                            {lang === "ar" ? "عرض المنتج" : "View product"}
-                          </span>
-                        </div>
-                        <div className="p-4 border-t border-gray-50">
-                          <h3 className="font-semibold text-gray-800 line-clamp-2 text-sm leading-snug group-hover:text-red-600 transition-colors duration-200">
-                            {lang === "ar" ? item.title_ar : item.title_en}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </button>
-                </div>
-              ))}
+                    <button
+                      type="button"
+                      onClick={() => openItemDialog(item)}
+                      className="block h-full w-full text-start"
+                    >
+                      <Card className="group overflow-hidden h-full border border-gray-100/80 bg-white shadow-sm hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-2 hover:border-red-100 rounded-2xl cursor-pointer">
+                        <CardContent className="p-0 flex flex-col h-full">
+                          <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
+                            <img
+                              src={getImageUrl(item.image_url)}
+                              alt={
+                                lang === "ar" ? item.title_ar : item.title_en
+                              }
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+                            {originalPrice && (
+                              <span className="absolute top-3 start-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">
+                                {lang === "ar" ? "عرض" : "SALE"}
+                              </span>
+                            )}
+                            <span className="absolute bottom-3 left-3 right-3 text-center text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 backdrop-blur-sm py-2 rounded-lg">
+                              {lang === "ar" ? "عرض المنتج" : "View product"}
+                            </span>
+                          </div>
+                          <div className="p-4 flex flex-col flex-1 gap-2">
+                            <h3 className="font-bold text-gray-800 line-clamp-1 text-sm leading-snug group-hover:text-red-600 transition-colors duration-200">
+                              {lang === "ar" ? item.title_ar : item.title_en}
+                            </h3>
+                            {plainDescription && (
+                              <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                                {plainDescription}
+                              </p>
+                            )}
+                            <div className="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                              {price != null ? (
+                                <div className="flex items-baseline gap-1.5">
+                                  <span className="text-base font-extrabold text-red-600">
+                                    {price.toFixed(2)}
+                                  </span>
+                                  <span className="text-[10px] font-medium text-red-600/70">
+                                    {lang === "ar" ? "ج.م" : "EGP"}
+                                  </span>
+                                  {originalPrice && (
+                                    <span className="text-[11px] text-gray-400 line-through ms-1">
+                                      {originalPrice.toFixed(2)}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400">
+                                  {lang === "ar"
+                                    ? "السعر غير متوفر"
+                                    : "Price N/A"}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-red-500 font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                {lang === "ar" ? "اطلب الآن" : "Order Now"}
+                              </span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
