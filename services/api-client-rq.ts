@@ -3,6 +3,10 @@ import { getClientApiKeyHeaders } from "@/lib/api-helpers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+if (!API_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL is not defined");
+}
+
 interface FetchOptions extends RequestInit {
   data?: any;
 }
@@ -32,6 +36,7 @@ class ApiClient {
         ...headers,
       },
       credentials: "include", // Include cookies for JWT
+      cache: "no-store",
     };
 
     if (data) {
@@ -124,6 +129,7 @@ class ApiClient {
       method: "POST",
       body: formData,
       credentials: "include",
+      cache: "no-store",
       headers: {
         ...apiKeyHeaders,
       },
