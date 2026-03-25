@@ -53,7 +53,7 @@ export default async function HomePage({
   return (
     <main className="min-h-screen">
       <NavbarOne lang={lang} dict={dict} />
-      <HeroSection lang={lang} dict={dict} />
+      <HeroSection />
 
       {/* آخر 10 منتجات - Latest 10 products */}
       <HomeProductsSection
