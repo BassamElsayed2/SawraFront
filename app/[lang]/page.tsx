@@ -51,34 +51,36 @@ export default async function HomePage({
   const showBestsellersSection = bestsellersProducts.length >= 10;
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gray-900">
       <NavbarOne lang={lang} dict={dict} />
       <HeroSection />
 
-      {/* آخر 10 منتجات - Latest 10 products */}
-      <HomeProductsSection
-        lang={lang}
-        title={lang === "ar" ? "أحدث المنتجات" : "Latest Products"}
-        products={latestProducts}
-        viewAllHref={`/${lang}/menu`}
-        viewAllLabel={lang === "ar" ? "عرض القائمة" : "View Menu"}
-      />
-
-      {/* عروض - Only when there are offers */}
-      {offers.length > 0 && (
-        <BestsellersSlider lang={lang} dict={dict} initialOffers={offers} />
-      )}
-
-      {/* أكثر 10 منتجات طلباً - Only when we have at least 10 */}
-      {showBestsellersSection && (
+      <div className="relative z-10 -mt-8 mb-8 rounded-t-[2.5rem] rounded-b-[2.5rem] bg-white overflow-hidden   shadow-[0_-4px_30px_rgba(0,0,0,0.1)]">
+        {/* آخر 10 منتجات - Latest 10 products */}
         <HomeProductsSection
           lang={lang}
-          title={lang === "ar" ? "الأكثر طلباً" : "Most Ordered"}
-          products={bestsellersProducts}
+          title={lang === "ar" ? "أحدث المنتجات" : "Latest Products"}
+          products={latestProducts}
           viewAllHref={`/${lang}/menu`}
           viewAllLabel={lang === "ar" ? "عرض القائمة" : "View Menu"}
         />
-      )}
+
+        {/* عروض - Only when there are offers */}
+        {offers.length > 0 && (
+          <BestsellersSlider lang={lang} dict={dict} initialOffers={offers} />
+        )}
+
+        {/* أكثر 10 منتجات طلباً - Only when we have at least 10 */}
+        {showBestsellersSection && (
+          <HomeProductsSection
+            lang={lang}
+            title={lang === "ar" ? "الأكثر طلباً" : "Most Ordered"}
+            products={bestsellersProducts}
+            viewAllHref={`/${lang}/menu`}
+            viewAllLabel={lang === "ar" ? "عرض القائمة" : "View Menu"}
+          />
+        )}
+      </div>
 
       <Footer lang={lang} dict={dict} />
     </main>
