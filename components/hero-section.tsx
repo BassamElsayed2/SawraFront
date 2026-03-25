@@ -1,13 +1,8 @@
-interface HeroSectionProps {
-  lang: "en" | "ar";
-  dict: any;
-}
-
-export default function HeroSection({ lang, dict }: HeroSectionProps) {
+export default function HeroSection() {
   return (
     <section className="relative h-screen flex items-center justify-center">
       <video
-        src="/main-comp.mp4"
+        src="/hero.mp4"
         autoPlay
         muted
         loop
