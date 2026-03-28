@@ -2,9 +2,7 @@
   "nav": {
     "menu": "المنيو",
     "branches": "الفروع",
-    "home": "الرئيسية",
-    "account": "حسابي",
-    "addressesLink": "العناوين"
+    "home": "الرئيسية"
   },
   "hero": {
     "title": "نكهات أصيلة",
