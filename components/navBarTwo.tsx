@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Globe, ChefHat } from "lucide-react";
 import Image from "next/image";
 import { UserMenu } from "@/components/auth/user-menu";
+import { NavAccountLinks } from "@/components/nav-account-links";
 import CartIcon from "@/components/cart-icon";
 
 interface NavbarProps {
@@ -83,6 +84,8 @@ export default function Navbar({ lang, dict }: NavbarProps) {
               </Link>
             ))}
 
+            <NavAccountLinks lang={lang} dict={dict} variant="desktopLight" />
+
             {/* Cart Icon */}
             <CartIcon lang={lang} dict={dict} variant="light" />
 
@@ -137,6 +140,13 @@ export default function Navbar({ lang, dict }: NavbarProps) {
                       {item.label}
                     </Link>
                   ))}
+
+                  <NavAccountLinks
+                    lang={lang}
+                    dict={dict}
+                    variant="mobileSheet"
+                    onNavigate={() => setIsOpen(false)}
+                  />
 
                   {/* Auth Buttons for Mobile */}
                   <div className="flex flex-col gap-3 md:gap-4 pt-4 border-t border-border/20">
