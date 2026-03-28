@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AddressesList } from "@/components/profile/addresses-list";
 import {
   Card,
@@ -24,13 +24,15 @@ interface AddressesClientProps {
 
 export function AddressesClient({ lang, dict }: AddressesClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push(`/${lang}/auth/signin`);
+      const next = `/${lang}/auth/signin?redirect=${encodeURIComponent(pathname)}`;
+      router.push(next);
     }
-  }, [user, loading, router, lang]);
+  }, [user, loading, router, lang, pathname]);
 
   if (loading) {
     return (

@@ -45,23 +45,10 @@ export function AddressesList({ lang, t }: AddressesListProps) {
       });
     },
     onError: (error: any) => {
-      // Check if the error is due to linked orders
-      const errorMessage = error.message || "";
-      const isLinkedToOrders =
-        errorMessage.includes("linked to existing orders") ||
-        errorMessage.includes("ADDRESS_HAS_ORDERS");
-
-      const description = isLinkedToOrders
-        ? lang === "ar"
-          ? "لا يمكن حذف هذا العنوان لأنه مرتبط بطلبات موجودة. يمكنك تعديل العنوان بدلاً من حذفه."
-          : "Cannot delete this address because it is linked to existing orders. You can edit the address instead of deleting it."
-        : error.message || t.addresses.failedToDelete;
-
       toast({
         title: t.addresses.error,
-        description,
+        description: error.message || t.addresses.failedToDelete,
         variant: "destructive",
-        duration: 5000, // Show for 5 seconds for important message
       });
     },
   });
@@ -88,8 +75,8 @@ export function AddressesList({ lang, t }: AddressesListProps) {
   const handleDelete = (addressId: string) => {
     const confirmMessage =
       lang === "ar"
-        ? "هل أنت متأكد من حذف هذا العنوان؟\n\nملاحظة: لا يمكن حذف العنوان إذا كان مرتبطاً بطلبات موجودة."
-        : "Are you sure you want to delete this address?\n\nNote: Address cannot be deleted if it is linked to existing orders.";
+        ? "هل أنت متأكد من حذف هذا العنوان؟\n\nالطلبات السابقة ستبقى محفوظة دون ربط بهذا العنوان."
+        : "Are you sure you want to delete this address?\n\nPast orders will remain on file without this address link.";
 
     if (window.confirm(confirmMessage)) {
       deleteAddressMutation.mutate(addressId);

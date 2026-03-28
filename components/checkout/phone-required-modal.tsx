@@ -88,7 +88,7 @@ export function PhoneRequiredModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-md max-h-[90dvh] overflow-y-auto p-4 sm:p-6 mx-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {lang === "ar" ? "رقم الهاتف مطلوب" : "Phone Number Required"}

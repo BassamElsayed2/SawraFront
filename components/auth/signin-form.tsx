@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/use-cart";
 import { addressesApi } from "@/services/apiAddresses";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchMe } from "@/store/slices/auth-slice";
+import { trySafeAuthRedirectPath } from "@/lib/auth-redirect";
 
 type SignInFormData = {
   email: string;
@@ -107,6 +108,12 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     }
   };
 
+  const resolvePostAuthPath = async () => {
+    const fromQuery = trySafeAuthRedirectPath(searchParams.get("redirect"));
+    if (fromQuery) return fromQuery;
+    return getRedirectPath();
+  };
+
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     setErrorMessage("");
@@ -120,8 +127,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
         description: t.auth.signInSuccess,
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
@@ -164,8 +170,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
@@ -214,8 +219,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =

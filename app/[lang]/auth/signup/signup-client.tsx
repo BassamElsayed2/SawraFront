@@ -6,22 +6,24 @@ import { useAuth } from "@/hooks/use-auth";
 import { SignUpForm } from "@/components/auth/signup-form";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import { getSafeAuthRedirectPath } from "@/lib/auth-redirect";
 
 interface SignUpClientProps {
   lang: "en" | "ar";
   t: any;
+  redirectParam?: string;
 }
 
-export function SignUpClient({ lang, t }: SignUpClientProps) {
+export function SignUpClient({ lang, t, redirectParam }: SignUpClientProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const whenLoggedInPath = getSafeAuthRedirectPath(redirectParam, `/${lang}/menu`);
 
   useEffect(() => {
-    // If user is already signed in, redirect to menu
     if (!loading && user) {
-      router.push(`/${lang}/menu`);
+      router.push(whenLoggedInPath);
     }
-  }, [user, loading, router, lang]);
+  }, [user, loading, router, whenLoggedInPath]);
 
   // Show loading while checking auth state
   if (loading) {

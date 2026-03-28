@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AddressForm } from "@/components/profile/address-form";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navBarTwo";
@@ -23,6 +23,8 @@ export default function EditAddressClient({
   addressId,
 }: EditAddressClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const signInWithReturn = `/${lang}/auth/signin?redirect=${encodeURIComponent(pathname)}`;
   const { user, loading: authLoading } = useAuth();
   const [address, setAddress] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export default function EditAddressClient({
   useEffect(() => {
     // Check authentication
     if (!authLoading && !user) {
-      router.push(`/${lang}/auth/signin`);
+      router.push(signInWithReturn);
       return;
     }
 
@@ -65,7 +67,7 @@ export default function EditAddressClient({
           err.message?.includes("401") ||
           err.message?.includes("Unauthorized")
         ) {
-          router.push(`/${lang}/auth/signin`);
+          router.push(signInWithReturn);
         } else {
           setError(
             lang === "ar" ? "فشل تحميل العنوان" : "Failed to load address"
@@ -79,7 +81,7 @@ export default function EditAddressClient({
     if (user) {
       fetchAddress();
     }
-  }, [user, authLoading, addressId, lang, router]);
+  }, [user, authLoading, addressId, lang, router, signInWithReturn]);
 
   if (authLoading || loading) {
     return (

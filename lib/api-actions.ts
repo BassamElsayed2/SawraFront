@@ -125,29 +125,34 @@ export async function getLatestProducts(
   limit: number = 10,
   branch_id?: string
 ) {
-  const queryParams = new URLSearchParams();
-  queryParams.set("page", "1");
-  queryParams.set("limit", String(limit));
-  if (branch_id) queryParams.set("branch_id", branch_id);
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.set("page", "1");
+    queryParams.set("limit", String(limit));
+    if (branch_id) queryParams.set("branch_id", branch_id);
 
-  const cacheOptions = {
-    cache: "force-cache" as RequestCache,
-    next: { revalidate: 60 },
-  } as RequestInit & { next?: { revalidate: number } };
+    const cacheOptions = {
+      cache: "force-cache" as RequestCache,
+      next: { revalidate: 60 },
+    } as RequestInit & { next?: { revalidate: number } };
 
-  const response = await serverRequestWithApiKey<any>(
-    `/products?${queryParams.toString()}`,
-    cacheOptions
-  );
+    const response = await serverRequestWithApiKey<any>(
+      `/products?${queryParams.toString()}`,
+      cacheOptions
+    );
 
-  const products = Array.isArray(response)
-    ? response
-    : response?.products || response?.data?.products || response?.data || [];
-  const total = Array.isArray(response)
-    ? response.length
-    : response?.total || response?.data?.total || products.length;
+    const products = Array.isArray(response)
+      ? response
+      : response?.products || response?.data?.products || response?.data || [];
+    const total = Array.isArray(response)
+      ? response.length
+      : response?.total || response?.data?.total || products.length;
 
-  return { products, total };
+    return { products, total };
+  } catch {
+    // Backend unreachable or network error during SSR — degrade gracefully
+    return { products: [], total: 0 };
+  }
 }
 
 /** Top products by order count. Only show when result has at least 10. */
