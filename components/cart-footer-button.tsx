@@ -2,28 +2,17 @@
 
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface CartFooterButtonProps {
   lang: "en" | "ar";
 }
 
 export default function CartFooterButton({ lang }: CartFooterButtonProps) {
-  const { getTotalItems, getTotalPrice, cart } = useCart();
+  const { getTotalItems, getTotalPrice } = useCart();
   const { user } = useAuth();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
