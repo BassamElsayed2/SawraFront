@@ -8,19 +8,20 @@ import Footer from "@/components/footer";
 export default async function CheckoutPage({
   params,
 }: {
-  params: { lang: "en" | "ar" };
+  params: Promise<{ lang: "en" | "ar" }>;
 }) {
-  const dict = await getDictionary(params.lang);
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Navbar - NavbarOne on hero, Navbar on other pages */}
       <div className="sticky top-0 z-50 shadow-sm">
-        <Navbar lang={params.lang} dict={dict} />
+        <Navbar lang={lang} dict={dict} />
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 pt-20">
+      <main className="flex-1 pt-[4.5rem] sm:pt-20 pb-4">
         <Suspense
           fallback={
             <div className="min-h-screen flex items-center justify-center">
@@ -28,12 +29,12 @@ export default async function CheckoutPage({
             </div>
           }
         >
-          <CheckoutClient lang={params.lang} dict={dict} />
+          <CheckoutClient lang={lang} dict={dict} />
         </Suspense>
       </main>
 
       {/* Footer */}
-      <Footer lang={params.lang} dict={dict} />
+      <Footer lang={lang} dict={dict} />
     </div>
   );
 }

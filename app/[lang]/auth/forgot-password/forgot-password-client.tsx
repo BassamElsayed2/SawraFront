@@ -7,22 +7,24 @@ import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import Navbar from "@/components/navBarTwo";
 import Footer from "@/components/footer";
 import { Loader2 } from "lucide-react";
+import { getSafeAuthRedirectPath } from "@/lib/auth-redirect";
 
 interface ForgotPasswordClientProps {
   lang: "en" | "ar";
   t: any;
+  redirectParam?: string;
 }
 
-export function ForgotPasswordClient({ lang, t }: ForgotPasswordClientProps) {
+export function ForgotPasswordClient({ lang, t, redirectParam }: ForgotPasswordClientProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const whenLoggedInPath = getSafeAuthRedirectPath(redirectParam, `/${lang}/menu`);
 
   useEffect(() => {
-    // If user is already signed in, redirect to menu
     if (!loading && user) {
-      router.push(`/${lang}/menu`);
+      router.push(whenLoggedInPath);
     }
-  }, [user, loading, router, lang]);
+  }, [user, loading, router, whenLoggedInPath]);
 
   // Show loading while checking auth state
   if (loading) {

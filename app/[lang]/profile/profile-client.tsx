@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 import Navbar from "@/components/navBarTwo";
 import Footer from "@/components/footer";
@@ -15,13 +15,16 @@ interface ProfilePageClientProps {
 
 export function ProfilePageClient({ lang, dict }: ProfilePageClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push(`/${lang}/auth/signin`);
+      router.push(
+        `/${lang}/auth/signin?redirect=${encodeURIComponent(pathname)}`
+      );
     }
-  }, [user, loading, router, lang]);
+  }, [user, loading, router, lang, pathname]);
 
   if (loading) {
     return (

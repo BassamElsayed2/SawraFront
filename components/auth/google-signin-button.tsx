@@ -75,8 +75,8 @@ export function GoogleSignInButton({
         ? "تسجيل الدخول بحساب جوجل"
         : "Sign in with Google"
       : lang === "ar"
-      ? "إنشاء حساب بواسطة جوجل"
-      : "Sign up with Google";
+        ? "إنشاء حساب بواسطة جوجل"
+        : "Sign up with Google";
 
   // Custom Google button (matching Facebook style)
   return (
@@ -88,7 +88,7 @@ export function GoogleSignInButton({
         if (window.google && buttonRef.current) {
           // Trigger Google Sign-In
           const wrapper = buttonRef.current.querySelector(
-            "div[role='button']"
+            "div[role='button']",
           ) as HTMLElement;
           if (wrapper) {
             wrapper.click();

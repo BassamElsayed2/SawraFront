@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +48,8 @@ export function AddressMapPicker({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Pan map when geolocation returns before Map instance is ready */
+  const pendingMapCenterRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -91,8 +93,14 @@ export function AddressMapPicker({
     );
   }
 
-  const onLoad = useCallback((map: google.maps.Map) => {
-    setMap(map);
+  const onLoad = useCallback((mapInstance: google.maps.Map) => {
+    setMap(mapInstance);
+    const pending = pendingMapCenterRef.current;
+    if (pending) {
+      pendingMapCenterRef.current = null;
+      mapInstance.setCenter(pending);
+      mapInstance.setZoom(15);
+    }
   }, []);
 
   const onUnmount = useCallback(() => {
@@ -112,108 +120,117 @@ export function AddressMapPicker({
     [onLocationSelect]
   );
 
-  const handleAutoFill = async () => {
-    if (!selectedLocation || !map) return;
+  /** Geocode by coordinates — does not rely on React state timing (fixes stale closure from "Use current location"). */
+  const geocodeAndFill = useCallback(
+    async (lat: number, lng: number) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const geocoder = new google.maps.Geocoder();
+        const result = await geocoder.geocode({
+          location: { lat, lng },
+        });
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const geocoder = new google.maps.Geocoder();
+        if (result.results && result.results.length > 0) {
+          const addressComponents = result.results[0].address_components;
+          const formattedAddress = result.results[0].formatted_address;
 
-      const result = await geocoder.geocode({
-        location: selectedLocation,
-      });
+          let street = "";
+          let city = "";
+          let area = "";
 
-      if (result.results && result.results.length > 0) {
-        const addressComponents = result.results[0].address_components;
-        const formattedAddress = result.results[0].formatted_address;
+          addressComponents.forEach((component) => {
+            const types = component.types;
 
-        // Extract address components
-        let street = "";
-        let city = "";
-        let area = "";
+            if (types.includes("route") || types.includes("street_address")) {
+              street = component.long_name;
+            } else if (
+              types.includes("locality") ||
+              types.includes("administrative_area_level_2")
+            ) {
+              city = component.long_name;
+            } else if (
+              types.includes("sublocality") ||
+              types.includes("neighborhood")
+            ) {
+              area = component.long_name;
+            }
+          });
 
-        addressComponents.forEach((component) => {
-          const types = component.types;
-
-          if (types.includes("route") || types.includes("street_address")) {
-            street = component.long_name;
-          } else if (
-            types.includes("locality") ||
-            types.includes("administrative_area_level_2")
-          ) {
-            city = component.long_name;
-          } else if (
-            types.includes("sublocality") ||
-            types.includes("neighborhood")
-          ) {
-            area = component.long_name;
+          if (!street && !city && !area) {
+            const parts = formattedAddress.split(",");
+            street = parts[0] || "";
+            city = parts[1] || "";
+            area = parts[2] || "";
           }
-        });
 
-        // If we couldn't extract specific components, use the formatted address
-        if (!street && !city && !area) {
-          const parts = formattedAddress.split(",");
-          street = parts[0] || "";
-          city = parts[1] || "";
-          area = parts[2] || "";
+          onAddressFill({
+            street: street || formattedAddress,
+            city: city || "",
+            area: area || "",
+          });
         }
-
-        onAddressFill({
-          street: street || formattedAddress,
-          city: city || "",
-          area: area || "",
-        });
+      } catch {
+        const errorMessage =
+          lang === "ar"
+            ? "⚠️ فشل في تحديد العنوان تلقائياً. يرجى التأكد من تفعيل Geocoding API في Google Cloud Console."
+            : "⚠️ Failed to auto-fill address. Please ensure the Geocoding API is enabled in Google Cloud Console.";
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      // Error is logged internally by the geocoding service
-      const errorMessage =
-        lang === "ar"
-          ? "⚠️ فشل في تحديد العنوان تلقائياً. يرجى التأكد من تفعيل Geocoding API في Google Cloud Console."
-          : "⚠️ Failed to auto-fill address. Please ensure the Geocoding API is enabled in Google Cloud Console.";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    },
+    [lang, onAddressFill]
+  );
+
+  const handleAutoFill = async () => {
+    if (!selectedLocation) return;
+    await geocodeAndFill(selectedLocation.lat, selectedLocation.lng);
   };
 
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      setIsLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-
-          setSelectedLocation({ lat, lng });
-          onLocationSelect(lat, lng);
-
-          if (map) {
-            map.setCenter({ lat, lng });
-            map.setZoom(15);
-          }
-
-          // Auto-fill address when getting current location
-          setTimeout(() => {
-            handleAutoFill();
-          }, 1000);
-        },
-        (error) => {
-          setIsLoading(false);
-          const errorMessage =
-            lang === "ar"
-              ? "فشل في الحصول على الموقع الحالي. يرجى التأكد من تفعيل خدمات الموقع."
-              : "Failed to get current location. Please ensure location services are enabled.";
-          setError(errorMessage);
-        }
-      );
-    } else {
-      const errorMessage =
+    if (!navigator.geolocation) {
+      setError(
         lang === "ar"
           ? "المتصفح لا يدعم خدمات الموقع."
-          : "Browser doesn't support geolocation.";
-      setError(errorMessage);
+          : "Browser doesn't support geolocation."
+      );
+      return;
     }
+
+    setError(null);
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        setSelectedLocation({ lat, lng });
+        onLocationSelect(lat, lng);
+
+        if (map) {
+          map.setCenter({ lat, lng });
+          map.setZoom(15);
+        } else {
+          pendingMapCenterRef.current = { lat, lng };
+        }
+
+        await geocodeAndFill(lat, lng);
+      },
+      () => {
+        setIsLoading(false);
+        const errorMessage =
+          lang === "ar"
+            ? "فشل في الحصول على الموقع الحالي. يرجى السماح بالوصول للموقع في المتصفح وتفعيل خدمات الموقع."
+            : "Failed to get current location. Allow location access in your browser and ensure location services are enabled.";
+        setError(errorMessage);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0,
+      }
+    );
   };
 
   // Auto-get current location when it's a new address

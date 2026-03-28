@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AddressForm } from "@/components/profile/address-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -17,13 +17,16 @@ interface AddAddressClientProps {
 
 export function AddAddressClient({ lang, dict }: AddAddressClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading } = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push(`/${lang}/auth/signin`);
+      router.push(
+        `/${lang}/auth/signin?redirect=${encodeURIComponent(pathname)}`
+      );
     }
-  }, [user, loading, router, lang]);
+  }, [user, loading, router, lang, pathname]);
 
   if (loading) {
     return (

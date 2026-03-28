@@ -359,43 +359,46 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
   const BackButton = lang === "ar" ? ArrowRight : ArrowLeft;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-4 sm:py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <div className="container mx-auto px-3 sm:px-4 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-5 sm:mb-8">
           <Link href={`/${lang}/menu`}>
             <Button
               variant="ghost"
-              className="mb-4 hover:bg-white/60 transition-colors"
+              size="sm"
+              className="mb-3 sm:mb-4 -ms-2 sm:ms-0 hover:bg-white/60 transition-colors text-sm sm:text-base"
             >
-              <BackButton className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+              <BackButton className="h-4 w-4 me-2" />
               {lang === "ar" ? "العودة للقائمة" : "Back to Menu"}
             </Button>
           </Link>
-          <h1 className="text-4xl font-bold flex items-center gap-3 text-gray-900">
-            <ShoppingCart className="h-9 w-9 text-red-600" />
-            {lang === "ar" ? "إتمام الطلب" : "Checkout"}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex flex-wrap items-center gap-2 sm:gap-3 text-gray-900">
+            <ShoppingCart className="h-7 w-7 sm:h-9 sm:w-9 shrink-0 text-red-600" />
+            <span className="leading-tight">
+              {lang === "ar" ? "إتمام الطلب" : "Checkout"}
+            </span>
           </h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-5 sm:gap-8">
           {/* Left Side - Order Items */}
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900">
-                <ShoppingCart className="h-6 w-6 text-red-600" />
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2 text-gray-900">
+                <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-red-600" />
                 {lang === "ar" ? "عناصر الطلب" : "Order Items"}
               </h2>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {cart.map((item, index) => (
                   <div
                     key={item.id}
-                    className="border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-red-200 transition-all bg-white"
+                    className="border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:shadow-md hover:border-red-200 transition-all bg-white"
                   >
-                    <div className="flex gap-4">
-                      <div className="relative flex-shrink-0">
-                        <div className="absolute -top-2 -left-2 bg-red-600 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center shadow-lg z-10">
+                    <div className="flex gap-3 sm:gap-4">
+                      <div className="relative shrink-0">
+                        <div className="absolute -top-1.5 -start-1.5 bg-red-600 text-white text-[10px] sm:text-xs font-bold rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center shadow-lg z-10">
                           {index + 1}
                         </div>
                         <Image
@@ -403,12 +406,13 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                           alt={lang === "ar" ? item.title_ar : item.title_en}
                           width={110}
                           height={110}
-                          className="rounded-xl object-cover border border-gray-200"
+                          sizes="(max-width: 640px) 80px, 110px"
+                          className="w-20 h-20 sm:w-[110px] sm:h-[110px] rounded-lg sm:rounded-xl object-cover border border-gray-200"
                         />
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-lg mb-2 text-gray-900">
+                        <h4 className="font-bold text-base sm:text-lg mb-1.5 sm:mb-2 text-gray-900 break-words">
                           {lang === "ar" ? item.title_ar : item.title_en}
                         </h4>
 
@@ -439,12 +443,12 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between mt-3">
-                          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg p-1">
+                        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg p-1 w-fit max-w-full">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-colors"
+                              className="h-9 w-9 sm:h-8 sm:w-8 shrink-0 touch-manipulation hover:bg-red-50 hover:text-red-600 transition-colors"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity - 1)
                               }
@@ -452,14 +456,14 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                               <Minus className="h-4 w-4" />
                             </Button>
 
-                            <span className="w-12 text-center font-bold text-lg text-gray-900">
+                            <span className="min-w-[2.5rem] text-center font-bold text-base sm:text-lg text-gray-900 tabular-nums">
                               {item.quantity}
                             </span>
 
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-red-50 hover:text-red-600 transition-colors"
+                              className="h-9 w-9 sm:h-8 sm:w-8 shrink-0 touch-manipulation hover:bg-red-50 hover:text-red-600 transition-colors"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
@@ -468,14 +472,14 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                             </Button>
                           </div>
 
-                          <div className="flex items-center gap-3">
-                            <span className="text-xl font-bold text-red-600">
+                          <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-3 min-w-0">
+                            <span className="text-lg sm:text-xl font-bold text-red-600 tabular-nums whitespace-nowrap">
                               {item.totalPrice.toFixed(2)} ج.م
                             </span>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-10 w-10 hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
+                              className="h-10 w-10 shrink-0 touch-manipulation hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
                               onClick={() => removeFromCart(item.id)}
                             >
                               <Trash2 className="h-5 w-5" />
@@ -494,21 +498,21 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
           <div className="space-y-6">
             {/* User Info */}
             {user && (
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900">
-                  <User className="h-5 w-5 text-red-600" />
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm">
+                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2 text-gray-900">
+                  <User className="h-5 w-5 shrink-0 text-red-600" />
                   {lang === "ar" ? "معلومات العميل" : "Customer Information"}
                 </h2>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                    <User className="h-5 w-5 text-gray-600" />
-                    <span className="font-semibold text-gray-900">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-start sm:items-center gap-2 sm:gap-3 bg-gray-50 p-3 rounded-lg sm:rounded-xl border border-gray-200">
+                    <User className="h-5 w-5 shrink-0 text-gray-600 mt-0.5 sm:mt-0" />
+                    <span className="font-semibold text-gray-900 text-sm sm:text-base break-words">
                       {user.full_name}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                    <Phone className="h-5 w-5 text-gray-600" />
-                    <span className="font-semibold text-gray-900">
+                  <div className="flex items-center gap-2 sm:gap-3 bg-gray-50 p-3 rounded-lg sm:rounded-xl border border-gray-200">
+                    <Phone className="h-5 w-5 shrink-0 text-gray-600" />
+                    <span className="font-semibold text-gray-900 text-sm sm:text-base break-all">
                       {user.phone}
                     </span>
                   </div>
@@ -517,10 +521,10 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
             )}
 
             {/* Address Selection */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin className="h-5 w-5 text-red-600" />
-                <Label className="text-xl font-bold text-gray-900">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <MapPin className="h-5 w-5 shrink-0 text-red-600" />
+                <Label className="text-lg sm:text-xl font-bold text-gray-900">
                   {lang === "ar" ? "عنوان التوصيل" : "Delivery Address"}
                 </Label>
               </div>
@@ -544,17 +548,19 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                   value={selectedAddress}
                   onValueChange={setSelectedAddress}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full min-h-[2.75rem] text-sm sm:text-base text-start py-2.5 h-auto [&>span]:line-clamp-2 sm:[&>span]:line-clamp-1 [&>span]:text-start">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[min(24rem,70dvh)] w-[var(--radix-select-trigger-width)] max-w-[calc(100vw-1.5rem)]">
                     {addresses.map((address) => (
                       <SelectItem key={address.id} value={address.id}>
-                        <div className="flex items-start space-x-2">
-                          <MapPin className="h-4 w-4 text-gray-400 mt-1" />
-                          <div>
-                            <div className="font-semibold">{address.title}</div>
-                            <div className="text-sm text-gray-500">
+                        <div className="flex items-start gap-2 py-0.5">
+                          <MapPin className="h-4 w-4 shrink-0 text-gray-400 mt-0.5" />
+                          <div className="min-w-0 text-start">
+                            <div className="font-semibold text-sm sm:text-base break-words">
+                              {address.title}
+                            </div>
+                            <div className="text-xs sm:text-sm text-gray-500 break-words">
                               {address.street}, {address.area}, {address.city}
                             </div>
                           </div>
@@ -582,7 +588,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
 
             {/* Delivery Fee */}
             {selectedAddress && (
-              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm">
                 {loadingDeliveryFee ? (
                   <Alert className="bg-gray-50 border-gray-300">
                     <div className="flex items-center gap-3">
@@ -615,31 +621,31 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                     <AlertTitle className="text-red-900 font-bold">
                       {lang === "ar" ? "التوصيل متاح!" : "Delivery available!"}
                     </AlertTitle>
-                    <AlertDescription className="text-gray-700 space-y-2 mt-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-900">
+                    <AlertDescription className="text-gray-700 space-y-2 sm:space-y-2 mt-2 text-sm sm:text-base">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-2">
+                        <span className="font-semibold text-gray-900 shrink-0">
                           {lang === "ar" ? "الفرع:" : "Branch:"}
                         </span>
-                        <span className="text-gray-800">
+                        <span className="text-gray-800 text-start sm:text-end break-words">
                           {lang === "ar"
                             ? deliveryFeeData.nearest_branch.name_ar
                             : deliveryFeeData.nearest_branch.name_en}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-gray-900">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center sm:gap-2">
+                        <span className="font-semibold text-gray-900 shrink-0">
                           {lang === "ar" ? "المسافة:" : "Distance:"}
                         </span>
-                        <span className="text-gray-800">
+                        <span className="text-gray-800 tabular-nums">
                           {deliveryFeeData.distance_km.toFixed(2)}{" "}
                           {lang === "ar" ? "كم" : "km"}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center font-bold text-lg border-t border-red-200 pt-2">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-center font-bold text-base sm:text-lg border-t border-red-200 pt-2 gap-y-1">
                         <span className="text-gray-900">
                           {lang === "ar" ? "رسوم التوصيل:" : "Delivery fee:"}
                         </span>
-                        <span className="text-red-600">
+                        <span className="text-red-600 tabular-nums">
                           {deliveryFeeData.fee.toFixed(2)}{" "}
                           {lang === "ar" ? "ج.م" : "EGP"}
                         </span>
@@ -651,13 +657,13 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
             )}
 
             {/* Order Notes */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm">
               <Label
                 htmlFor="orderNotes"
-                className="text-xl font-bold mb-3 block text-gray-900"
+                className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 block text-gray-900"
               >
                 {lang === "ar" ? "ملاحظات الطلب" : "Order Notes"}
-                <span className="text-sm font-normal text-gray-500 ml-2 rtl:ml-0 rtl:mr-2">
+                <span className="text-xs sm:text-sm font-normal text-gray-500 ms-2">
                   ({lang === "ar" ? "اختياري" : "Optional"})
                 </span>
               </Label>
@@ -671,34 +677,34 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                     : "Any special notes for your order?"
                 }
                 rows={4}
-                className="resize-none border-gray-300 focus:border-red-500 focus:ring-red-500"
+                className="resize-none min-h-[100px] text-base border-gray-300 focus:border-red-500 focus:ring-red-500"
               />
             </div>
 
             {/* Order Summary */}
-            <div className="bg-white rounded-2xl p-6 border-2 border-red-200 shadow-sm">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
-                <ShoppingCart className="h-5 w-5 text-red-600" />
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-red-200 shadow-sm">
+              <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 text-gray-900">
+                <ShoppingCart className="h-5 w-5 shrink-0 text-red-600" />
                 {lang === "ar" ? "ملخص الطلب" : "Order Summary"}
               </h3>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-lg">
-                  <span className="text-gray-700">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex justify-between items-start gap-3 text-base sm:text-lg">
+                  <span className="text-gray-700 shrink-0">
                     {lang === "ar" ? "المجموع الفرعي:" : "Subtotal:"}
                   </span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 tabular-nums text-end">
                     {getTotalPrice().toFixed(2)} ج.م
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center text-lg">
-                  <span className="text-gray-700">
+                <div className="flex justify-between items-start gap-3 text-base sm:text-lg">
+                  <span className="text-gray-700 shrink-0">
                     {lang === "ar" ? "رسوم التوصيل:" : "Delivery Fee:"}
                   </span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 tabular-nums text-end">
                     {loadingDeliveryFee ? (
-                      <span className="text-sm text-gray-500">
+                      <span className="text-xs sm:text-sm text-gray-500">
                         {lang === "ar" ? "جاري الحساب..." : "Calculating..."}
                       </span>
                     ) : deliveryFeeData ? (
@@ -709,11 +715,11 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                   </span>
                 </div>
 
-                <div className="border-t-2 border-red-200 pt-4 flex justify-between items-center">
-                  <span className="text-2xl font-bold text-gray-900">
+                <div className="border-t-2 border-red-200 pt-3 sm:pt-4 flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-baseline">
+                  <span className="text-xl sm:text-2xl font-bold text-gray-900">
                     {lang === "ar" ? "الإجمالي:" : "Total:"}
                   </span>
-                  <span className="text-3xl font-black text-red-600">
+                  <span className="text-2xl sm:text-3xl font-black text-red-600 tabular-nums">
                     {(getTotalPrice() + (deliveryFeeData?.fee || 0)).toFixed(2)}{" "}
                     ج.م
                   </span>
@@ -734,7 +740,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                 !!deliveryFeeError ||
                 !deliveryFeeData
               }
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-7 text-xl rounded-xl shadow-lg hover:shadow-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-5 sm:py-7 min-h-[52px] text-base sm:text-xl rounded-xl shadow-lg hover:shadow-xl transition-all disabled:bg-gray-400 disabled:cursor-not-allowed touch-manipulation"
             >
               {isInitiatingPayment ? (
                 <span className="flex items-center justify-center gap-3">

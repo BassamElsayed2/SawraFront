@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,7 @@ import { useCart } from "@/hooks/use-cart";
 import { addressesApi } from "@/services/apiAddresses";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchMe } from "@/store/slices/auth-slice";
+import { trySafeAuthRedirectPath } from "@/lib/auth-redirect";
 
 type SignUpFormData = {
   email: string;
@@ -42,6 +43,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
   const [isCheckingPhone, setIsCheckingPhone] = useState(false);
   const { signUp, checkPhoneExists } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const dispatch = useAppDispatch();
   const googleSignInMutation = useGoogleSignIn();
@@ -73,6 +75,12 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
       // On error, redirect to profile as fallback
       return `/${lang}/profile`;
     }
+  };
+
+  const resolvePostAuthPath = async () => {
+    const fromQuery = trySafeAuthRedirectPath(searchParams.get("redirect"));
+    if (fromQuery) return fromQuery;
+    return getRedirectPath();
   };
 
   // تحليل قوة كلمة المرور
@@ -252,8 +260,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
         description: t.auth.signUpSuccess,
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       let errorMsg =
@@ -310,8 +317,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
           : "Successfully signed in",
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
@@ -368,8 +374,7 @@ export function SignUpForm({ lang, t }: SignUpFormProps) {
           : "Successfully signed in",
       });
 
-      // Determine redirect path based on user state
-      const redirectPath = await getRedirectPath();
+      const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
       const errorMsg =
