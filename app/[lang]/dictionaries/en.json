@@ -2,7 +2,9 @@
   "nav": {
     "menu": "Menu",
     "branches": "Branches",
-    "home": "Home"
+    "home": "Home",
+    "account": "My account",
+    "addressesLink": "Addresses"
   },
   "hero": {
     "title": "Authentic Flavors",
