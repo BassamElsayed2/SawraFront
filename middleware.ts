@@ -5,6 +5,25 @@ const locales = ["ar", "en"];
 const defaultLocale = "ar";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/**
+ * Session cookie is set on the API host (e.g. api.x.com). The browser does NOT send it to the
+ * frontend host (e.g. www.x.com), so Next middleware never sees `food_cms_session` on Vercel.
+ * Same for localhost:3000 vs localhost:5000 — different origins; cookie stays on :5000.
+ * Auth must rely on client fetch(..., credentials) to the API; skip cookie gate here.
+ */
+function isApiDifferentOriginThanPage(request: NextRequest): boolean {
+  if (!API_URL?.startsWith("http")) return false;
+  try {
+    const api = new URL(API_URL);
+    const page = request.nextUrl;
+    const apiPort = api.port || (api.protocol === "https:" ? "443" : "80");
+    const pagePort = page.port || (page.protocol === "https:" ? "443" : "80");
+    return api.hostname !== page.hostname || apiPort !== pagePort;
+  } catch {
+    return false;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   try {
     const pathname = request.nextUrl.pathname;
@@ -42,6 +61,11 @@ export async function middleware(request: NextRequest) {
 
     if (isProfileRoute) {
       const locale = pathname.split("/")[1] || defaultLocale;
+
+      if (isApiDifferentOriginThanPage(request)) {
+        return NextResponse.next();
+      }
+
       const sessionCookie = request.cookies.get("food_cms_session");
 
       if (!sessionCookie?.value) {
