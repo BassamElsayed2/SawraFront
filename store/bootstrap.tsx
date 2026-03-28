@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchMe } from "@/store/slices/auth-slice";
@@ -46,7 +46,9 @@ export function CartBootstrap() {
       }) as CartBootstrapState
   );
 
-  useEffect(() => {
+  // Runs synchronously after DOM updates, before the browser paints — so cart
+  // matches localStorage on the first visible frame (no delayed cart bar).
+  useLayoutEffect(() => {
     let storedCart: unknown = null;
 
     try {

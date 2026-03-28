@@ -12,6 +12,7 @@ import BestsellersSlider from "@/components/bestsellers-slider";
 import HomeProductsSection from "@/components/home-products-section";
 import Footer from "@/components/footer";
 import NavbarOne from "@/components/navbarOne";
+import CartFooterButton from "@/components/cart-footer-button";
 
 export default async function HomePage({
   params,
@@ -83,6 +84,7 @@ export default async function HomePage({
       </div>
 
       <Footer lang={lang} dict={dict} />
+      <CartFooterButton lang={lang} />
     </main>
   );
 }
