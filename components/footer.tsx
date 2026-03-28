@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { NavAccountLinks } from "@/components/nav-account-links";
 import {
   ChefHat,
   Phone,
@@ -68,7 +67,6 @@ export default function Footer({ lang, dict }: FooterProps) {
                   {dict.nav.branches}
                 </Link>
               </li>
-              <NavAccountLinks lang={lang} dict={dict} variant="footer" />
             </ul>
           </div>
 

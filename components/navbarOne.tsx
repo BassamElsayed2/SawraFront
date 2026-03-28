@@ -8,7 +8,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, Globe, ChefHat } from "lucide-react";
 import Image from "next/image";
 import { UserMenu } from "@/components/auth/user-menu";
-import { NavAccountLinks } from "@/components/nav-account-links";
 import CartIcon from "@/components/cart-icon";
 
 interface NavbarProps {
@@ -42,7 +41,7 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
 
     const isMobile =
       /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
-        navigator.userAgent
+        navigator.userAgent,
       );
 
     if (isMobile) {
@@ -51,7 +50,7 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
       alert(
         lang === "ar"
           ? "الاتصال متاح فقط من الهاتف"
-          : "Calling is available only on mobile"
+          : "Calling is available only on mobile",
       );
     }
   };
@@ -117,8 +116,6 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
             ))}
-
-            <NavAccountLinks lang={lang} dict={dict} variant="desktopDark" />
 
             {/* Cart Icon */}
             <CartIcon lang={lang} dict={dict} variant="dark" />
@@ -199,13 +196,6 @@ export default function NavbarOne({ lang, dict }: NavbarProps) {
                       {item.label}
                     </Link>
                   ))}
-
-                  <NavAccountLinks
-                    lang={lang}
-                    dict={dict}
-                    variant="mobileSheet"
-                    onNavigate={() => setIsOpen(false)}
-                  />
 
                   {/* Auth Buttons for Mobile */}
                   <div className="flex flex-col gap-3 md:gap-4 pt-4 border-t border-border/20">
