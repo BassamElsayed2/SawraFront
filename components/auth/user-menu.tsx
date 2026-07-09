@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { LogOut, User, MapPin, History, Loader2 } from "lucide-react";
@@ -40,7 +39,29 @@ interface UserMenuProps {
   lang: string;
   t: Translations;
   isMobile?: boolean;
-  variant?: "light" | "dark"; // light for navBarTwo (white bg), dark for navbarOne (dark bg)
+  variant?: "light" | "dark";
+}
+
+function MobileMenuLink({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 transition-colors hover:bg-red-50 hover:text-red-600 active:scale-[0.99]"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-red-600">
+        <Icon className="h-4 w-4" />
+      </span>
+      {label}
+    </Link>
+  );
 }
 
 export function UserMenu({
@@ -50,7 +71,6 @@ export function UserMenu({
   variant = "dark",
 }: UserMenuProps) {
   const { user, signOut } = useAuth();
-  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,19 +95,16 @@ export function UserMenu({
     // Mobile Layout
     if (isMobile) {
       return (
-        <div className="flex flex-col gap-3 w-full">
-          <Link href={`/${lang}/auth/signin`} className="w-full">
-            <Button
-              variant="outline"
-              className="w-full bg-transparent border-red-600/50 text-foreground hover:bg-red-50 hover:border-red-600 transition-all duration-300 font-medium py-6 rounded-xl shadow-sm hover:shadow-md"
-            >
+        <div className="grid grid-cols-2 gap-2">
+          <Link href={`/${lang}/auth/signin`} className="block">
+            <span className="flex h-11 items-center justify-center rounded-xl border border-red-200 bg-white text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 active:scale-[0.98]">
               {t.auth.signIn}
-            </Button>
+            </span>
           </Link>
-          <Link href={`/${lang}/auth/signup`} className="w-full">
-            <Button className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white border-none transition-all duration-300 font-medium py-6 rounded-xl shadow-md hover:shadow-lg">
+          <Link href={`/${lang}/auth/signup`} className="block">
+            <span className="flex h-11 items-center justify-center rounded-xl bg-red-600 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-500 active:scale-[0.98]">
               {t.auth.signUp}
-            </Button>
+            </span>
           </Link>
         </div>
       );
@@ -138,72 +155,58 @@ export function UserMenu({
   // Mobile Layout for logged in user
   if (isMobile) {
     return (
-      <div className="flex flex-col space-y-3 w-full">
-        {/* User Info Card */}
-        <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl">
-          <Avatar className="h-12 w-12 ring-2 ring-red-600">
-            <AvatarFallback className="bg-red-600 text-white">
+      <div className="space-y-2">
+        <div className="flex items-center gap-3 rounded-xl bg-red-50 px-3 py-3">
+          <Avatar className="h-11 w-11 ring-2 ring-red-600">
+            <AvatarFallback className="bg-red-600 text-white text-sm">
               {user?.full_name
                 ? getInitials(user.full_name)
                 : user.email?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <p className="text-sm font-semibold text-foreground">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-gray-900">
               {user?.full_name || t.common?.user || "User"}
             </p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="truncate text-xs text-gray-500" dir="ltr">
+              {user.email}
+            </p>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="flex flex-col gap-2">
-          <Link href={`/${lang}/profile`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-red-50 hover:text-red-600 transition-all duration-200 py-6 rounded-xl font-medium"
-            >
-              <User className="h-5 w-5" />
-              <span>{t.profile.title}</span>
-            </Button>
-          </Link>
-          <Link href={`/${lang}/profile/addresses`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-red-50 hover:text-red-600 transition-all duration-200 py-6 rounded-xl font-medium"
-            >
-              <MapPin className="h-5 w-5" />
-              <span>{t.profile.addresses}</span>
-            </Button>
-          </Link>
-          <Link href={`/${lang}/profile/orders`}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 hover:bg-red-50 hover:text-red-600 transition-all duration-200 py-6 rounded-xl font-medium"
-            >
-              <History className="h-5 w-5" />
-              <span>{t.profile.orderHistory}</span>
-            </Button>
-          </Link>
-          <div className="border-t border-border/20 my-2" />
-          <Button
-            onClick={handleSignOut}
-            disabled={isLoading}
-            variant="ghost"
-            className="w-full justify-start gap-3 hover:bg-red-50 hover:text-red-600 transition-all duration-200 py-6 rounded-xl font-medium text-red-600 disabled:opacity-70"
-          >
+        <MobileMenuLink
+          href={`/${lang}/profile`}
+          icon={User}
+          label={t.profile.title}
+        />
+        <MobileMenuLink
+          href={`/${lang}/profile/addresses`}
+          icon={MapPin}
+          label={t.profile.addresses}
+        />
+        <MobileMenuLink
+          href={`/${lang}/profile/orders`}
+          icon={History}
+          label={t.profile.orderHistory}
+        />
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          disabled={isLoading}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-60 active:scale-[0.99]"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100">
             {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
             )}
-            <span>
-              {isLoading
-                ? t.auth.signingOut || "جاري تسجيل الخروج..."
-                : t.auth.signOut}
-            </span>
-          </Button>
-        </div>
+          </span>
+          {isLoading
+            ? t.auth.signingOut || "جاري تسجيل الخروج..."
+            : t.auth.signOut}
+        </button>
       </div>
     );
   }

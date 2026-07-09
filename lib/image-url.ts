@@ -7,44 +7,54 @@ function getBackendBaseUrl(): string {
   return base || (typeof window !== "undefined" ? "" : "http://localhost:5000");
 }
 
+/** Logo shown when a product has no image or the file fails to load */
+export const FALLBACK_LOGO = "/LogoElSawra.png";
+
 /** Supabase storage host - we never load images from it */
 const SUPABASE_STORAGE_REGEX =
   /^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//;
+
+function toBackendUploadsPath(path: string): string {
+  const base = getBackendBaseUrl();
+  const normalized = path.replace(/\/+uploads\//, "/uploads/");
+  return base ? `${base}${normalized}` : normalized;
+}
 
 /**
  * Returns the full image URL. Images are always loaded from the current backend
  * (never from Supabase). Supabase URLs are rewritten to backend /uploads/.
  */
 export function getImageUrl(url: string | null | undefined): string {
-  if (!url) return "/placeholder.svg";
+  if (!url || !url.trim()) return FALLBACK_LOGO;
 
+  const trimmed = url.trim();
   const base = getBackendBaseUrl();
 
-  // Never use Supabase: rewrite to backend /uploads/ or placeholder
-  if (SUPABASE_STORAGE_REGEX.test(url)) {
-    const m = url.match(
+  // Never use Supabase: rewrite to backend /uploads/
+  if (SUPABASE_STORAGE_REGEX.test(trimmed)) {
+    const m = trimmed.match(
       /^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/([^/]+)\/(.+)$/
     );
-    if (m && base) return `${base}/uploads/${m[1]}/${m[2]}`;
-    return "/placeholder.svg";
+    if (m) return toBackendUploadsPath(`/uploads/${m[1]}/${m[2]}`);
+    return FALLBACK_LOGO;
   }
 
-  // Rewrite any full URL containing /uploads/ to use current backend base
-  const uploadsMatch = url.match(/^(https?:\/\/[^/]+)(\/uploads\/.*)$/);
-  if (uploadsMatch) {
-    return base ? `${base}${uploadsMatch[2]}` : url;
+  // Any absolute URL containing /uploads/ → current backend (handles //uploads and old hosts)
+  const uploadsPathMatch = trimmed.match(/\/+uploads\/(.+)$/);
+  if (uploadsPathMatch) {
+    return toBackendUploadsPath(`/uploads/${uploadsPathMatch[1]}`);
   }
 
   // Relative path
-  if (url.startsWith("/")) {
-    if (!base) return url;
-    const path = url.startsWith("/uploads/") ? url : `/uploads${url}`;
+  if (trimmed.startsWith("/")) {
+    if (!base) return trimmed;
+    const path = trimmed.startsWith("/uploads/") ? trimmed : `/uploads${trimmed}`;
     return `${base}${path}`;
   }
-  if (!url.startsWith("http")) {
-    if (!base) return url;
-    return `${base}/uploads/${url.replace(/^\/+/, "")}`;
+  if (!trimmed.startsWith("http")) {
+    if (!base) return trimmed;
+    return `${base}/uploads/${trimmed.replace(/^\/+/, "")}`;
   }
 
-  return url;
+  return FALLBACK_LOGO;
 }

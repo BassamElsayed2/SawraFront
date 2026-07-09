@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Phone, MapPin, Loader2 } from "lucide-react";
 import { Branch } from "@/services/apiBranches";
 import { getBranches as fetchBranches } from "@/lib/api-actions";
-import { getImageUrl } from "@/lib/image-url";
+import ProductImage from "@/components/product-image";
 
 interface BranchesGridProps {
   lang: "en" | "ar";
@@ -152,13 +152,11 @@ export default function BranchesGrid({ lang, dict, initialBranches = [] }: Branc
         >
           <CardContent className="p-0">
             <div className="aspect-[4/3] overflow-hidden">
-              <img
-                src={getImageUrl(branch.image)}
+              <ProductImage
+                src={branch.image}
                 alt={lang === "ar" ? branch.name_ar : branch.name_en}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.currentTarget.src = "/placeholder.svg";
-                }}
+                fallbackClassName="w-full h-full object-contain bg-gray-50 p-8"
               />
             </div>
             <div className="p-6">

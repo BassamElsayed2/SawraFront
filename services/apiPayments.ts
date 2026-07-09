@@ -29,6 +29,7 @@ export interface InitiatePaymentData {
   customer_name: string;
   customer_email?: string;
   customer_phone?: string;
+  lang?: "ar" | "en";
 }
 
 export interface InitiatePaymentResponse {

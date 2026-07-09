@@ -3,25 +3,58 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Globe, ChefHat } from "lucide-react";
+import {
+  Menu,
+  Globe,
+  Home,
+  UtensilsCrossed,
+  MapPin,
+  ChefHat,
+} from "lucide-react";
 import Image from "next/image";
 import { UserMenu } from "@/components/auth/user-menu";
 import CartIcon from "@/components/cart-icon";
+import { MobileNavDrawer } from "@/components/mobile-nav-drawer";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   lang: "en" | "ar";
   dict: any;
 }
 
+const navIcons = {
+  home: Home,
+  menu: UtensilsCrossed,
+  branches: MapPin,
+} as const;
+
 export default function Navbar({ lang, dict }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const isAr = lang === "ar";
+
+  const navItems = [
+    { href: `/${lang}`, label: dict.nav.home, icon: navIcons.home, exact: true },
+    { href: `/${lang}/menu`, label: dict.nav.menu, icon: navIcons.menu },
+    {
+      href: `/${lang}/branches`,
+      label: dict.nav.branches,
+      icon: navIcons.branches,
+    },
+  ];
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const toggleLanguage = () => {
@@ -30,129 +63,131 @@ export default function Navbar({ lang, dict }: NavbarProps) {
     window.location.href = newPath;
   };
 
-  const navItems = [
-    { href: `/${lang}`, label: dict.nav.home },
-    { href: `/${lang}/menu`, label: dict.nav.menu },
-    { href: `/${lang}/branches`, label: dict.nav.branches },
-  ];
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
-  // Render null or a placeholder until mounted to prevent hydration issues
   if (!mounted) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50  backdrop-blur-md border-b border-border/50 shadow-sm py-10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <ChefHat className="h-10 w-10 text-foreground" />
-              <span className="text-2xl font-bold text-foreground">
-                Restaurant
-              </span>
-            </div>
-            <div className="h-8 w-32 bg-gray-200 rounded animate-pulse"></div>
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-white/90 py-3 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <ChefHat className="h-8 w-8 text-red-600" />
+            <div className="h-5 w-24 animate-pulse rounded bg-gray-200" />
           </div>
+          <div className="h-9 w-32 animate-pulse rounded-full bg-gray-200" />
         </div>
-      </nav>
+      </header>
     );
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50  backdrop-blur-md border-b border-border/50 shadow-sm py-2">
-      <div className="container mx-auto px-6 ">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href={`/${lang}`} className="flex items-center group">
-            <Image
-              width={130}
-              height={40}
-              src="/LogoElSawra.png"
-              alt="El Sawra Restaurant"
-              className="object-contain transition-transform duration-200 group-hover:scale-105 "
-            />
-          </Link>
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        scrolled
+          ? "border-b border-gray-200/80 bg-white/95 py-2 shadow-md shadow-gray-200/40 backdrop-blur-xl"
+          : "border-b border-gray-100/80 bg-white/85 py-2.5 backdrop-blur-lg sm:py-3",
+      )}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 sm:px-6">
+        {/* Logo */}
+        <Link
+          href={`/${lang}`}
+          className="group flex shrink-0 items-center"
+        >
+          <Image
+            width={120}
+            height={36}
+            src="/LogoElSawra.png"
+            alt="El Sawra Restaurant"
+            className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105 sm:h-9"
+            priority
+          />
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-6 xl:space-x-10 rtl:space-x-reverse">
-            {navItems.map((item) => (
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 lg:flex xl:gap-2">
+          {navItems.map((item) => {
+            const active = isActive(item.href, item.exact);
+            const Icon = item.icon;
+            return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-foreground/80 hover:text-red-500 transition-all duration-200 font-[200] text-[13px] relative group text-black"
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                  active
+                    ? "bg-red-600 text-white shadow-sm shadow-red-200"
+                    : "text-gray-600 hover:bg-red-50 hover:text-red-600",
+                )}
               >
+                <Icon className="h-4 w-4" />
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-            ))}
+            );
+          })}
+        </nav>
 
-            {/* Cart Icon */}
-            <CartIcon lang={lang} dict={dict} variant="light" />
+        {/* Desktop actions */}
+        <div className="hidden items-center gap-1.5 lg:flex xl:gap-2">
+          <CartIcon lang={lang} dict={dict} variant="light" />
+          <UserMenu lang={lang} t={dict} variant="light" />
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-red-600 px-3.5 text-sm font-semibold text-white shadow-sm shadow-red-200 transition-all hover:bg-red-500 active:scale-[0.98] xl:px-4"
+          >
+            <Globe className="h-4 w-4" />
+            {lang === "en" ? "العربية" : "English"}
+          </button>
+        </div>
 
-            {/* User Menu */}
-            <UserMenu lang={lang} t={dict} variant="light" />
+        {/* Mobile actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden">
+          <CartIcon lang={lang} dict={dict} variant="light" />
 
-            <Button
-              onClick={toggleLanguage}
-              variant="outline"
-              size="sm"
-              className="bg-red-600 border-none text-foreground hover:bg-red-500 text-white hover:border-red-500 transition-all duration-200 font-medium px-3 xl:px-4 py-2"
-            >
-              <Globe className="h-4 w-4 mr-1.5 xl:mr-2 rtl:mr-0 rtl:ml-1.5 xl:rtl:ml-2" />
-              {lang === "en" ? "العربية" : "English"}
-            </Button>
-          </div>
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            aria-label={lang === "en" ? "Switch to Arabic" : "Switch to English"}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white shadow-sm transition-all hover:bg-red-500 active:scale-[0.98]"
+          >
+            <Globe className="h-4 w-4" />
+          </button>
 
-          {/* Mobile & Tablet Navigation */}
-          <div className="lg:hidden flex items-center space-x-3 rtl:space-x-reverse">
-            <CartIcon lang={lang} dict={dict} variant="light" />
-
-            <Button
-              onClick={toggleLanguage}
-              variant="outline"
-              size="sm"
-              className="bg-red-600 border-none text-foreground hover:bg-red-500 text-white hover:border-red-500 transition-all duration-200"
-            >
-              <Globe className="h-4 w-4 " />
-            </Button>
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="bg-red-600 border-none text-foreground hover:bg-red-500 text-white hover:border-red-500 transition-all duration-200"
-                >
-                  <Menu className="h-4 w-4 " />
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side={lang === "ar" ? "left" : "right"}
-                className="w-[320px] sm:w-[380px] md:w-[420px] bg-background/95 backdrop-blur-md"
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                aria-label={isAr ? "فتح القائمة" : "Open menu"}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-all hover:border-red-200 hover:text-red-600 active:scale-[0.98]"
               >
-                <div className="flex flex-col space-y-6 mt-8 px-2">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="text-xl md:text-2xl font-medium hover:text-red-500 transition-colors duration-200 py-3 md:py-4 border-b border-border/20 last:border-b-0"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
 
-                  {/* Auth Buttons for Mobile */}
-                  <div className="flex flex-col gap-3 md:gap-4 pt-4 border-t border-border/20">
-                    <UserMenu
-                      lang={lang}
-                      t={dict}
-                      isMobile={true}
-                      variant="light"
-                    />
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+            <SheetContent
+              side="left"
+              showClose={false}
+              hideTitle
+              title={isAr ? "القائمة" : "Menu"}
+              className="border-0 p-0 shadow-2xl"
+            >
+              <MobileNavDrawer
+                lang={lang}
+                dict={dict}
+                navItems={navItems}
+                isActive={isActive}
+                onClose={() => setIsOpen(false)}
+                onToggleLanguage={toggleLanguage}
+                userMenuVariant="light"
+              />
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

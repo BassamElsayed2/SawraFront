@@ -212,7 +212,10 @@ export const api = {
     image: (file: File, bucket?: string, folder?: string) =>
       apiClient.uploadFile("/upload/image", file, { bucket, folder }),
     branchImage: (file: File, folder?: string) =>
-      apiClient.uploadFile("/upload/branch-image", file, { folder }),
+      apiClient.uploadFile("/upload/image", file, {
+        bucket: "branches",
+        folder: folder ?? "branches",
+      }),
     avatarImage: (file: File, folder?: string) =>
       apiClient.uploadFile("/upload/image", file, {
         bucket: "AVATARS",

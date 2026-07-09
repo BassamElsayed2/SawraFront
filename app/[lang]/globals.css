@@ -71,23 +71,30 @@
 .nav {
   max-width: 1250px;
   position: absolute;
-  top: 2rem;
+  top: 1rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(12px);
+  width: calc(100% - 1.5rem);
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 9999px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .nav {
+    top: 1.25rem;
+    width: calc(100% - 2rem);
+    padding: 0.5rem 1rem;
+  }
 }
 
 .font-arabic {
@@ -167,18 +174,18 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.2);
+  padding: 7px 14px;
+  background: rgba(220, 38, 38, 0.85);
   color: white;
-  border: none;
-  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-
+  transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
 }
 
 .hotline-button::before {
@@ -202,9 +209,9 @@ html {
 }
 
 .hotline-button:hover {
-  transform: translateY(-2px);
-
-  background: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  background: rgba(220, 38, 38, 1);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
 }
 
 .hotline-button:active {

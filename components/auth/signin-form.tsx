@@ -19,6 +19,18 @@ import { addressesApi } from "@/services/apiAddresses";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchMe } from "@/store/slices/auth-slice";
 import { trySafeAuthRedirectPath } from "@/lib/auth-redirect";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Loader2,
+  LogIn,
+  X,
+} from "lucide-react";
+
+const ERROR_ALERT_DURATION_MS = 6000;
 
 type SignInFormData = {
   email: string;
@@ -34,6 +46,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { signIn } = useAuth();
   const router = useRouter();
@@ -43,67 +56,82 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   const googleSignInMutation = useGoogleSignIn();
   const facebookSignInMutation = useFacebookSignIn();
   const { getTotalItems } = useCart();
+  const isAr = lang === "ar";
+  const isAnyLoading = isLoading || isGoogleLoading || isFacebookLoading;
 
-  // التحقق من معامل الخطأ في URL
+  const clearError = () => setErrorMessage("");
+
+  useEffect(() => {
+    if (!errorMessage) return;
+
+    const timer = setTimeout(clearError, ERROR_ALERT_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [errorMessage]);
+
   useEffect(() => {
     const error = searchParams.get("error");
     if (error === "admin-account") {
-      const msg =
-        lang === "ar"
-          ? "هذا الحساب مخصص للإدارة. يرجى استخدام لوحة التحكم للدخول."
-          : "This account is for admin use. Please use the dashboard to sign in.";
+      const msg = isAr
+        ? "هذا الحساب مخصص للإدارة. يرجى استخدام لوحة التحكم للدخول."
+        : "This account is for admin use. Please use the dashboard to sign in.";
       setErrorMessage(msg);
       toast({
-        title: lang === "ar" ? "خطأ" : "Error",
+        title: isAr ? "خطأ" : "Error",
         description: msg,
         variant: "destructive",
       });
     }
-  }, [searchParams, lang, toast]);
+  }, [searchParams, isAr, toast]);
 
   const signInSchema = z.object({
     email: z
       .string()
-      .min(1, lang === "ar" ? "البريد الإلكتروني مطلوب" : "Email is required")
-      .email(
-        lang === "ar" ? "البريد الإلكتروني غير صحيح" : "Invalid email address"
-      ),
+      .min(1, isAr ? "البريد الإلكتروني مطلوب" : "Email is required")
+      .email(isAr ? "البريد الإلكتروني غير صحيح" : "Invalid email address"),
     password: z
       .string()
-      .min(1, lang === "ar" ? "كلمة المرور مطلوبة" : "Password is required"),
+      .min(1, isAr ? "كلمة المرور مطلوبة" : "Password is required"),
   });
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
   });
 
-  // Helper function to determine redirect path after sign in
+  useEffect(() => {
+    const subscription = watch((_, { name, type }) => {
+      if (
+        errorMessage &&
+        type === "change" &&
+        (name === "email" || name === "password")
+      ) {
+        clearError();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, errorMessage]);
+
   const getRedirectPath = async () => {
     try {
-      // Check if user has addresses
       const { data: addresses, error } = await addressesApi.getAddresses();
 
       if (error || !addresses || addresses.length === 0) {
-        // No addresses - redirect to add address page
         return `/${lang}/profile/addresses/add`;
       }
 
-      // User has addresses - check cart
       const cartItemsCount = getTotalItems();
 
       if (cartItemsCount === 0) {
-        // Cart is empty - redirect to menu
         return `/${lang}/menu`;
       }
 
-      // Has address and cart items - redirect to checkout
       return `/${lang}/checkout`;
-    } catch (error) {
-      // On error, redirect to profile as fallback
+    } catch {
       return `/${lang}/profile`;
     }
   };
@@ -121,31 +149,29 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     try {
       await signIn(data.email, data.password);
 
-      // If we reach here, sign in was successful
       toast({
-        title: lang === "ar" ? "نجح" : "Success",
+        title: isAr ? "نجح" : "Success",
         description: t.auth.signInSuccess,
       });
 
       const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
-      // التحقق من رسالة الخطأ الخاصة بحسابات الإدارة
       const isAdminAccount =
         error?.message?.includes("مخصص للإدارة") ||
         error?.message?.includes("admin");
 
       const errorMsg = isAdminAccount
-        ? lang === "ar"
+        ? isAr
           ? "هذا الحساب مخصص للإدارة. يرجى استخدام لوحة التحكم للدخول."
           : "This account is for admin use. Please use the dashboard to sign in."
-        : lang === "ar"
-        ? "البريد الإلكتروني أو كلمة المرور غير صحيحة"
-        : "Invalid email or password";
+        : isAr
+          ? "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+          : "Invalid email or password";
 
       setErrorMessage(errorMsg);
       toast({
-        title: lang === "ar" ? "خطأ" : "Error",
+        title: isAr ? "خطأ" : "Error",
         description: errorMsg,
         variant: "destructive",
       });
@@ -159,28 +185,24 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     setErrorMessage("");
 
     try {
-      await googleSignInMutation.mutateAsync({
-        idToken: idToken,
-      });
+      await googleSignInMutation.mutateAsync({ idToken });
       await dispatch(fetchMe()).unwrap();
 
       toast({
-        title: lang === "ar" ? "تم بنجاح" : "Success",
-        description:
-          lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
+        title: isAr ? "تم بنجاح" : "Success",
+        description: isAr ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
       const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
-      const errorMsg =
-        lang === "ar"
-          ? "فشل تسجيل الدخول بحساب جوجل"
-          : "Failed to sign in with Google";
+      const errorMsg = isAr
+        ? "فشل تسجيل الدخول بحساب جوجل"
+        : "Failed to sign in with Google";
 
       setErrorMessage(errorMsg);
       toast({
-        title: lang === "ar" ? "خطأ" : "Error",
+        title: isAr ? "خطأ" : "Error",
         description: error?.message || errorMsg,
         variant: "destructive",
       });
@@ -190,14 +212,13 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   };
 
   const handleGoogleError = () => {
-    const errorMsg =
-      lang === "ar"
-        ? "فشل تسجيل الدخول بحساب جوجل"
-        : "Failed to sign in with Google";
+    const errorMsg = isAr
+      ? "فشل تسجيل الدخول بحساب جوجل"
+      : "Failed to sign in with Google";
 
     setErrorMessage(errorMsg);
     toast({
-      title: lang === "ar" ? "خطأ" : "Error",
+      title: isAr ? "خطأ" : "Error",
       description: errorMsg,
       variant: "destructive",
     });
@@ -208,28 +229,24 @@ export function SignInForm({ lang, t }: SignInFormProps) {
     setErrorMessage("");
 
     try {
-      await facebookSignInMutation.mutateAsync({
-        accessToken: accessToken,
-      });
+      await facebookSignInMutation.mutateAsync({ accessToken });
       await dispatch(fetchMe()).unwrap();
 
       toast({
-        title: lang === "ar" ? "تم بنجاح" : "Success",
-        description:
-          lang === "ar" ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
+        title: isAr ? "تم بنجاح" : "Success",
+        description: isAr ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
       });
 
       const redirectPath = await resolvePostAuthPath();
       router.push(redirectPath);
     } catch (error: any) {
-      const errorMsg =
-        lang === "ar"
-          ? "فشل تسجيل الدخول بحساب فيسبوك"
-          : "Failed to sign in with Facebook";
+      const errorMsg = isAr
+        ? "فشل تسجيل الدخول بحساب فيسبوك"
+        : "Failed to sign in with Facebook";
 
       setErrorMessage(errorMsg);
       toast({
-        title: lang === "ar" ? "خطأ" : "Error",
+        title: isAr ? "خطأ" : "Error",
         description: error?.message || errorMsg,
         variant: "destructive",
       });
@@ -239,14 +256,13 @@ export function SignInForm({ lang, t }: SignInFormProps) {
   };
 
   const handleFacebookError = () => {
-    const errorMsg =
-      lang === "ar"
-        ? "فشل تسجيل الدخول بحساب فيسبوك"
-        : "Failed to sign in with Facebook";
+    const errorMsg = isAr
+      ? "فشل تسجيل الدخول بحساب فيسبوك"
+      : "Failed to sign in with Facebook";
 
     setErrorMessage(errorMsg);
     toast({
-      title: lang === "ar" ? "خطأ" : "Error",
+      title: isAr ? "خطأ" : "Error",
       description: errorMsg,
       variant: "destructive",
     });
@@ -254,12 +270,12 @@ export function SignInForm({ lang, t }: SignInFormProps) {
 
   return (
     <div className="w-full">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="mb-8 hidden lg:block">
+        <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
           {t.auth.signIn}
         </h2>
-        <p className="text-gray-600">
-          {lang === "ar"
+        <p className="mt-2 text-gray-500">
+          {isAr
             ? "أدخل بياناتك للوصول إلى حسابك"
             : "Enter your credentials to access your account"}
         </p>
@@ -267,8 +283,20 @@ export function SignInForm({ lang, t }: SignInFormProps) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {errorMessage && (
-          <div className="p-3 rounded-md bg-red-50 border border-red-200">
-            <p className="text-sm text-red-800 text-center">{errorMessage}</p>
+          <div
+            role="alert"
+            className="relative flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 pe-10 animate-in fade-in slide-in-from-top-2 duration-300"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+            <p className="flex-1 text-sm text-red-800">{errorMessage}</p>
+            <button
+              type="button"
+              onClick={clearError}
+              aria-label={isAr ? "إغلاق التنبيه" : "Dismiss alert"}
+              className="absolute end-3 top-3 rounded-md p-0.5 text-red-400 transition-colors hover:bg-red-100 hover:text-red-700"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         )}
 
@@ -276,75 +304,115 @@ export function SignInForm({ lang, t }: SignInFormProps) {
           <Label htmlFor="email" className="text-sm font-medium text-gray-700">
             {t.auth.email}
           </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder={
-              lang === "ar" ? "أدخل بريدك الإلكتروني" : "Enter your email"
-            }
-            className={`h-11 ${
-              errors.email ? "border-red-500 focus-visible:ring-red-500" : ""
-            }`}
-            {...register("email")}
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Mail className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              dir="ltr"
+              placeholder={isAr ? "name@example.com" : "Enter your email"}
+              className={`h-12 ps-10 text-start ${
+                errors.email
+                  ? "border-red-500 focus-visible:ring-red-500"
+                  : "focus-visible:ring-red-500/30"
+              }`}
+              {...register("email")}
+              disabled={isAnyLoading}
+            />
+          </div>
           {errors.email && (
-            <p className="text-sm text-red-600 flex items-center gap-1">
-              <span>⚠</span> {errors.email.message}
+            <p className="flex items-center gap-1 text-sm text-red-600">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.email.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label
-            htmlFor="password"
-            className="text-sm font-medium text-gray-700"
-          >
-            {t.auth.password}
-          </Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder={
-              lang === "ar" ? "أدخل كلمة المرور" : "Enter your password"
-            }
-            className={`h-11 ${
-              errors.password ? "border-red-500 focus-visible:ring-red-500" : ""
-            }`}
-            {...register("password")}
-            disabled={isLoading}
-          />
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
+              {t.auth.password}
+            </Label>
+            {/* <Link
+              href={`/${lang}/auth/forgot-password`}
+              className="text-xs font-medium text-red-600 transition-colors hover:text-red-500 hover:underline"
+            >
+              {t.auth.forgotPassword}
+            </Link> */}
+          </div>
+          <div className="relative">
+            <Lock className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder={isAr ? "أدخل كلمة المرور" : "Enter your password"}
+              className={`h-12 ps-10 pe-10 ${
+                errors.password
+                  ? "border-red-500 focus-visible:ring-red-500"
+                  : "focus-visible:ring-red-500/30"
+              }`}
+              {...register("password")}
+              disabled={isAnyLoading}
+            />
+            <button
+              type="button"
+              aria-label={
+                showPassword
+                  ? isAr
+                    ? "إخفاء كلمة المرور"
+                    : "Hide password"
+                  : isAr
+                    ? "إظهار كلمة المرور"
+                    : "Show password"
+              }
+              className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
           {errors.password && (
-            <p className="text-sm text-red-600 flex items-center gap-1">
-              <span>⚠</span> {errors.password.message}
+            <p className="flex items-center gap-1 text-sm text-red-600">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {errors.password.message}
             </p>
           )}
         </div>
 
-        {/* <div className="flex items-center justify-end">
-          <Link
-            href={`/${lang}/auth/forgot-password`}
-            className="text-sm text-primary hover:underline font-medium"
-          >
-            {t.auth.forgotPassword}
-          </Link>
-        </div> */}
-
         <Button
           type="submit"
-          className="w-full h-11 text-base font-semibold"
-          disabled={isLoading || isGoogleLoading || isFacebookLoading}
+          className="h-12 w-full bg-red-600 text-base font-semibold hover:bg-red-500"
+          disabled={isAnyLoading}
         >
-          {isLoading ? t.common.loading : t.auth.signIn}
+          {isLoading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t.common.loading}
+            </>
+          ) : (
+            <>
+              <LogIn className="h-4 w-4" />
+              {t.auth.signIn}
+            </>
+          )}
         </Button>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="w-full border-t border-gray-200" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-500">
-              {lang === "ar" ? "أو" : "Or"}
+            <span className="bg-white px-3 text-gray-400">
+              {isAr ? "أو" : "Or"}
             </span>
           </div>
         </div>
@@ -354,7 +422,7 @@ export function SignInForm({ lang, t }: SignInFormProps) {
             onSuccess={handleGoogleSuccess}
             onError={handleGoogleError}
             lang={lang}
-            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            isLoading={isAnyLoading}
             mode="signin"
           />
 
@@ -362,18 +430,18 @@ export function SignInForm({ lang, t }: SignInFormProps) {
             onSuccess={handleFacebookSuccess}
             onError={handleFacebookError}
             lang={lang}
-            isLoading={isLoading || isGoogleLoading || isFacebookLoading}
+            isLoading={isAnyLoading}
             mode="signin"
           />
         </div>
 
-        <div className="text-center text-sm pt-4 border-t">
+        <div className="border-t border-gray-100 pt-5 text-center text-sm">
           <span className="text-gray-600">
-            {lang === "ar" ? "ليس لديك حساب؟ " : "Don't have an account? "}
+            {isAr ? "ليس لديك حساب؟ " : "Don't have an account? "}
           </span>
           <Link
             href={`/${lang}/auth/signup`}
-            className="text-primary hover:underline font-semibold"
+            className="font-semibold text-red-600 transition-colors hover:text-red-500 hover:underline"
           >
             {t.auth.signUp}
           </Link>

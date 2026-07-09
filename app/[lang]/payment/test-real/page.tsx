@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Navbar from "@/components/navBarTwo";
@@ -15,6 +16,10 @@ export default async function PaymentTestRealPage({
   params,
   searchParams,
 }: PaymentTestRealPageProps) {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
+
   const { lang } = await params;
   const searchParamsData = await searchParams;
   const orderId = Array.isArray(searchParamsData.id)

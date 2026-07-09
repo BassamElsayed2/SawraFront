@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { useCart } from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { getImageUrl } from "@/lib/image-url";
+import ProductImage from "@/components/product-image";
 
 interface CartIconProps {
   lang: "en" | "ar";
@@ -97,13 +96,14 @@ export default function CartIcon({
                   key={item.id}
                   className="flex gap-3 p-2 rounded-lg border bg-white hover:bg-gray-50 transition-colors"
                 >
-                  <Image
-                    src={getImageUrl(item.image_url)}
-                    alt={lang === "ar" ? item.title_ar : item.title_en}
-                    width={60}
-                    height={60}
-                    className="rounded-md object-cover flex-shrink-0"
-                  />
+                  <div className="h-[60px] w-[60px] shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <ProductImage
+                      src={item.image_url}
+                      alt={lang === "ar" ? item.title_ar : item.title_en}
+                      className="h-full w-full object-cover"
+                      fallbackClassName="h-full w-full object-contain bg-gray-50 p-2"
+                    />
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-sm truncate">

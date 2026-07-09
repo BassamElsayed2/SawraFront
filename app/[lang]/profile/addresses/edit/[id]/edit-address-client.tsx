@@ -152,7 +152,7 @@ export default function EditAddressClient({
             </p>
           </div>
 
-          <AddressForm initialData={address} lang={lang} t={dict} />
+          <AddressForm initialData={address} lang={lang} t={dict} stickySubmit />
         </div>
       </div>
       <Footer lang={lang} dict={dict} />

@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
-import { getImageUrl } from "@/lib/image-url";
+import ProductImage from "@/components/product-image";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { addressesApi, Address } from "@/services/apiAddresses";
 import { ordersApi, OrderItem } from "@/services/apiOrders";
@@ -40,7 +40,6 @@ import {
 import { paymentsApi } from "@/services/apiPayments";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
 import { PhoneRequiredModal } from "@/components/checkout/phone-required-modal";
 
 interface CheckoutClientProps {
@@ -250,6 +249,7 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
           customer_email: user?.email,
           customer_phone: user?.phone,
           currency: "EGP",
+          lang,
         });
 
         if (paymentResult.error || !paymentResult.data) {
@@ -401,14 +401,14 @@ export default function CheckoutClient({ lang, dict }: CheckoutClientProps) {
                         <div className="absolute -top-1.5 -start-1.5 bg-red-600 text-white text-[10px] sm:text-xs font-bold rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center shadow-lg z-10">
                           {index + 1}
                         </div>
-                        <Image
-                          src={getImageUrl(item.image_url)}
-                          alt={lang === "ar" ? item.title_ar : item.title_en}
-                          width={110}
-                          height={110}
-                          sizes="(max-width: 640px) 80px, 110px"
-                          className="w-20 h-20 sm:w-[110px] sm:h-[110px] rounded-lg sm:rounded-xl object-cover border border-gray-200"
-                        />
+                        <div className="w-20 h-20 sm:w-[110px] sm:h-[110px] rounded-lg sm:rounded-xl overflow-hidden border border-gray-200">
+                          <ProductImage
+                            src={item.image_url}
+                            alt={lang === "ar" ? item.title_ar : item.title_en}
+                            className="h-full w-full object-cover"
+                            fallbackClassName="h-full w-full object-contain bg-gray-50 p-3 sm:p-4"
+                          />
+                        </div>
                       </div>
 
                       <div className="flex-1 min-w-0">

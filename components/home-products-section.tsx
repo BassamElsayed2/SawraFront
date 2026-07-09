@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { getImageUrl } from "@/lib/image-url";
+import ProductImage from "@/components/product-image";
 import { ProductWithTypes } from "@/services/apiProduct";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
@@ -192,8 +192,8 @@ export default function HomeProductsSection({
                       <Card className="group overflow-hidden h-full border border-gray-100/80 bg-white shadow-sm hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-2 hover:border-red-100 rounded-2xl cursor-pointer">
                         <CardContent className="p-0 flex flex-col h-full">
                           <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
-                            <img
-                              src={getImageUrl(item.image_url)}
+                            <ProductImage
+                              src={item.image_url}
                               alt={
                                 lang === "ar" ? item.title_ar : item.title_en
                               }
@@ -308,8 +308,8 @@ export default function HomeProductsSection({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                 <div className="space-y-4">
                   <div className="aspect-square overflow-hidden rounded-2xl">
-                    <img
-                      src={getImageUrl(selectedItem.image_url)}
+                    <ProductImage
+                      src={selectedItem.image_url}
                       alt={
                         lang === "ar"
                           ? selectedItem.title_ar
