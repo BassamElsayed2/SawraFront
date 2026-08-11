@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import PaymentStatus from "@/components/payment/payment-status";
-import { ordersApi } from "@/services/apiOrders";
-import { paymentsApi } from "@/services/apiPayments";
+import { paymentsApi, Payment } from "@/services/apiPayments";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const CANCEL_AFTER_MS = 5 * 60 * 1000; // 5 minutes
 
 interface PaymentResultClientProps {
   orderId?: string;
@@ -19,19 +20,17 @@ export default function PaymentResultClient({
   orderId: initialOrderId,
   lang,
 }: PaymentResultClientProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const [orderId, setOrderId] = useState<string | undefined>(initialOrderId);
   const [paymentId, setPaymentId] = useState<string | undefined>(undefined);
-  const [showCancelOption, setShowCancelOption] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<string | undefined>();
+  const [fiveMinutesElapsed, setFiveMinutesElapsed] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
-    // Try to get order ID from multiple sources
     let finalOrderId = initialOrderId;
 
-    // 1. Try from URL search params
     if (!finalOrderId) {
       const urlOrderId = searchParams.get("id");
       if (urlOrderId) {
@@ -39,7 +38,6 @@ export default function PaymentResultClient({
       }
     }
 
-    // 2. Try from sessionStorage (stored before redirecting to EasyKash)
     if (!finalOrderId) {
       const storedOrderId = sessionStorage.getItem("pending_order_id");
       const storedPaymentId = sessionStorage.getItem("pending_payment_id");
@@ -51,35 +49,42 @@ export default function PaymentResultClient({
           setPaymentId(storedPaymentId);
         }
 
-        // Clear from sessionStorage after reading
         sessionStorage.removeItem("pending_order_id");
         sessionStorage.removeItem("pending_payment_id");
       }
     }
 
-    // Update state if we found an order ID
     if (finalOrderId && finalOrderId !== orderId) {
       setOrderId(finalOrderId);
     }
 
-    // Show cancel option after 10 seconds if payment is still pending
     const cancelTimeout = setTimeout(() => {
-      setShowCancelOption(true);
-    }, 10000); // 10 seconds
+      setFiveMinutesElapsed(true);
+    }, CANCEL_AFTER_MS);
 
-    // Cleanup timeout
     return () => {
       clearTimeout(cancelTimeout);
     };
   }, [initialOrderId, searchParams]);
 
-  // Handle payment cancellation
+  const isExpiredOrCancelled =
+    paymentStatus === "cancelled" || paymentStatus === "failed";
+  const isStillPending = paymentStatus === "pending" || paymentStatus === "processing";
+  const showCancelOption =
+    isExpiredOrCancelled || (isStillPending && fiveMinutesElapsed);
+
+  const handlePaymentStatusChange = (payment: Payment) => {
+    setPaymentStatus(payment.status);
+    if (payment.id) {
+      setPaymentId(payment.id);
+    }
+  };
+
   const handleCancelPayment = async () => {
     if (!paymentId) {
-      // Try to get payment from order
       try {
         const { data: payment } = await paymentsApi.getPaymentByOrderId(
-          orderId!
+          orderId!,
         );
         if (payment) {
           setPaymentId(payment.id);
@@ -94,7 +99,7 @@ export default function PaymentResultClient({
             variant: "destructive",
           });
         }
-      } catch (error) {
+      } catch {
         // Error finding payment
       }
       return;
@@ -106,7 +111,7 @@ export default function PaymentResultClient({
   const cancelPaymentById = async (id: string) => {
     try {
       setIsCancelling(true);
-      const { data, error } = await paymentsApi.cancelPayment(id);
+      const { error } = await paymentsApi.cancelPayment(id);
 
       if (error) {
         throw new Error(error.message);
@@ -120,7 +125,6 @@ export default function PaymentResultClient({
             : "Payment cancelled successfully",
       });
 
-      // Refresh the page to show updated status
       window.location.reload();
     } catch (error: any) {
       toast({
@@ -133,7 +137,6 @@ export default function PaymentResultClient({
     }
   };
 
-  // Show loading state if order ID is not yet determined
   if (!orderId) {
     return (
       <div className="flex justify-center">
@@ -161,7 +164,33 @@ export default function PaymentResultClient({
         autoRefresh={true}
         refreshInterval={3000}
         lang={lang}
+        onStatusChange={handlePaymentStatusChange}
       />
+
+      {showCancelOption && isStillPending && (
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6 space-y-3">
+            <p className="text-sm text-muted-foreground text-center">
+              {lang === "ar"
+                ? "يمكنك إلغاء الدفع إذا لم تكتمل العملية."
+                : "You can cancel the payment if you have not completed it."}
+            </p>
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={isCancelling}
+              onClick={handleCancelPayment}
+            >
+              {isCancelling ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <XCircle className="h-4 w-4 mr-2" />
+              )}
+              {lang === "ar" ? "إلغاء الدفع" : "Cancel payment"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

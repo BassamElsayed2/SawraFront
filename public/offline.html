@@ -50,6 +50,10 @@
         font-size: 16px;
         cursor: pointer;
       }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     </style>
   </head>
   <body>
@@ -58,7 +62,54 @@
       <h1>أنت غير متصل بالإنترنت</h1>
       <p>تحقق من اتصالك ثم حاول مرة أخرى.</p>
       <p class="muted">You are offline. Check your connection and try again.</p>
-      <button type="button" onclick="window.location.reload()">إعادة المحاولة</button>
+      <button type="button" id="retry" disabled>إعادة المحاولة</button>
     </main>
+    <script>
+      (function () {
+        var button = document.getElementById("retry");
+        var probing = false;
+
+        function setButtonEnabled(online) {
+          button.disabled = !online || probing;
+        }
+
+        async function probeAndReload() {
+          if (probing) return;
+          probing = true;
+          setButtonEnabled(false);
+          try {
+            var response = await fetch("/", {
+              method: "GET",
+              cache: "no-store",
+              credentials: "same-origin",
+            });
+            if (response.ok) {
+              window.location.reload();
+              return;
+            }
+          } catch (e) {
+            // Stay on offline page — avoid reload loop on flaky reconnect
+          }
+          probing = false;
+          setButtonEnabled(navigator.onLine);
+        }
+
+        button.addEventListener("click", function () {
+          if (!navigator.onLine) return;
+          probeAndReload();
+        });
+
+        window.addEventListener("online", function () {
+          setButtonEnabled(true);
+          probeAndReload();
+        });
+
+        window.addEventListener("offline", function () {
+          setButtonEnabled(false);
+        });
+
+        setButtonEnabled(navigator.onLine);
+      })();
+    </script>
   </body>
 </html>

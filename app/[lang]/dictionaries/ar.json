@@ -58,7 +58,7 @@
     "signInSuccess": "تم تسجيل الدخول بنجاح",
     "signUpSuccess": "تم إنشاء الحساب بنجاح",
     "signOutSuccess": "تم تسجيل الخروج بنجاح",
-    "resetPasswordSent": "تم إرسال رابط إعادة تعيين كلمة المرور",
+    "resetPasswordSent": "إذا كان هناك حساب بهذا البريد، فسيتم إرسال رابط إعادة التعيين",
     "passwordUpdated": "تم تحديث كلمة المرور بنجاح",
     "invalidCredentials": "بيانات الدخول غير صحيحة",
     "emailAlreadyExists": "البريد الإلكتروني مستخدم بالفعل",

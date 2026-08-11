@@ -58,7 +58,7 @@
     "signInSuccess": "Signed in successfully",
     "signUpSuccess": "Account created successfully",
     "signOutSuccess": "Signed out successfully",
-    "resetPasswordSent": "Password reset link sent",
+    "resetPasswordSent": "If an account exists with this email, a password reset link has been sent",
     "passwordUpdated": "Password updated successfully",
     "invalidCredentials": "Invalid credentials",
     "emailAlreadyExists": "Email already exists",

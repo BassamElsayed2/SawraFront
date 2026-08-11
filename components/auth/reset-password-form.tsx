@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +18,6 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { newAuthApi } from "@/services/newApiAuth";
 
 const resetPasswordSchema = (lang: string) =>
   z
@@ -76,13 +74,19 @@ interface ResetPasswordFormProps {
 
 export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [passwordValue, setPasswordValue] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenChecked, setTokenChecked] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  // تحليل قوة كلمة المرور
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setToken(params.get("token"));
+    setTokenChecked(true);
+  }, []);
+
   const passwordStrength = useMemo(() => {
     const checks = {
       length: passwordValue.length >= 8,
@@ -107,62 +111,22 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
     resolver: zodResolver(resetPasswordSchema(lang)),
   });
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        // Check if there's a valid reset token in URL params
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
-
-        if (!token) {
-          toast({
-            title: lang === "ar" ? "خطأ" : "Error",
-            description:
-              lang === "ar"
-                ? "رابط غير صالح أو منتهي الصلاحية"
-                : "Invalid or expired reset link",
-            variant: "destructive",
-          });
-          router.push(`/${lang}/auth/forgot-password`);
-          return;
-        }
-
-        // Valid token found - user can now reset password
-        setIsValidToken(true);
-      } catch (error) {
-        // Error is logged internally by the auth service
-        toast({
-          title: lang === "ar" ? "خطأ" : "Error",
-          description:
-            lang === "ar"
-              ? "حدث خطأ أثناء التحقق من الرابط"
-              : "An error occurred while verifying the link",
-          variant: "destructive",
-        });
-        router.push(`/${lang}/auth/forgot-password`);
-      }
-    };
-
-    checkSession();
-  }, [router, lang, toast]);
-
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
     try {
-      // Get reset token from URL
       const params = new URLSearchParams(window.location.search);
-      const token = params.get("token");
+      const resetToken = params.get("token");
 
-      if (!token) {
+      if (!resetToken) {
         toast({
-          title: "Error",
+          title: lang === "ar" ? "خطأ" : "Error",
           description: lang === "ar" ? "رابط غير صالح" : "Invalid link",
           variant: "destructive",
         });
+        router.push(`/${lang}/auth/forgot-password`);
         return;
       }
 
-      // Call backend API to reset password
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`,
         {
@@ -171,7 +135,7 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            token,
+            token: resetToken,
             new_password: data.password,
           }),
         }
@@ -181,7 +145,7 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
 
       if (!response.ok) {
         toast({
-          title: "Error",
+          title: lang === "ar" ? "خطأ" : "Error",
           description: result.message || "Failed to update password",
           variant: "destructive",
         });
@@ -190,17 +154,20 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
 
       setIsSuccess(true);
       toast({
-        title: "Success",
+        title: lang === "ar" ? "نجاح" : "Success",
         description: t.auth.passwordUpdated,
       });
 
       setTimeout(() => {
         router.push(`/${lang}/auth/signin`);
       }, 2000);
-    } catch (error) {
+    } catch {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: lang === "ar" ? "خطأ" : "Error",
+        description:
+          lang === "ar"
+            ? "حدث خطأ غير متوقع"
+            : "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
@@ -208,18 +175,40 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
     }
   };
 
-  if (!isValidToken) {
+  if (!tokenChecked) {
     return (
       <Card className="w-full max-w-md mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
         <CardContent className="pt-6">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>
-              {lang === "ar"
-                ? "جاري التحقق من رابط استعادة كلمة المرور..."
-                : "Verifying reset token..."}
-            </p>
+          <div className="text-center text-sm text-muted-foreground">
+            {lang === "ar" ? "جاري التحميل..." : "Loading..."}
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!token) {
+    return (
+      <Card className="w-full max-w-md mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="space-y-1 pb-8">
+          <CardTitle className="text-3xl text-center font-bold text-gray-900">
+            {lang === "ar" ? "رابط غير صالح" : "Invalid link"}
+          </CardTitle>
+          <CardDescription className="text-center">
+            {lang === "ar"
+              ? "رابط استعادة كلمة المرور مفقود أو غير صالح"
+              : "The password reset link is missing or invalid"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center">
+          <Link
+            href={`/${lang}/auth/forgot-password`}
+            className="text-primary hover:underline"
+          >
+            {lang === "ar"
+              ? "طلب رابط جديد"
+              : "Request a new reset link"}
+          </Link>
         </CardContent>
       </Card>
     );
@@ -246,7 +235,7 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
               {lang === "ar"
-                ? "جاري التحويل إلى صفحة التسجيل..."
+                ? "جاري التحويل إلى صفحة تسجيل الدخول..."
                 : "Redirecting to sign in page..."}
             </p>
           </div>
@@ -263,8 +252,8 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
         </CardTitle>
         <CardDescription className="text-center text-gray-600">
           {lang === "ar"
-            ? "أدخل كلمة المرور الجديدة"
-            : "Enter your new password"}
+            ? "أدخل كلمة المرور الجديدة. سيتم التحقق من الرابط عند الإرسال."
+            : "Enter your new password. The reset link is verified when you submit."}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -285,7 +274,6 @@ export function ResetPasswordForm({ lang, t }: ResetPasswordFormProps) {
               disabled={isLoading}
             />
 
-            {/* مؤشر قوة كلمة المرور */}
             {passwordValue && (
               <div className="space-y-2">
                 <div className="flex gap-1">

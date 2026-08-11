@@ -81,14 +81,10 @@ export function ForgotPasswordForm({ lang, t }: ForgotPasswordFormProps) {
       <Card className="w-full max-w-md mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
         <CardHeader className="space-y-1 pb-8">
           <CardTitle className="text-3xl text-center font-bold text-green-600">
-            {lang === "ar"
-              ? "تم ارسال رابط استعادة كلمة المرور"
-              : "Check Your Email"}
+            {lang === "ar" ? "تحقق من بريدك" : "Check Your Email"}
           </CardTitle>
           <CardDescription className="text-center">
-            {lang === "ar"
-              ? "لقد ارسلنا لك رابط استعادة كلمة المرور"
-              : "We've sent you a password reset link"}
+            {t.auth.resetPasswordSent}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
