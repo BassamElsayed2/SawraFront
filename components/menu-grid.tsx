@@ -99,12 +99,20 @@ export default function MenuGrid({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(9);
   const [showChangeBranchDialog, setShowChangeBranchDialog] = useState(false);
+  const [isChangingBranch, setIsChangingBranch] = useState(false);
   const { addToCart, selectedBranchId, setSelectedBranch, clearCart, cart } =
     useCart();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // After a branch is chosen, allow auto-select again on a future fresh visit
+  useEffect(() => {
+    if (selectedBranchId) {
+      setIsChangingBranch(false);
+    }
+  }, [selectedBranchId]);
 
   // Reset to first page when filter (category or branch) changes
   useEffect(() => {
@@ -350,7 +358,10 @@ export default function MenuGrid({
   if (!selectedBranchId) {
     return (
       <div className="w-full">
-        <BranchMapSelector lang={lang} />
+        <BranchMapSelector
+          lang={lang}
+          autoSelectNearest={!isChangingBranch}
+        />
       </div>
     );
   }
@@ -361,12 +372,14 @@ export default function MenuGrid({
       setShowChangeBranchDialog(true);
     } else {
       // No items in cart, just clear selection to show map
+      setIsChangingBranch(true);
       setSelectedBranch("");
     }
   };
 
   const confirmChangeBranch = () => {
     clearCart();
+    setIsChangingBranch(true);
     setSelectedBranch("");
     setShowChangeBranchDialog(false);
   };

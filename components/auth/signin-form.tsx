@@ -337,12 +337,12 @@ export function SignInForm({ lang, t }: SignInFormProps) {
             >
               {t.auth.password}
             </Label>
-            {/* <Link
+            <Link
               href={`/${lang}/auth/forgot-password`}
               className="text-xs font-medium text-red-600 transition-colors hover:text-red-500 hover:underline"
             >
               {t.auth.forgotPassword}
-            </Link> */}
+            </Link>
           </div>
           <div className="relative">
             <Lock className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />

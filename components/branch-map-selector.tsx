@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   GoogleMap,
   Marker,
@@ -28,6 +28,8 @@ interface Branch {
 
 interface BranchMapSelectorProps {
   lang: "ar" | "en";
+  /** Auto-pick nearest branch on enter; false when user is manually changing branch */
+  autoSelectNearest?: boolean;
 }
 
 const mapContainerStyle = {
@@ -44,7 +46,29 @@ const defaultCenter = {
 
 const libraries: ("places" | "geometry")[] = ["places", "geometry"];
 
-export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
+const calculateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+) => {
+  const R = 6371; // Earth's radius in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+export default function BranchMapSelector({
+  lang,
+  autoSelectNearest = true,
+}: BranchMapSelectorProps) {
   const [mounted, setMounted] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +81,11 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [showWarning, setShowWarning] = useState(false);
   const [pendingBranchId, setPendingBranchId] = useState<string | null>(null);
+  const [isFindingNearest, setIsFindingNearest] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [autoSelectFailed, setAutoSelectFailed] = useState(false);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const autoSelectAttemptedRef = useRef(false);
 
   const { selectedBranchId, setSelectedBranch, cart, clearCart } = useCart();
 
@@ -74,7 +103,6 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
 
   useEffect(() => {
     fetchBranches();
-    detectUserLocation();
   }, []);
 
   const fetchBranches = async () => {
@@ -88,15 +116,19 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
       }
 
       const data = await response.json();
-      
 
       if (data.success && data.branches && Array.isArray(data.branches)) {
         // Normalize lat/lng fields
-        const normalizedBranches = data.branches.map((branch: any) => ({
-          ...branch,
-          lat: branch.lat || branch.latitude,
-          lng: branch.lng || branch.longitude,
-        }));
+        const normalizedBranches = data.branches
+          .map((branch: any) => ({
+            ...branch,
+            lat: Number(branch.lat ?? branch.latitude),
+            lng: Number(branch.lng ?? branch.longitude),
+          }))
+          .filter(
+            (branch: Branch) =>
+              Number.isFinite(branch.lat) && Number.isFinite(branch.lng)
+          );
         setBranches(normalizedBranches);
 
         if (normalizedBranches.length === 0) {
@@ -123,43 +155,85 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
     }
   };
 
-  const detectUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const location = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setUserLocation(location);
-          setMapCenter(location);
-        },
-        (error) => {
-          console.log("Geolocation error:", error);
-          // Don't show error, just use default center
-        }
-      );
-    }
-  };
+  const findNearestBranch = useCallback(
+    (location: { lat: number; lng: number }, branchList: Branch[]) => {
+      if (branchList.length === 0) return null;
 
-  const calculateDistance = (
-    lat1: number,
-    lng1: number,
-    lat2: number,
-    lng2: number
-  ) => {
-    const R = 6371; // Earth's radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
+      return branchList.reduce((nearest, branch) => {
+        const nearestDistance = calculateDistance(
+          location.lat,
+          location.lng,
+          nearest.lat,
+          nearest.lng
+        );
+        const branchDistance = calculateDistance(
+          location.lat,
+          location.lng,
+          branch.lat,
+          branch.lng
+        );
+        return branchDistance < nearestDistance ? branch : nearest;
+      });
+    },
+    []
+  );
+
+  const applyNearestBranch = useCallback(
+    (
+      location: { lat: number; lng: number },
+      branchList: Branch[],
+      options?: { silent?: boolean }
+    ) => {
+      setUserLocation(location);
+      setMapCenter(location);
+
+      const nearest = findNearestBranch(location, branchList);
+      if (!nearest) {
+        if (!options?.silent) {
+          setLocationError(
+            lang === "ar"
+              ? "لا توجد فروع متاحة للاختيار"
+              : "No branches available to select"
+          );
+        }
+        setIsFindingNearest(false);
+        setAutoSelectFailed(true);
+        return false;
+      }
+
+      // Auto-select should not trip cart-change warning on first entry
+      if (
+        !options?.silent &&
+        cart.length > 0 &&
+        selectedBranchId &&
+        selectedBranchId !== nearest.id
+      ) {
+        setPendingBranchId(nearest.id);
+        setShowWarning(true);
+        setSelectedMarker(nearest.id);
+      } else {
+        setSelectedBranch(nearest.id);
+        setSelectedMarker(nearest.id);
+      }
+
+      setMapCenter({ lat: nearest.lat, lng: nearest.lng });
+
+      if (mapRef.current) {
+        mapRef.current.panTo({ lat: nearest.lat, lng: nearest.lng });
+        mapRef.current.setZoom(14);
+      }
+
+      setIsFindingNearest(false);
+      return true;
+    },
+    [
+      cart.length,
+      findNearestBranch,
+      lang,
+      selectedBranchId,
+      setSelectedBranch,
+    ]
+  );
 
   const handleBranchSelect = (branchId: string) => {
     // If cart has items from different branch, show warning
@@ -171,6 +245,136 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
 
     setSelectedBranch(branchId);
     setSelectedMarker(branchId);
+  };
+
+  // Auto-select nearest branch when entering the menu
+  useEffect(() => {
+    if (!autoSelectNearest) return;
+    if (selectedBranchId) return;
+    if (loading || error) return;
+    if (branches.length === 0) return;
+    if (autoSelectAttemptedRef.current) return;
+
+    autoSelectAttemptedRef.current = true;
+    setIsFindingNearest(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setIsFindingNearest(false);
+      setAutoSelectFailed(true);
+      setLocationError(
+        lang === "ar"
+          ? "تعذر تحديد موقعك تلقائياً. اختر الفرع يدوياً من الخريطة."
+          : "Couldn't detect your location. Please choose a branch on the map."
+      );
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        applyNearestBranch(
+          {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          branches,
+          { silent: true }
+        );
+      },
+      () => {
+        setIsFindingNearest(false);
+        setAutoSelectFailed(true);
+        setLocationError(
+          lang === "ar"
+            ? "تعذر تحديد موقعك تلقائياً. اختر الفرع يدوياً من الخريطة."
+            : "Couldn't detect your location. Please choose a branch on the map."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000,
+      }
+    );
+  }, [
+    autoSelectNearest,
+    selectedBranchId,
+    loading,
+    error,
+    branches,
+    lang,
+    applyNearestBranch,
+  ]);
+
+  // When user is changing branch manually, still try to show their location on the map
+  useEffect(() => {
+    if (autoSelectNearest) return;
+    if (userLocation || !navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setUserLocation(location);
+        setMapCenter(location);
+      },
+      () => {
+        // Keep default map center
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000,
+      }
+    );
+  }, [autoSelectNearest, userLocation]);
+
+  const handleSelectNearestBranch = () => {
+    setLocationError(null);
+    setIsFindingNearest(true);
+
+    const finishWithLocation = (location: { lat: number; lng: number }) => {
+      applyNearestBranch(location, branches);
+    };
+
+    if (userLocation) {
+      finishWithLocation(userLocation);
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      setLocationError(
+        lang === "ar"
+          ? "المتصفح لا يدعم خدمات الموقع"
+          : "Browser doesn't support geolocation"
+      );
+      setIsFindingNearest(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        finishWithLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        setLocationError(
+          lang === "ar"
+            ? "فشل الحصول على موقعك. يرجى السماح بالوصول للموقع ثم المحاولة مرة أخرى."
+            : "Failed to get your location. Please allow location access and try again."
+        );
+        setIsFindingNearest(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 60000,
+      }
+    );
   };
 
   const handleConfirmBranchChange = () => {
@@ -190,6 +394,7 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
 
   const onMapLoad = useCallback(
     (map: google.maps.Map) => {
+      mapRef.current = map;
       // Fit bounds to show all branches
       if (branches.length > 0) {
         const bounds = new google.maps.LatLngBounds();
@@ -205,15 +410,27 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
     [branches, userLocation]
   );
 
+  const showAutoSelectLoading =
+    autoSelectNearest &&
+    !selectedBranchId &&
+    !autoSelectFailed &&
+    (loading || isFindingNearest);
+
   // Don't render until mounted on client
-  if (!mounted || loading) {
+  if (!mounted || loading || showAutoSelectLoading) {
     return (
       <div className="w-full mb-8">
         <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
             <p className="text-gray-600">
-              {lang === "ar" ? "جاري تحميل الفروع..." : "Loading branches..."}
+              {autoSelectNearest
+                ? lang === "ar"
+                  ? "جاري تحديد أقرب فرع وفتح المنيو..."
+                  : "Finding your nearest branch..."
+                : lang === "ar"
+                  ? "جاري تحميل الفروع..."
+                  : "Loading branches..."}
             </p>
           </div>
         </div>
@@ -257,15 +474,38 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
       {/* Header */}
       <div className="mb-4">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-          {lang === "ar"
-            ? "🗺️ اختر الفرع القريب منك"
-            : "🗺️ Choose Your Nearest Branch"}
+          {lang === "ar" ? "🗺️ اختر الفرع" : "🗺️ Choose a Branch"}
         </h2>
-        <p className="text-gray-600">
+        <p className="text-gray-600 mb-3">
           {lang === "ar"
-            ? "اضغط على الفرع على الخريطة للاختيار"
-            : "Click on a branch marker on the map to select"}
+            ? "اضغط على فرع من الخريطة، أو استخدم زر أقرب فرع"
+            : "Tap a branch on the map, or use the nearest branch button"}
         </p>
+        <Button
+          onClick={handleSelectNearestBranch}
+          disabled={isFindingNearest || branches.length === 0}
+          className="bg-orange-500 hover:bg-orange-600 text-white inline-flex items-center gap-2"
+        >
+          {isFindingNearest ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {lang === "ar" ? "جاري تحديد أقرب فرع..." : "Finding nearest branch..."}
+            </>
+          ) : (
+            <>
+              <Navigation className="w-4 h-4" />
+              {lang === "ar" ? "اختيار أقرب فرع" : "Select Nearest Branch"}
+            </>
+          )}
+        </Button>
+        {locationError && (
+          <Alert className="mt-3 bg-red-50 border-red-200">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              {locationError}
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       {/* Warning Dialog */}
@@ -434,6 +674,23 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
               </span>
             </div>
           </div>
+
+          {/* Nearest branch shortcut on map */}
+          <div className="absolute top-4 end-4">
+            <Button
+              size="sm"
+              onClick={handleSelectNearestBranch}
+              disabled={isFindingNearest || branches.length === 0}
+              className="bg-white text-gray-800 hover:bg-orange-50 border shadow-lg inline-flex items-center gap-2"
+            >
+              {isFindingNearest ? (
+                <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+              ) : (
+                <Navigation className="w-4 h-4 text-orange-500" />
+              )}
+              {lang === "ar" ? "أقرب فرع" : "Nearest"}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -447,8 +704,8 @@ export default function BranchMapSelector({ lang }: BranchMapSelectorProps) {
           <Navigation className="h-4 w-4" />
           <AlertDescription>
             {lang === "ar"
-              ? "💡 اضغط على أي فرع على الخريطة لاختياره والبدء في الطلب"
-              : "💡 Click on any branch marker on the map to select it and start ordering"}
+              ? "💡 اختر فرعاً من الخريطة أو اضغط «اختيار أقرب فرع»"
+              : "💡 Pick a branch on the map or tap “Select Nearest Branch”"}
           </AlertDescription>
         </Alert>
       )}

@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Kufi_Arabic } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
+import { PwaProvider } from "@/components/pwa-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoKufiArabic = Noto_Kufi_Arabic({
@@ -12,9 +12,32 @@ const notoKufiArabic = Noto_Kufi_Arabic({
   variable: "--font-arabic",
 });
 
+const APP_NAME = "مطعم الثورة";
+const APP_DESCRIPTION = "استمتع بأفضل تجربة طعام مع مأكولاتنا الأصيلة";
+
 export const metadata: Metadata = {
-  title: "مطعم الثورة",
-  description: "استمتع بأفضل تجربة طعام مع مأكولاتنا الأصيلة",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
+  },
+  description: APP_DESCRIPTION,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#DC2626",
 };
 
 export async function generateStaticParams() {
@@ -56,7 +79,9 @@ export default async function RootLayout({
         }`}
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
+        <PwaProvider>
+          <Providers>{children}</Providers>
+        </PwaProvider>
       </body>
     </html>
   );

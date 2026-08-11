@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>غير متصل | مطعم الثورة</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, sans-serif;
+        background: #fff7ed;
+        color: #1f2937;
+        padding: 24px;
+      }
+      main {
+        max-width: 420px;
+        text-align: center;
+      }
+      .icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 20px;
+        border-radius: 20px;
+        background: #dc2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 700;
+      }
+      p {
+        line-height: 1.6;
+        color: #4b5563;
+      }
+      .muted {
+        color: #6b7280;
+      }
+      button {
+        margin-top: 24px;
+        border: none;
+        border-radius: 12px;
+        background: #dc2626;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="icon">!</div>
+      <h1>أنت غير متصل بالإنترنت</h1>
+      <p>تحقق من اتصالك ثم حاول مرة أخرى.</p>
+      <p class="muted">You are offline. Check your connection and try again.</p>
+      <button type="button" onclick="window.location.reload()">إعادة المحاولة</button>
+    </main>
+  </body>
+</html>

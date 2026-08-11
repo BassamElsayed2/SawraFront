@@ -49,7 +49,7 @@ export function ForgotPasswordForm({ lang, t }: ForgotPasswordFormProps) {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await resetPassword(data.email);
+      const { error } = await resetPassword(data.email, lang);
 
       if (error) {
         toast({
