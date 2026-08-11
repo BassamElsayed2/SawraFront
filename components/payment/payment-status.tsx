@@ -30,7 +30,6 @@ interface PaymentStatusProps {
   autoRefresh?: boolean;
   refreshInterval?: number;
   lang?: "en" | "ar";
-  onStatusChange?: (payment: Payment) => void;
 }
 
 export default function PaymentStatus({
@@ -40,11 +39,11 @@ export default function PaymentStatus({
   autoRefresh = true,
   refreshInterval = 3000,
   lang = "en",
-  onStatusChange,
 }: PaymentStatusProps) {
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [orderCancelled, setOrderCancelled] = useState(false);
   const [cartCleared, setCartCleared] = useState(false);
   const router = useRouter();
   const { clearCart } = useCart();
@@ -75,7 +74,6 @@ export default function PaymentStatus({
 
         setPayment(data);
         setError(null);
-        onStatusChange?.(data);
 
         // Clear cart if payment is completed (only once)
         if (!cartCleared && data.status === "completed") {
@@ -83,7 +81,22 @@ export default function PaymentStatus({
           clearCart();
         }
 
-        // Backend callback / auto-expire own order cancellation — do not race from the client
+        // Cancel order if payment failed or cancelled (only once)
+        if (
+          !orderCancelled &&
+          data.status &&
+          ["failed", "cancelled"].includes(data.status) &&
+          data.order_id
+        ) {
+          setOrderCancelled(true);
+          try {
+            // Import ordersApi dynamically to avoid circular dependency
+            const { ordersApi } = await import("@/services/apiOrders");
+            await ordersApi.cancelOrder(data.order_id);
+          } catch (cancelError) {
+            // Failed to auto-cancel order
+          }
+        }
 
         // Stop auto-refresh if payment is in a final state
         if (
